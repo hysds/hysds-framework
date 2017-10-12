@@ -1,0 +1,155 @@
+commit 6ef8d7fa5327ca8424ca1f7f1501594dc28c7fb5
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Tue Oct 3 17:38:18 2017 +0000
+
+    add latest_release.txt
+
+commit 5013443a199975017ad2ddcb790e3a5137ff5391
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Thu Sep 7 08:26:49 2017 -0700
+
+    add facet image
+
+commit dbd6bba4ffb1d5e89febc7c187b6ae8ddd13b5b8
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Thu Sep 7 08:24:41 2017 -0700
+
+    add tosca
+
+commit e86e9578682b76933cc996e3b65f1acedc116e0d
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Tue Aug 29 08:53:52 2017 -0700
+
+    add screenshots for _stdout.txt and _stderr.txt
+
+commit e2d1d5aa8e8ec55fd4d03d617d62b1e9f515e2fd
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Tue Aug 29 08:48:11 2017 -0700
+
+    rename
+
+commit 49423702b991841ec73f1f5735be7e8272ec91b3
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Tue Aug 29 08:47:09 2017 -0700
+
+    add screenshot for figaro job completed
+
+commit 5fdbef616d5af48bd990461262071ae505aa6cb6
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Tue Aug 29 08:42:03 2017 -0700
+
+    add screenshot for figaro job started
+
+commit b0a7afad3c4a6ff5ab1baa8905139bffb55d409a
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Tue Aug 29 07:56:01 2017 -0700
+
+    add screenshot for rabbitmq admin
+
+commit 60b92cdcaa14979600568fc99ae277d4a686a539
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Tue Aug 29 07:42:17 2017 -0700
+
+    add screenshot for figaro job queued
+
+commit b16ab81839f9b48106ea90bc0c9bf69b38affa76
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Tue Aug 29 07:34:42 2017 -0700
+
+    add screenshot for on_demand submission
+
+commit 944fc05830ec48542cb1dcdaa3075cd766beae7c
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Tue Aug 29 07:29:49 2017 -0700
+
+    add screenshot for on_demand modal
+
+commit 5a56feeb03c0425ba15cffdd67f54191fc02bb1b
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Tue Aug 29 05:33:04 2017 -0700
+
+    add screenshot of tosca
+
+commit 63ea306f517618361aa5792a5cf1475a899eb13e
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Mon Aug 28 15:43:48 2017 -0700
+
+    add screenshot of head plugin
+
+commit 99e1aac7c90f16740b9a73ef0d2d17d1370fa6a8
+Author: Gerald Manipon <geraldjohn.m.manipon@jpl.nasa.gov>
+Date:   Mon Aug 28 10:40:21 2017 -0700
+
+    create directory for wiki images
+
+commit 0a15c990da447de28bad2f97da238261144f8470
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Thu Aug 17 13:47:29 2017 +0000
+
+    update example
+
+commit 47dedfbc30be0abfa735ea62e59b3b331d26aaea
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Aug 16 21:40:46 2017 +0000
+
+    update help documentation
+
+commit 3cbedcfc3a73de3852702ad4d787721bbfa8e344
+Author: Gerald Manipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Aug 16 14:34:59 2017 -0700
+
+    Update README.md
+
+commit 119505758cd6926dafdc6aba416b5a71e6f5e479
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Aug 16 20:10:48 2017 +0000
+
+    install verdi docker-compose file
+
+commit e496992a90712184c8a08fcc8264fc452baa49db
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Aug 16 19:32:35 2017 +0000
+
+    install container-builder and s3-bucket-listing
+
+commit 70dbbeb3ddb8c0f2503a392fa9636899be770890
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Tue Aug 15 20:12:08 2017 +0000
+
+    sort releases
+
+commit 5df3bef2212e60899bbb931c529bb5cc2ca8844c
+Author: Gerald Manipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Aug 9 12:43:14 2017 -0700
+
+    update indents
+
+commit 1985b4d18dee28370f9e93bf15329a47afdeeb20
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Aug 9 19:42:06 2017 +0000
+
+    use numbered list
+
+commit 57fbf20cb9908721bf0b5bcc5b7f92574f436605
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Aug 9 19:40:56 2017 +0000
+
+    cleanup documentation
+
+commit 8353150efaac07de446bde83bc60bf704255afca
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Aug 9 19:37:18 2017 +0000
+
+    add prereq instructions
+
+commit ceb09636232ac79bc61bdc50989e84137b132fc2
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Aug 9 19:30:21 2017 +0000
+
+    initial implementation of installer scripts for HySDS releases
+
+commit fd54551fa49cd2d84bda530dc64a1cb5d64068e8
+Author: Gerald Manipon <gmanipon@jpl.nasa.gov>
+Date:   Tue Aug 1 08:45:12 2017 -0700
+
+    Initial commit
