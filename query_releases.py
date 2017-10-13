@@ -19,7 +19,9 @@ def mask_token(url): return TOKEN_RE.sub(r'\1xxxxxxxx@\2', url)
 def get_releases(url, token):
     """Query releases."""
 
-    headers = { 'Authorization': 'token %s' % token }
+    if token is not None:
+        headers = { 'Authorization': 'token %s' % token }
+    else: headers = {}
     r = requests.get(url, headers=headers)
     r.raise_for_status()
     return r.json()
@@ -42,7 +44,7 @@ def parse_url(url):
     if '@' in u.netloc:
         token, host = u.netloc.split('@')
     else:
-        token = ''
+        token = None
         host = u.netloc
     return token, '{}://{}{}'.format(u.scheme, host, u.path)
 

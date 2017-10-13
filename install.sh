@@ -140,22 +140,13 @@ if [ ! -d "$INSTALL_DIR/run" ]; then
 fi
 
 
-# set oauth token
-OAUTH_CFG="$HOME/.git_oauth_token"
-if [ -e "$OAUTH_CFG" ]; then
-  source $OAUTH_CFG
-  GIT_URL="https://${GIT_OAUTH_TOKEN}@github.jpl.nasa.gov"
-else
-  GIT_URL="https://github.jpl.nasa.gov"
-fi
-
-
-# set github API url
-API_URL="${GIT_URL}/api/v3"
+# set github API urls
+GIT_URL="https://github.com"
+API_URL="https://api.github.com"
 
 
 # set hysds-framework API url
-REL_API_URL="${API_URL}/repos/hysds-org/hysds-framework/releases"
+REL_API_URL="${API_URL}/repos/hysds/hysds-framework/releases"
 
 
 # get all releases
@@ -198,9 +189,7 @@ for i in `${BASE_PATH}/query_releases.py $REL_API_URL -r $RELEASE`; do
   as_name=`echo $i | awk 'BEGIN{FS="|"}{print $1}'`
   as_url=`echo $i | awk 'BEGIN{FS="|"}{print $2}'`
   assets[$as_name]+=$as_url
-  wget --header="Authorization: token $GIT_OAUTH_TOKEN" \
-       --header="Accept: application/octet-stream" \
-       -O $as_name $as_url
+  wget --header="Accept: application/octet-stream" -O $as_name $as_url
   tar xvfz $as_name
 done
 rm -rf *.tar.gz
