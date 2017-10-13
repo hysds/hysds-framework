@@ -7,13 +7,7 @@ Installer for HySDS framework releases
    - pip 9.0.1+
    - setuptools 36.0.1+
    - virtualenv 1.10.1+
-2. setup Github OAuth token file
-   ```
-   cd $HOME
-   echo "GIT_OAUTH_TOKEN=<your github oauth token>" > .git_oauth_token
-   chmod 400 .git_oauth_token
-   ```
-3. clone repository
+2. clone repository
    ```
    git clone https://github.jpl.nasa.gov/hysds-org/hysds-framework.git
    cd hysds-framework
@@ -41,8 +35,8 @@ Usage:
   Installing Setuptools............................................done.
   Installing Pip...................................................done.
   Created virtualenv at /home/ops/mozart.
-  [2017-08-09 19:25:37,789: INFO/main] Github repo URL: https://xxxxxxxx@github.jpl.nasa.gov/api/v3/repos/hysds-org/hysds-framework/releases
-  [2017-08-09 19:25:37,798: INFO/_new_conn] Starting new HTTPS connection (1): github.jpl.nasa.gov
+  [2017-10-13 01:04:08,735: INFO/main] Github repo URL: https://xxxxxxxx@api.github.com/repos/hysds/hysds-framework/releases
+  [2017-10-13 01:04:08,745: INFO/_new_conn] Starting new HTTPS connection (1): api.github.com
   No release specified. Use -r RELEASE | --release=RELEASE to install a specific release. Listing available releases:
   v2.0.0-alpha.1
   v2.0.0-alpha.2
