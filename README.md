@@ -9,7 +9,7 @@ Installer for HySDS framework releases
    - virtualenv 1.10.1+
 2. clone repository
    ```
-   git clone https://github.jpl.nasa.gov/hysds-org/hysds-framework.git
+   git clone https://github.com/hysds/hysds-framework.git
    cd hysds-framework
    ```
 
