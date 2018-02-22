@@ -309,7 +309,8 @@ link_repo $OPS s3-bucket-listing
 # export latest hysds-dockerfiles package
 link_repo $OPS hysds-dockerfiles
 
-# export latest hysds_cluster_setup
+# mozart specific tasks
 if [[ "$COMPONENT" == "mozart" ]]; then
+  # export latest hysds_cluster_setup
   move_and_link_repo $OPS hysds_cluster_setup $HOME
 fi
