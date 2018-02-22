@@ -21,6 +21,8 @@ Usage:
     -r RELEASE | --release=RELEASE
                                 Release tag to use for installation; without this option specified, a list
                                 of releases will be printed and the installation stops
+    -k GIT_OAUTH_TOKEN | --token=GIT_OAUTH_TOKEN
+                                OAuth token to use to authenticate
     -h | --help                 Print help
     -t | --test                 Install test HySDS component, e.g. /home/ops/mozart-test instead of /home/ops/mozart
     COMPONENT                   <component>: mozart | grq | metrics | verdi
