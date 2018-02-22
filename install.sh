@@ -238,6 +238,10 @@ install_repo $OPS mozart
 install_repo $OPS figaro
 
 
+# export latest sdscli package
+install_repo $OPS sdscli
+
+
 # export latest grq2 package
 link_repo $OPS grq2
 
