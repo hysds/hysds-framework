@@ -48,3 +48,10 @@ fi
 
 # configure sds
 sds configure
+
+
+# copy cluster.py in ~/hsds_cluster_setup
+FAB_FILE=$HOME/hysds_cluster_setup/cluster.py
+if [ ! -e "$FAB_FILE" ]; then
+  cp ${FAB_FILE}.example ${FAB_FILE}
+fi
