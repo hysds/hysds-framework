@@ -20,6 +20,8 @@ Usage:
     -r RELEASE | --release=RELEASE
                                 Release tag to use for installation; without this option specified, a list
                                 of releases will be printed and the installation stops
+    -k GIT_OAUTH_TOKEN | --token=GIT_OAUTH_TOKEN
+                                OAuth token to use to authenticate
     -h | --help                 Print help
     -t | --test                 Install test HySDS component, e.g. $HOME/mozart-test instead of $HOME/mozart
     COMPONENT                   <component>: mozart | grq | metrics | verdi
@@ -50,6 +52,17 @@ install_repo() {
 }
 
 
+move_and_link_repo() {
+  cd $1
+  PACKAGE=$2
+  NEW_DIR=$3
+  PACKAGE_DIR=${PACKAGE}-*
+  mv $PACKAGE_DIR $NEW_DIR/
+  cd $NEW_DIR
+  ln -sf $PACKAGE_DIR $PACKAGE
+}
+
+
 # process arguments
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -68,6 +81,15 @@ while [[ $# -gt 0 ]]; do
       ;;
     --release=*)
       RELEASE="${1#*=}"
+      shift 1
+      ;;
+    -k)
+      GIT_OAUTH_TOKEN="$2"
+      if [[ $GIT_OAUTH_TOKEN == "" ]]; then break; fi
+      shift 2
+      ;;
+    --token=*)
+      GIT_OAUTH_TOKEN="${1#*=}"
       shift 1
       ;;
     mozart|metrics|verdi)
@@ -141,8 +163,13 @@ fi
 
 
 # set github API urls
-GIT_URL="https://github.com"
-API_URL="https://api.github.com"
+if [[ "$GIT_OAUTH_TOKEN" == "" ]]; then
+  GIT_URL="https://github.com"
+  API_URL="https://api.github.com"
+else
+  GIT_URL="https://${GIT_OAUTH_TOKEN}@github.com"
+  API_URL="https://${GIT_OAUTH_TOKEN}@api.github.com"
+fi
 
 
 # set hysds-framework API url
@@ -189,7 +216,20 @@ for i in `${BASE_PATH}/query_releases.py $REL_API_URL -r $RELEASE`; do
   as_name=`echo $i | awk 'BEGIN{FS="|"}{print $1}'`
   as_url=`echo $i | awk 'BEGIN{FS="|"}{print $2}'`
   assets[$as_name]+=$as_url
-  wget --header="Accept: application/octet-stream" -O $as_name $as_url
+  if [[ "$GIT_OAUTH_TOKEN" == "" ]]; then
+      #echo wget --max-redirect=10 --header="Accept: application/octet-stream" \
+      #     -O $as_name $as_url
+      ${BASE_PATH}/download_asset.py $as_url $as_name
+  else
+      #echo wget --max-redirect=10 --header="Accept: application/octet-stream" \
+      #     --header="Authorization: token $GIT_OAUTH_TOKEN" \
+      #     -O $as_name $as_url
+      ${BASE_PATH}/download_asset.py $as_url $as_name --token $GIT_OAUTH_TOKEN
+  fi
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to download asset $as_url."
+    exit 1
+  fi
   tar xvfz $as_name
 done
 rm -rf *.tar.gz
@@ -268,3 +308,8 @@ link_repo $OPS s3-bucket-listing
 
 # export latest hysds-dockerfiles package
 link_repo $OPS hysds-dockerfiles
+
+# export latest hysds_cluster_setup
+if [[ "$COMPONENT" == "mozart" ]]; then
+  move_and_link_repo $OPS hysds_cluster_setup $HOME
+fi
