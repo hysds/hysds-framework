@@ -59,7 +59,11 @@ fi
 
 # prompt user to customize hysds_cluster_setup
 echo "Your hysds_cluster_setup at $HOME/hysds_cluster_setup is ready."
+echo ""
 echo "You should:"
 echo "- update $FAB_FILE with any customizations for your cluster"
 echo "- update datasets.json* under $HOME/hysds_cluster_setup/files for your cluster"
 echo "- ensure $HOME/hysds_cluster_setup/files/datasets.json exists"
+echo ""
+echo "Once done, you may proceed with running hysds_cluster_setup scripts like update.sh,"
+echo "stop.sh, start.sh, reset.sh or start running fabric commands."
