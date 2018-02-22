@@ -55,3 +55,11 @@ FAB_FILE=$HOME/hysds_cluster_setup/cluster.py
 if [ ! -e "$FAB_FILE" ]; then
   cp ${FAB_FILE}.example ${FAB_FILE}
 fi
+
+
+# prompt user to customize hysds_cluster_setup
+echo "Your hysds_cluster_setup at $HOME/hysds_cluster_setup is ready."
+echo "You should:"
+echo "- update $FAB_FILE with any customizations for your cluster"
+echo "- update datasets.json* under $HOME/hysds_cluster_setup/files for your cluster"
+echo "- ensure $HOME/hysds_cluster_setup/files/datasets.json exists"
