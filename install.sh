@@ -17,6 +17,9 @@ usage() {
   cat << USAGE >&2
 Usage:
     $cmdname <component>
+    -d | --dev
+                                Development mode installation; install master branch of all repos instead
+                                of official releases
     -r RELEASE | --release=RELEASE
                                 Release tag to use for installation; without this option specified, a list
                                 of releases will be printed and the installation stops
@@ -52,6 +55,32 @@ install_repo() {
 }
 
 
+clone_dev_repo() {
+  cd $1
+  PACKAGE=$2
+  GIT_URL=$3
+  git clone $GIT_URL $PACKAGE
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to clone $GIT_URL."
+    exit 1
+  fi
+}
+
+
+install_dev_repo() {
+  cd $1
+  PACKAGE=$2
+  GIT_URL=$3
+  clone_dev_repo $1 $PACKAGE $GIT_URL
+  cd $OPS/$PACKAGE
+  pip install -e .
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to run 'pip install -e .' for $PACKAGE."
+    exit 1
+  fi
+}
+
+
 move_and_link_repo() {
   cd $1
   PACKAGE=$2
@@ -72,6 +101,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --test|-t)
       DIR_POST="-test"
+      shift 1
+      ;;
+    -d)
+      DEV=1
+      shift 1
+      ;;
+    --dev)
+      DEV=1
       shift 1
       ;;
     -r)
@@ -108,6 +145,13 @@ while [[ $# -gt 0 ]]; do
     ;;
   esac
 done
+
+
+# check if both -d and -r were specified
+if [ ! -z ${DEV+x} ] && [ ! -z ${RELEASE+x} ]; then
+  echoerr "Error: Cannot specify -r/--release and -d/--dev options together."
+  usage
+fi
 
 
 # check component is defined
@@ -186,19 +230,14 @@ done
 
 
 # print release if not specified
-if [[ "$RELEASE" == "" ]]; then
-  echo "No release specified. Use -r RELEASE | --release=RELEASE to install a specific release. Listing available releases:"
+if [ -z ${DEV+x} ] && [ -z ${RELEASE+x} ]; then
+  echo "No release specified or development mode not set."
+  echo "Use -d | --dev to install development mode or use -r RELEASE | --release=RELEASE"
+  echo "to install a specific release. Listing available releases:"
   for tag in "${!rels[@]}"; do
     echo "$tag"
   done | sort
   exit 0
-fi
-
-
-# verify release exists
-if [[ "${rels[$RELEASE]}" == "" ]]; then
-  echoerr "Error: release $RELEASE doesn't exist."
-  usage
 fi
 
 
@@ -208,109 +247,207 @@ if [ ! -d "$OPS" ]; then
   mkdir $OPS
 fi
 cd $OPS
-
-
-# download all assets for a release and untar
-declare -A assets
-for i in `${BASE_PATH}/query_releases.py $REL_API_URL -r $RELEASE`; do
-  as_name=`echo $i | awk 'BEGIN{FS="|"}{print $1}'`
-  as_url=`echo $i | awk 'BEGIN{FS="|"}{print $2}'`
-  assets[$as_name]+=$as_url
-  if [[ "$GIT_OAUTH_TOKEN" == "" ]]; then
-      #echo wget --max-redirect=10 --header="Accept: application/octet-stream" \
-      #     -O $as_name $as_url
-      ${BASE_PATH}/download_asset.py $as_url $as_name
-  else
-      #echo wget --max-redirect=10 --header="Accept: application/octet-stream" \
-      #     --header="Authorization: token $GIT_OAUTH_TOKEN" \
-      #     -O $as_name $as_url
-      ${BASE_PATH}/download_asset.py $as_url $as_name --token $GIT_OAUTH_TOKEN
-  fi
+  
+  
+# install dev environment
+if [[ "$DEV" == 1 ]]; then
+  # clone prov_es package
+  install_dev_repo $OPS prov_es https://github.com/hysds/prov_es.git
+  
+  
+  # clone osaka package
+  pip install -U python-dateutil
+  install_dev_repo $OPS osaka https://github.com/hysds/osaka.git
+  
+  
+  # clone hysds_commons package
+  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git
+  
+  
+  # clone hysds package
+  cd $OPS
+  PACKAGE=hysds
+  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
+  pip install -U  greenlet
+  pip install -U  pytz
+  pip uninstall -y celery
+  cd $OPS/$PACKAGE/third_party/celery-v3.1.25.pqueue
+  pip install --process-dependency-links -e .
+  cd $OPS/$PACKAGE
+  pip install --process-dependency-links -e .
   if [ "$?" -ne 0 ]; then
-    echo "Failed to download asset $as_url."
+    echo "Failed to run 'pip install -e .' for $PACKAGE."
     exit 1
   fi
-  tar xvfz $as_name
-done
-rm -rf *.tar.gz
+  
+  
+  # clone sciflo package
+  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git
+  
+  
+  # clone mozart package
+  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git
+  
+  
+  # clone figaro package
+  install_dev_repo $OPS figaro https://github.com/hysds/figaro.git
+  
+  
+  # clone sdscli package
+  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git
+  
+  
+  # clone grq2 package
+  clone_dev_repo $OPS grq2 https://github.com/hysds/grq2.git
+  
+  
+  # clone tosca package
+  clone_dev_repo $OPS tosca https://github.com/hysds/tosca.git
+  
+  
+  # clone spyddder-man package
+  clone_dev_repo $OPS spyddder-man https://github.com/hysds/spyddder-man.git
+  
+  
+  # clone lightweight-jobs package
+  clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git
+  
+  
+  # clone container-builder package
+  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git
+  
+  
+  # clone s3-bucket-listing package
+  clone_dev_repo $OPS s3-bucket-listing https://github.com/hysds/s3-bucket-listing.git
+  
+  
+  # clone hysds-dockerfiles package
+  clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git
+  
+  # mozart specific tasks
+  if [[ "$COMPONENT" == "mozart" ]]; then
+    clone_dev_repo $HOME hysds_cluster_setup https://github.com/hysds/hysds_cluster_setup.git
+  fi
+else
+  # print release if not specified
+  if [[ "$RELEASE" == "" ]]; then
+    echo "No release specified. Use -r RELEASE | --release=RELEASE to install a specific release."
+    echo "Listing available releases:"
+    for tag in "${!rels[@]}"; do
+      echo "$tag"
+    done | sort
+    exit 0
+  fi
 
-
-# export latest prov_es package
-install_repo $OPS prov_es
-
-
-# export latest osaka package
-pip install -U python-dateutil
-install_repo $OPS osaka
-
-
-# export latest hysds_commons package
-install_repo $OPS hysds_commons
-
-
-# export latest hysds package
-cd $OPS
-PACKAGE=hysds
-PACKAGE_DIR=${PACKAGE}-!(dockerfiles*)
-ln -sf $PACKAGE_DIR $PACKAGE
-pip install -U  greenlet
-pip install -U  pytz
-pip uninstall -y celery
-cd $OPS/$PACKAGE/third_party/celery-v3.1.25.pqueue
-pip install --process-dependency-links -e .
-cd $OPS/$PACKAGE
-pip install --process-dependency-links -e .
-if [ "$?" -ne 0 ]; then
-  echo "Failed to run 'pip install -e .' for $PACKAGE."
-  exit 1
-fi
-
-
-# export latest sciflo package
-install_repo $OPS sciflo
-
-
-# export latest mozart package
-install_repo $OPS mozart
-
-
-# export latest figaro package
-install_repo $OPS figaro
-
-
-# export latest sdscli package
-install_repo $OPS sdscli
-
-
-# export latest grq2 package
-link_repo $OPS grq2
-
-
-# export latest tosca package
-link_repo $OPS tosca
-
-
-# export latest spyddder-man package
-link_repo $OPS spyddder-man
-
-
-# export latest lightweight-jobs package
-link_repo $OPS lightweight-jobs
-
-
-# export latest container-builder package
-link_repo $OPS container-builder
-
-
-# export latest s3-bucket-listing package
-link_repo $OPS s3-bucket-listing
-
-
-# export latest hysds-dockerfiles package
-link_repo $OPS hysds-dockerfiles
-
-# mozart specific tasks
-if [[ "$COMPONENT" == "mozart" ]]; then
-  # export latest hysds_cluster_setup
-  move_and_link_repo $OPS hysds_cluster_setup $HOME
+  # verify release exists
+  if [[ "${rels[$RELEASE]}" == "" ]]; then
+    echoerr "Error: release $RELEASE doesn't exist."
+    usage
+  fi
+  
+  
+  # download all assets for a release and untar
+  declare -A assets
+  for i in `${BASE_PATH}/query_releases.py $REL_API_URL -r $RELEASE`; do
+    as_name=`echo $i | awk 'BEGIN{FS="|"}{print $1}'`
+    as_url=`echo $i | awk 'BEGIN{FS="|"}{print $2}'`
+    assets[$as_name]+=$as_url
+    if [[ "$GIT_OAUTH_TOKEN" == "" ]]; then
+        #echo wget --max-redirect=10 --header="Accept: application/octet-stream" \
+        #     -O $as_name $as_url
+        ${BASE_PATH}/download_asset.py $as_url $as_name
+    else
+        #echo wget --max-redirect=10 --header="Accept: application/octet-stream" \
+        #     --header="Authorization: token $GIT_OAUTH_TOKEN" \
+        #     -O $as_name $as_url
+        ${BASE_PATH}/download_asset.py $as_url $as_name --token $GIT_OAUTH_TOKEN
+    fi
+    if [ "$?" -ne 0 ]; then
+      echo "Failed to download asset $as_url."
+      exit 1
+    fi
+    tar xvfz $as_name
+  done
+  rm -rf *.tar.gz
+  
+  
+  # export latest prov_es package
+  install_repo $OPS prov_es
+  
+  
+  # export latest osaka package
+  pip install -U python-dateutil
+  install_repo $OPS osaka
+  
+  
+  # export latest hysds_commons package
+  install_repo $OPS hysds_commons
+  
+  
+  # export latest hysds package
+  cd $OPS
+  PACKAGE=hysds
+  PACKAGE_DIR=${PACKAGE}-!(dockerfiles*)
+  ln -sf $PACKAGE_DIR $PACKAGE
+  pip install -U  greenlet
+  pip install -U  pytz
+  pip uninstall -y celery
+  cd $OPS/$PACKAGE/third_party/celery-v3.1.25.pqueue
+  pip install --process-dependency-links -e .
+  cd $OPS/$PACKAGE
+  pip install --process-dependency-links -e .
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to run 'pip install -e .' for $PACKAGE."
+    exit 1
+  fi
+  
+  
+  # export latest sciflo package
+  install_repo $OPS sciflo
+  
+  
+  # export latest mozart package
+  install_repo $OPS mozart
+  
+  
+  # export latest figaro package
+  install_repo $OPS figaro
+  
+  
+  # export latest sdscli package
+  install_repo $OPS sdscli
+  
+  
+  # export latest grq2 package
+  link_repo $OPS grq2
+  
+  
+  # export latest tosca package
+  link_repo $OPS tosca
+  
+  
+  # export latest spyddder-man package
+  link_repo $OPS spyddder-man
+  
+  
+  # export latest lightweight-jobs package
+  link_repo $OPS lightweight-jobs
+  
+  
+  # export latest container-builder package
+  link_repo $OPS container-builder
+  
+  
+  # export latest s3-bucket-listing package
+  link_repo $OPS s3-bucket-listing
+  
+  
+  # export latest hysds-dockerfiles package
+  link_repo $OPS hysds-dockerfiles
+  
+  # mozart specific tasks
+  if [[ "$COMPONENT" == "mozart" ]]; then
+    # export latest hysds_cluster_setup
+    move_and_link_repo $OPS hysds_cluster_setup $HOME
+  fi
 fi
