@@ -323,11 +323,6 @@ if [[ "$DEV" == 1 ]]; then
   
   # clone hysds-dockerfiles package
   clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git
-  
-  # mozart specific tasks
-  if [[ "$COMPONENT" == "mozart" ]]; then
-    clone_dev_repo $HOME hysds_cluster_setup https://github.com/hysds/hysds_cluster_setup.git
-  fi
 else
   # print release if not specified
   if [[ "$RELEASE" == "" ]]; then
@@ -444,10 +439,4 @@ else
   
   # export latest hysds-dockerfiles package
   link_repo $OPS hysds-dockerfiles
-  
-  # mozart specific tasks
-  if [[ "$COMPONENT" == "mozart" ]]; then
-    # export latest hysds_cluster_setup
-    move_and_link_repo $OPS hysds_cluster_setup $HOME
-  fi
 fi
