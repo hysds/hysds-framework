@@ -323,6 +323,10 @@ if [[ "$DEV" == 1 ]]; then
   
   # clone hysds-dockerfiles package
   clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git
+  
+  
+  # clone hysds-cloud-functions package
+  clone_dev_repo $OPS hysds-cloud-functions https://github.com/hysds/hysds-cloud-functions.git
 else
   # print release if not specified
   if [[ "$RELEASE" == "" ]]; then
@@ -439,4 +443,8 @@ else
   
   # export latest hysds-dockerfiles package
   link_repo $OPS hysds-dockerfiles
+  
+  
+  # export latest hysds-cloud-functions package
+  link_repo $OPS hysds-cloud-functions
 fi
