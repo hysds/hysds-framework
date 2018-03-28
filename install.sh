@@ -448,3 +448,6 @@ else
   # export latest hysds-cloud-functions package
   link_repo $OPS hysds-cloud-functions
 fi
+
+# download hysds core packages
+${BASE_PATH}/download_latest_pkg.py $API_URL hysds lightweight-jobs -o ${INSTALL_DIR}/pkgs
