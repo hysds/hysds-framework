@@ -386,7 +386,7 @@ else
   # export latest hysds package
   cd $OPS
   PACKAGE=hysds
-  PACKAGE_DIR=${PACKAGE}-!(dockerfiles*)
+  PACKAGE_DIR=${PACKAGE}-!(dockerfiles*|cloud-functions*|ops-bot*)
   ln -sf $PACKAGE_DIR $PACKAGE
   pip install -U  greenlet
   pip install -U  pytz
