@@ -449,5 +449,6 @@ else
   link_repo $OPS hysds-cloud-functions
 fi
 
-# download hysds core packages
-${BASE_PATH}/download_latest_pkg.py $API_URL hysds lightweight-jobs -o ${INSTALL_DIR}/pkgs
+# download hysds core packages and verdi image
+${BASE_PATH}/download_latest.py $API_URL hysds lightweight-jobs -o ${INSTALL_DIR}/pkgs -s sdspkg.tar
+${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -s tar.gz

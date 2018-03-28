@@ -24,7 +24,7 @@ def call_github_api(url, token, method="get", **kargs):
     return r.json()
 
 
-def get_latest_pkg(api_url, owner, repo, token):
+def get_latest_assets(api_url, owner, repo, token, suffix=None):
     """Return latest release for repo."""
 
     # get latest release info
@@ -33,33 +33,35 @@ def get_latest_pkg(api_url, owner, repo, token):
 
     # git sdspkg.tar asset
     assets = latest['assets']
+    dl_assets = []
     for asset in assets:
-        if asset['name'].endswith('.sdspkg.tar'):
-            return asset['name'], asset['url']
+        if suffix is not None:
+            if asset['name'].endswith(suffix):
+                dl_assets.append([asset['name'], asset['url']])
+        else: dl_assets.append([asset['name'], asset['url']])
+    return dl_assets
 
 
-def main(url, owner, repo, outdir=None):
+def main(url, owner, repo, outdir=None, suffix=None):
     """Route request."""
 
     token, api_url = parse_url(url)
-    print("token: {}".format(token))
-    print("api_url: {}".format(api_url))
-    latest_pkg_name, latest_pkg_url = get_latest_pkg(api_url, owner, repo, token)
-    print("latest_pkg_name: {}".format(latest_pkg_name))
-    print("latest_pkg_url: {}".format(latest_pkg_url))
+    dl_assets = get_latest_assets(api_url, owner, repo, token, suffix)
     if outdir is not None and not os.path.isdir(outdir):
         os.makedirs(outdir)
-        local_path = os.path.join(outdir, latest_pkg_name)
-    else: local_path = latest_pkg_name
-    handle_redirects(latest_pkg_url, local_path, token)
+    for pkg_name, pkg_url in dl_assets:
+        local_path = pkg_name if outdir is None else os.path.join(outdir, pkg_name)
+        handle_redirects(pkg_url, local_path, token)
 
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--outdir", '-o', default=None,
                         help="directory to save packages to")
+    parser.add_argument("--suffix", '-s', default=None,
+                        help="filter by suffix")
     parser.add_argument("api_url", help="Github API url")
     parser.add_argument("owner", help="repo owner or org")
     parser.add_argument("repo", help="repo name")
     args = parser.parse_args()
-    main(args.api_url, args.owner, args.repo, args.outdir)
+    main(args.api_url, args.owner, args.repo, args.outdir, args.suffix)
