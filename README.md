@@ -18,13 +18,16 @@ Installer for HySDS framework releases
 $ ./install.sh -h
 Usage:
     install.sh <component>
+    -d | --dev
+                                Development mode installation; install master branch of all repos instead
+                                of official releases
     -r RELEASE | --release=RELEASE
                                 Release tag to use for installation; without this option specified, a list
                                 of releases will be printed and the installation stops
     -k GIT_OAUTH_TOKEN | --token=GIT_OAUTH_TOKEN
                                 OAuth token to use to authenticate
     -h | --help                 Print help
-    -t | --test                 Install test HySDS component, e.g. /home/ops/mozart-test instead of /home/ops/mozart
+    -t | --test                 Install test HySDS component, e.g. /export/home/hysdsops/mozart-test instead of /export/home/hysdsops/mozart
     COMPONENT                   <component>: mozart | grq | metrics | verdi
 ```
 
