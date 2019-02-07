@@ -3,7 +3,7 @@
 Helper script for querying github API for release info.
 """
 import os, sys, re, requests, json, logging, argparse
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 
 log_format = "[%(asctime)s: %(levelname)s/%(funcName)s] %(message)s"
@@ -57,11 +57,11 @@ def main(url, release):
     if release is None:
         for i in get_releases(url, token):
             #print(json.dumps(i, indent=2))
-            print("{}|{}".format(i['id'], i['tag_name']))
+            print(("{}|{}".format(i['id'], i['tag_name'])))
     else:
         for i in get_assets(url, token, release):
             #print(json.dumps(i, indent=2))
-            print("{}|{}".format(i['name'], i['url']))
+            print(("{}|{}".format(i['name'], i['url'])))
 
     
 if __name__ == "__main__":

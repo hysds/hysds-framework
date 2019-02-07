@@ -3,7 +3,7 @@
 Helper script for querying github API for release info.
 """
 import os, sys, re, requests, json, logging, argparse
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from query_releases import parse_url
 from download_asset import handle_redirects
