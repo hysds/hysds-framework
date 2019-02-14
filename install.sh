@@ -59,7 +59,12 @@ clone_dev_repo() {
   cd $1
   PACKAGE=$2
   GIT_URL=$3
-  git clone $GIT_URL $PACKAGE
+  BRANCH=$4
+  if [ ! -z ${BRANCH} ]; then
+    git clone --single-branch -b $BRANCH $GIT_URL $PACKAGE
+  else
+    git clone $GIT_URL $PACKAGE
+  fi
   if [ "$?" -ne 0 ]; then
     echo "Failed to clone $GIT_URL."
     exit 1
@@ -71,7 +76,12 @@ install_dev_repo() {
   cd $1
   PACKAGE=$2
   GIT_URL=$3
-  clone_dev_repo $1 $PACKAGE $GIT_URL
+  BRANCH=$4
+  if [ ! -z ${BRANCH} ]; then
+    clone_dev_repo $1 $PACKAGE $GIT_URL $BRANCH
+  else
+    clone_dev_repo $1 $PACKAGE $GIT_URL
+  fi
   cd $OPS/$PACKAGE
   pip install -e .
   if [ "$?" -ne 0 ]; then
@@ -183,8 +193,10 @@ pip install -U setuptools
 
 
 # force install supervisor
+# install from git because master has support for python3
 if [ ! -e "$INSTALL_DIR/bin/supervisord" ]; then
-  pip install --ignore-installed supervisor
+  #pip install --ignore-installed supervisor
+  pip install --ignore-installed git+https://github.com/Supervisor/supervisor
 fi
 
 
@@ -252,22 +264,22 @@ cd $OPS
 # install dev environment
 if [[ "$DEV" == 1 ]]; then
   # clone prov_es package
-  install_dev_repo $OPS prov_es https://github.com/hysds/prov_es.git
+  install_dev_repo $OPS prov_es https://github.com/hysds/prov_es.git python3
   
   
   # clone osaka package
   pip install -U python-dateutil
-  install_dev_repo $OPS osaka https://github.com/hysds/osaka.git
+  install_dev_repo $OPS osaka https://github.com/hysds/osaka.git python3
   
   
   # clone hysds_commons package
-  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git
+  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git python3
   
   
   # clone hysds package
   cd $OPS
   PACKAGE=hysds
-  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
+  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git python3
   pip install -U  greenlet
   pip install -U  pytz
   pip uninstall -y celery
@@ -282,39 +294,39 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone sciflo package
-  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git
+  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git python3
   
   
   # clone mozart package
-  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git
+  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git python3
   
   
   # clone figaro package
-  install_dev_repo $OPS figaro https://github.com/hysds/figaro.git
+  install_dev_repo $OPS figaro https://github.com/hysds/figaro.git python3
   
   
   # clone sdscli package
-  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git
+  install_dev_repo $OPS sdscli https://github.com/hysds/sdscli.git python3
   
   
   # clone grq2 package
-  clone_dev_repo $OPS grq2 https://github.com/hysds/grq2.git
+  clone_dev_repo $OPS grq2 https://github.com/hysds/grq2.git python3
   
   
   # clone tosca package
-  clone_dev_repo $OPS tosca https://github.com/hysds/tosca.git
+  clone_dev_repo $OPS tosca https://github.com/hysds/tosca.git python3
   
   
   # clone spyddder-man package
-  clone_dev_repo $OPS spyddder-man https://github.com/hysds/spyddder-man.git
+  clone_dev_repo $OPS spyddder-man https://github.com/hysds/spyddder-man.git python3
   
   
   # clone lightweight-jobs package
-  clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git
+  clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git python3
   
   
   # clone container-builder package
-  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git
+  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git python3
   
   
   # clone s3-bucket-listing package
@@ -322,7 +334,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds-dockerfiles package
-  clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git
+  clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git python3
   
   
   # clone hysds-cloud-functions package
