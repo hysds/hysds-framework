@@ -280,10 +280,7 @@ if [[ "$DEV" == 1 ]]; then
   cd $OPS
   PACKAGE=hysds
   clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git python3
-  pip install -U  greenlet
-  pip install -U  pytz
-  pip uninstall -y celery
-  cd $OPS/$PACKAGE/third_party/celery-v3.1.25.pqueue
+  cd $OPS/$PACKAGE/third_party/celery-v4.2.1
   pip install -e .
   cd $OPS/$PACKAGE
   pip install -e .
@@ -306,6 +303,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone sdscli package
+  pip install "cryptography==2.4.2"
   install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git python3
   
   
@@ -400,10 +398,7 @@ else
   PACKAGE=hysds
   PACKAGE_DIR=${PACKAGE}-!(dockerfiles*|cloud-functions*|ops-bot*)
   ln -sf $PACKAGE_DIR $PACKAGE
-  pip install -U  greenlet
-  pip install -U  pytz
-  pip uninstall -y celery
-  cd $OPS/$PACKAGE/third_party/celery-v3.1.25.pqueue
+  cd $OPS/$PACKAGE/third_party/celery-v4.2.1
   pip install -e .
   cd $OPS/$PACKAGE
   pip install -e .
@@ -426,6 +421,7 @@ else
   
   
   # export latest sdscli package
+  pip install "cryptography==2.4.2"
   install_repo $OPS sdscli
   
   
