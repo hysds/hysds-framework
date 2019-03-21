@@ -264,22 +264,22 @@ cd $OPS
 # install dev environment
 if [[ "$DEV" == 1 ]]; then
   # clone prov_es package
-  install_dev_repo $OPS prov_es https://github.com/hysds/prov_es.git python3
+  install_dev_repo $OPS prov_es https://github.com/hysds/prov_es.git
   
   
   # clone osaka package
   pip install -U python-dateutil
-  install_dev_repo $OPS osaka https://github.com/hysds/osaka.git python3
+  install_dev_repo $OPS osaka https://github.com/hysds/osaka.git
   
   
   # clone hysds_commons package
-  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git python3
+  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git
   
   
   # clone hysds package
   cd $OPS
   PACKAGE=hysds
-  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git python3
+  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
   cd $OPS/$PACKAGE/third_party/celery-v4.2.1
   pip install -e .
   cd $OPS/$PACKAGE
@@ -291,40 +291,40 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone sciflo package
-  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git python3
+  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git
   
   
   # clone mozart package
-  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git python3
+  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git
   
   
   # clone figaro package
-  install_dev_repo $OPS figaro https://github.com/hysds/figaro.git python3
+  install_dev_repo $OPS figaro https://github.com/hysds/figaro.git
   
   
   # clone sdscli package
   pip install "cryptography==2.4.2"
-  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git python3
+  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git
   
   
   # clone grq2 package
-  clone_dev_repo $OPS grq2 https://github.com/hysds/grq2.git python3
+  clone_dev_repo $OPS grq2 https://github.com/hysds/grq2.git
   
   
   # clone tosca package
-  clone_dev_repo $OPS tosca https://github.com/hysds/tosca.git python3
+  clone_dev_repo $OPS tosca https://github.com/hysds/tosca.git
   
   
   # clone spyddder-man package
-  clone_dev_repo $OPS spyddder-man https://github.com/hysds/spyddder-man.git python3
+  clone_dev_repo $OPS spyddder-man https://github.com/hysds/spyddder-man.git
   
   
   # clone lightweight-jobs package
-  clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git python3
+  clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git
   
   
   # clone container-builder package
-  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git python3
+  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git
   
   
   # clone s3-bucket-listing package
@@ -332,7 +332,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds-dockerfiles package
-  clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git python3
+  clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git
   
   
   # clone hysds-cloud-functions package
