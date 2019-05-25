@@ -5,6 +5,13 @@ headers from the original request and results in these errors:
   Only one auth mechanism allowed; only the X-Amz-Algorithm query parameter, 
   Signature query string parameter or the Authorization header should be specified
 """
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from builtins import open
+from future import standard_library
+standard_library.install_aliases()
 import requests, argparse
 
 
