@@ -9,7 +9,10 @@ from __future__ import absolute_import
 from future import standard_library
 standard_library.install_aliases()
 import os, sys, re, requests, json, logging, argparse
-from urllib.parse import urlparse
+try:
+    from urllib.parse import urlparse # Python3
+except ImportError:
+    from urlparse import urlparse # Python2
 
 
 log_format = "[%(asctime)s: %(levelname)s/%(funcName)s] %(message)s"
