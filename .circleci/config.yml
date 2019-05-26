@@ -8,6 +8,7 @@ jobs:
       - run:
           name: Test
           command: |
+            pip install pytest
             pytest
 
 workflows:
