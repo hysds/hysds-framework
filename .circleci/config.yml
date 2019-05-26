@@ -11,6 +11,7 @@ jobs:
             source $HOME/verdi/bin/activate
             pip install pytest
             echo 'export PYTHONPATH="$CIRCLE_WORKING_DIRECTORY:$PYTHONPATH"' >> $BASH_ENV
+            source $BASH_ENV
             pytest
 
 workflows:
