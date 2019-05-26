@@ -178,7 +178,7 @@ echo "HySDS install directory set to $INSTALL_DIR"
 
 # create virtualenv if not found
 if [ ! -e "$INSTALL_DIR/bin/activate" ]; then
-  virtualenv --system-site-packages $INSTALL_DIR
+  /opt/conda/bin/virtualenv --system-site-packages $INSTALL_DIR
   echo "Created virtualenv at $INSTALL_DIR."
 fi
 
@@ -268,6 +268,8 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone osaka package
+  pip install -U pyasn1
+  pip install -U pyasn1-modules
   pip install -U python-dateutil
   install_dev_repo $OPS osaka https://github.com/hysds/osaka.git
   
@@ -303,7 +305,6 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone sdscli package
-  pip install "cryptography==2.4.2"
   install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git
   
   
@@ -385,6 +386,8 @@ else
   
   
   # export latest osaka package
+  pip install -U pyasn1
+  pip install -U pyasn1-modules
   pip install -U python-dateutil
   install_repo $OPS osaka
   
@@ -421,7 +424,6 @@ else
   
   
   # export latest sdscli package
-  pip install "cryptography==2.4.2"
   install_repo $OPS sdscli
   
   
