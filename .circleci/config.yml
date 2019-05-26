@@ -8,6 +8,7 @@ jobs:
       - run:
           name: Test
           command: |
+            source $HOME/verdi/bin/activate
             pip install pytest
             pytest
 
