@@ -29,6 +29,7 @@ jobs:
       - run:
           name: Build
           command: |
+            echo "GIT_OAUTH_TOKEN=${GIT_OAUTH_TOKEN}" > $HOME/.git_oauth_token
             git clone https://github.com/hysds/hysds-dockerfiles.git
             cd hysds-dockerfiles
             docker login -u $DOCKER_USER -p $DOCKER_PASS
