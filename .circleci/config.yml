@@ -38,7 +38,7 @@ jobs:
       - persist_to_workspace:
           root: hysds-dockerfiles
           paths:
-            - "*"
+            - images/*
   deploy:
     docker:
       - image: alpine:latest
