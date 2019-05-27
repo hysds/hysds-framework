@@ -3,7 +3,7 @@ Installer for HySDS framework releases
 
 ## Prerequisites
 1. ensure the following packages are installed:
-   - python 2.7
+   - python 3.7
    - pip 9.0.1+
    - setuptools 36.0.1+
    - virtualenv 1.10.1+
