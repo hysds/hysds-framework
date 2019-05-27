@@ -50,22 +50,22 @@ jobs:
             apk add --no-cache \
               curl file
       - attach_workspace:
-          at: hysds-dockerfiles
+          at: images
       - run:
           name: Deploy
           command: |
-            cd images
-            owner=hysds
-            repo=hysds-dockerfiles
-            release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
-              "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
-              | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
             file=hysds-verdi-${CIRCLE_TAG}.tar.gz
             echo $file
             echo $CIRCLE_PROJECT_REPONAME
             echo $CIRCLE_PROJECT_USERNAME
             pwd
             ls -al
+            cd images
+            owner=hysds
+            repo=hysds-dockerfiles
+            release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
+              "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
+              | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
             #echo curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
             #  "Content-type: $(file -b --mime-type ${file})" \
             #  --data-binary @${file} \
