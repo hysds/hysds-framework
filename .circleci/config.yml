@@ -32,9 +32,7 @@ jobs:
             git clone https://github.com/hysds/hysds-dockerfiles.git
             cd hysds-dockerfiles
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            #./build_release.sh $CIRCLE_TAG hysds master
-            mkdir images
-            echo "test.txt" > images/test.txt
+            ./build_release.sh $CIRCLE_TAG hysds master
             mv images ..
       - persist_to_workspace:
           root: images
@@ -54,23 +52,20 @@ jobs:
       - run:
           name: Deploy
           command: |
+            echo "CIRCLE_TAG: $CIRCLE_TAG"
+            echo "CIRCLE_BRANCH: $CIRCLE_BRANCH"
             file=hysds-verdi-${CIRCLE_TAG}.tar.gz
-            echo $file
-            echo $CIRCLE_PROJECT_REPONAME
-            echo $CIRCLE_PROJECT_USERNAME
-            pwd
-            ls -al
+            echo "file: $file"
             cd images
             owner=hysds
             repo=hysds-dockerfiles
             release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
               "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
               | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
-            #echo curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
-            #  "Content-type: $(file -b --mime-type ${file})" \
-            #  --data-binary @${file} \
-            #  "https://uploads.github.com/repos/${owner}/${repo}/releases/${release_id}/assets?name=${file}"
-            cat test.txt
+            curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
+              "Content-type: $(file -b --mime-type ${file})" \
+              --data-binary @${file} \
+              "https://uploads.github.com/repos/${owner}/${repo}/releases/${release_id}/assets?name=${file}"
 
 workflows:
   version: 2
@@ -96,13 +91,13 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-            #branches:
-            #  ignore: /.*/
+            branches:
+              ignore: /.*/
       - deploy:
           requires:
             - build
           filters:
             tags:
               only: /^v.*/
-            #branches:
-            #  ignore: /.*/
+            branches:
+              ignore: /.*/
