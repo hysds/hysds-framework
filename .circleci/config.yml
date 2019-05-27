@@ -29,10 +29,10 @@ jobs:
       - run:
           name: Build
           command: |
-            git clone https://github.com/hysds/hysds-dockerfiles.git
-            cd hysds-dockerfiles
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
-            ./build_release.sh $CIRCLE_TAG hysds master
+            echo git clone https://github.com/hysds/hysds-dockerfiles.git
+            echo cd hysds-dockerfiles
+            echo docker login -u $DOCKER_USER -p $DOCKER_PASS
+            echo ./build_release.sh $CIRCLE_TAG hysds master
       - persist_to_workspace:
           root: images
           paths:
@@ -51,14 +51,14 @@ jobs:
       - run:
           name: Deploy
           command: |
-            cd images
-            owner=hysds
-            repo=hysds-dockerfiles
-            release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
+            echo cd images
+            echo owner=hysds
+            echo repo=hysds-dockerfiles
+            echo release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
               "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
               | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
-            file=hysds-verdi-${CIRCLE_TAG}.tar.gz
-            curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
+            echo file=hysds-verdi-${CIRCLE_TAG}.tar.gz
+            echo curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
               "Content-type: $(file -b --mime-type ${file})" \
               --data-binary @${file} \
               "https://uploads.github.com/repos/${owner}/${repo}/releases/${release_id}/assets?name=${file}"
