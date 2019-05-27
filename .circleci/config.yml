@@ -53,16 +53,13 @@ jobs:
       - run:
           name: Deploy
           command: |
-            echo "CIRCLE_TAG: $CIRCLE_TAG"
-            echo "CIRCLE_BRANCH: $CIRCLE_BRANCH"
-            file=hysds-verdi-${CIRCLE_TAG}.tar.gz
-            echo "file: $file"
             cd images
-            owner=hysds
-            repo=hysds-dockerfiles
+            owner=$CIRCLE_PROJECT_USERNAME
+            repo=$CIRCLE_PROJECT_REPONAME
             release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
               "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
               | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
+            file=hysds-verdi-${CIRCLE_TAG}.tar.gz
             curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
               "Content-type: $(file -b --mime-type ${file})" \
               --data-binary @${file} \
