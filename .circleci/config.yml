@@ -35,10 +35,11 @@ jobs:
             #./build_release.sh $CIRCLE_TAG hysds master
             mkdir images
             echo "test.txt" > images/test.txt
+            mv images ..
       - persist_to_workspace:
-          root: hysds-dockerfiles
+          root: images
           paths:
-            - images/*
+            - "*"
   deploy:
     docker:
       - image: alpine:latest
@@ -53,7 +54,7 @@ jobs:
       - run:
           name: Deploy
           command: |
-            cd hysds-dockerfiles/images
+            cd images
             owner=hysds
             repo=hysds-dockerfiles
             release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
