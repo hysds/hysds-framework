@@ -29,13 +29,14 @@ jobs:
       - run:
           name: Build
           command: |
-            echo git clone https://github.com/hysds/hysds-dockerfiles.git
-            echo cd hysds-dockerfiles
-            echo docker login -u $DOCKER_USER -p $DOCKER_PASS
-            echo ./build_release.sh $CIRCLE_TAG hysds master
+            git clone https://github.com/hysds/hysds-dockerfiles.git
+            cd hysds-dockerfiles
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            #./build_release.sh $CIRCLE_TAG hysds master
             mkdir images
+            echo "test.txt" > images/test.txt
       - persist_to_workspace:
-          root: images
+          root: hysds-dockerfiles
           paths:
             - "*"
   deploy:
@@ -48,21 +49,22 @@ jobs:
             apk add --no-cache \
               curl file
       - attach_workspace:
-          at: images
+          at: hysds-dockerfiles
       - run:
           name: Deploy
           command: |
-            echo cd images
-            echo owner=hysds
-            echo repo=hysds-dockerfiles
-            echo release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
+            cd hysds-dockerfiles/images
+            owner=hysds
+            repo=hysds-dockerfiles
+            release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
               "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
               | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
-            echo file=hysds-verdi-${CIRCLE_TAG}.tar.gz
-            echo curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
-              "Content-type: $(file -b --mime-type ${file})" \
-              --data-binary @${file} \
-              "https://uploads.github.com/repos/${owner}/${repo}/releases/${release_id}/assets?name=${file}"
+            file=hysds-verdi-${CIRCLE_TAG}.tar.gz
+            #echo curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
+            #  "Content-type: $(file -b --mime-type ${file})" \
+            #  --data-binary @${file} \
+            #  "https://uploads.github.com/repos/${owner}/${repo}/releases/${release_id}/assets?name=${file}"
+            cat test.txt
 
 workflows:
   version: 2
