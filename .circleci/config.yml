@@ -60,6 +60,11 @@ jobs:
               "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
               | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
             file=hysds-verdi-${CIRCLE_TAG}.tar.gz
+            echo $file
+            echo $CIRCLE_PROJECT_REPONAME
+            echo $CIRCLE_PROJECT_USERNAME
+            pwd
+            ls -al
             #echo curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
             #  "Content-type: $(file -b --mime-type ${file})" \
             #  --data-binary @${file} \
