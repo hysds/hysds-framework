@@ -33,6 +33,7 @@ jobs:
             echo cd hysds-dockerfiles
             echo docker login -u $DOCKER_USER -p $DOCKER_PASS
             echo ./build_release.sh $CIRCLE_TAG hysds master
+            mkdir images
       - persist_to_workspace:
           root: images
           paths:
