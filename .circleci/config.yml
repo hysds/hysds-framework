@@ -15,10 +15,11 @@ jobs:
             pytest
   build:
     docker:
-      - image: docker:stable-git
+      - image: docker:18.09-git
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 18.09.3
       - run:
           name: Install dependencies
           command: |

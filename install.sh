@@ -102,6 +102,13 @@ move_and_link_repo() {
 }
 
 
+# unset environment variables
+unset DIR_POST
+unset DEV
+unset RELEASE
+unset GIT_OAUTH_TOKEN
+
+
 # process arguments
 while [[ $# -gt 0 ]]; do
   case "$1" in
