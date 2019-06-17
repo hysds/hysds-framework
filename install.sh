@@ -303,6 +303,10 @@ if [[ "$DEV" == 1 ]]; then
   install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git
   
   
+  # clone chimera package
+  install_dev_repo $OPS chimera https://github.com/hysds/chimera.git
+  
+  
   # clone mozart package
   install_dev_repo $OPS mozart https://github.com/hysds/mozart.git
   
@@ -321,6 +325,10 @@ if [[ "$DEV" == 1 ]]; then
   
   # clone tosca package
   clone_dev_repo $OPS tosca https://github.com/hysds/tosca.git
+  
+  
+  # clone pele package
+  clone_dev_repo $OPS pele https://github.com/hysds/pele.git
   
   
   # clone spyddder-man package
@@ -422,6 +430,10 @@ else
   install_repo $OPS sciflo
   
   
+  # export latest chimera package
+  install_repo $OPS chimera
+  
+  
   # export latest mozart package
   install_repo $OPS mozart
   
@@ -440,6 +452,10 @@ else
   
   # export latest tosca package
   link_repo $OPS tosca
+  
+  
+  # export latest pele package
+  link_repo $OPS pele
   
   
   # export latest spyddder-man package
