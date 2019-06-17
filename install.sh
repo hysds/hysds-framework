@@ -185,7 +185,7 @@ echo "HySDS install directory set to $INSTALL_DIR"
 
 # create virtualenv if not found
 if [ ! -e "$INSTALL_DIR/bin/activate" ]; then
-  /opt/conda/bin/virtualenv --system-site-packages $INSTALL_DIR
+  virtualenv --system-site-packages $INSTALL_DIR
   echo "Created virtualenv at $INSTALL_DIR."
 fi
 
