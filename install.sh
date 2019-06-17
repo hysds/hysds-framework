@@ -183,6 +183,12 @@ INSTALL_DIR=$HOME/${HYSDS_DIR}${DIR_POST}
 echo "HySDS install directory set to $INSTALL_DIR"
 
 
+# source bash profile to ensure virtualenv is found
+if [ -e "$HOME/.bash_profile" ]; then
+  source $HOME/.bash_profile
+fi
+
+
 # create virtualenv if not found
 if [ ! -e "$INSTALL_DIR/bin/activate" ]; then
   virtualenv --system-site-packages $INSTALL_DIR
