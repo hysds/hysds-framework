@@ -206,10 +206,8 @@ pip install -U setuptools
 
 
 # force install supervisor
-# install from git because master has support for python3
 if [ ! -e "$INSTALL_DIR/bin/supervisord" ]; then
-  #pip install --ignore-installed supervisor
-  pip install --ignore-installed git+https://github.com/Supervisor/supervisor
+  pip install --ignore-installed supervisor
 fi
 
 
@@ -295,8 +293,6 @@ if [[ "$DEV" == 1 ]]; then
   cd $OPS
   PACKAGE=hysds
   clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
-  cd $OPS/$PACKAGE/third_party/celery-v4.2.1
-  pip install -e .
   cd $OPS/$PACKAGE
   pip install -e .
   if [ "$?" -ne 0 ]; then
@@ -422,8 +418,6 @@ else
   PACKAGE=hysds
   PACKAGE_DIR=${PACKAGE}-!(dockerfiles*|cloud-functions*|ops-bot*)
   ln -sf $PACKAGE_DIR $PACKAGE
-  cd $OPS/$PACKAGE/third_party/celery-v4.2.1
-  pip install -e .
   cd $OPS/$PACKAGE
   pip install -e .
   if [ "$?" -ne 0 ]; then

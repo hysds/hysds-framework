@@ -24,7 +24,8 @@ class TestDownloadLatest(unittest.TestCase):
         repo = "hysds-dockerfiles"
         token = None
         suffix = "tar.gz"
-        self.assertEqual(download_latest.get_latest_assets(api_url, owner, repo, token, suffix)[0][0], "hysds-verdi-latest.tar.gz")
+        assets = [i[0] for i in download_latest.get_latest_assets(api_url, owner, repo, token, suffix)]
+        self.assertIn("hysds-verdi-latest.tar.gz", assets)
 
 if __name__ == '__main__':
     unittest.main()
