@@ -378,6 +378,9 @@ else
   for i in `${BASE_PATH}/query_releases.py $REL_API_URL -r $RELEASE`; do
     as_name=`echo $i | awk 'BEGIN{FS="|"}{print $1}'`
     as_url=`echo $i | awk 'BEGIN{FS="|"}{print $2}'`
+    if [[ $as_name == hysds-verdi* ]]; then
+      continue
+    fi
     assets[$as_name]+=$as_url
     if [[ "$GIT_OAUTH_TOKEN" == "" ]]; then
         #echo wget --max-redirect=10 --header="Accept: application/octet-stream" \
@@ -393,9 +396,7 @@ else
       echo "Failed to download asset $as_url."
       exit 1
     fi
-    if [[ $as_name != hysds-verdi* ]]; then
-      tar xvfz $as_name
-    fi
+    tar xvfz $as_name
   done
   rm -rf *.tar.gz
   
