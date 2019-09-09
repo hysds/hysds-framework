@@ -393,7 +393,9 @@ else
       echo "Failed to download asset $as_url."
       exit 1
     fi
-    tar xvfz $as_name
+    if [[ $as_name != hysds-verdi* ]]; then
+      tar xvfz $as_name
+    fi
   done
   rm -rf *.tar.gz
   
