@@ -13,7 +13,10 @@ from builtins import open
 from future import standard_library
 
 standard_library.install_aliases()
-import requests, argparse
+import requests, argparse, requests_cache
+
+
+requests_cache.install_cache("hysds-framework")
 
 
 def handle_redirects(url, path, token=None):
