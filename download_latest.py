@@ -33,8 +33,12 @@ def call_github_api(url, token, method="get", **kargs):
     return r.json()
 
 
-def get_latest_assets(api_url, owner, repo, token, suffix=None):
+def get_latest_assets(api_url, owner, repo, token, suffix=None, regex=None):
     """Return latest release for repo."""
+
+    # compile regex if set
+    if regex is not None:
+        regex = re.compile(regex)
 
     # get latest release info
     latest_url = "{}/repos/{}/{}/releases/latest".format(api_url, owner, repo)
@@ -44,18 +48,18 @@ def get_latest_assets(api_url, owner, repo, token, suffix=None):
     assets = latest['assets']
     dl_assets = []
     for asset in assets:
-        if suffix is not None:
-            if asset['name'].endswith(suffix):
-                dl_assets.append([asset['name'], asset['url']])
-        else: dl_assets.append([asset['name'], asset['url']])
+        dl_suffix = True if suffix is None or asset['name'].endswith(suffix) else False 
+        dl_regex = True if regex is None or regex.search(asset['name']) else False
+        if dl_suffix and dl_regex:
+            dl_assets.append([asset['name'], asset['url']])
     return dl_assets
 
 
-def main(url, owner, repo, outdir=None, suffix=None):
+def main(url, owner, repo, outdir=None, suffix=None, regex=None):
     """Route request."""
 
     token, api_url = parse_url(url)
-    dl_assets = get_latest_assets(api_url, owner, repo, token, suffix)
+    dl_assets = get_latest_assets(api_url, owner, repo, token, suffix, regex)
     if outdir is not None and not os.path.isdir(outdir):
         os.makedirs(outdir)
     for pkg_name, pkg_url in dl_assets:
@@ -67,10 +71,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--outdir", '-o', default=None,
                         help="directory to save packages to")
-    parser.add_argument("--suffix", '-s', default=None,
-                        help="filter by suffix")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--suffix", '-s', default=None,
+                       help="filter by suffix")
+    group.add_argument("--regex", '-r', default=None,
+                       help="filter by regex")
     parser.add_argument("api_url", help="Github API url")
     parser.add_argument("owner", help="repo owner or org")
     parser.add_argument("repo", help="repo name")
     args = parser.parse_args()
-    main(args.api_url, args.owner, args.repo, args.outdir, args.suffix)
+    main(args.api_url, args.owner, args.repo, args.outdir, args.suffix, args.regex)

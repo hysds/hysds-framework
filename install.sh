@@ -355,6 +355,9 @@ if [[ "$DEV" == 1 ]]; then
   
   # clone hysds-cloud-functions package
   clone_dev_repo $OPS hysds-cloud-functions https://github.com/hysds/hysds-cloud-functions.git
+
+  # download latest develop verdi image
+  ${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^hysds-verdi-develop"
 else
   # print release if not specified
   if [[ "$RELEASE" == "" ]]; then
@@ -378,9 +381,6 @@ else
   for i in `${BASE_PATH}/query_releases.py $REL_API_URL -r $RELEASE`; do
     as_name=`echo $i | awk 'BEGIN{FS="|"}{print $1}'`
     as_url=`echo $i | awk 'BEGIN{FS="|"}{print $2}'`
-    if [[ $as_name == hysds-verdi* ]]; then
-      continue
-    fi
     assets[$as_name]+=$as_url
     if [[ "$GIT_OAUTH_TOKEN" == "" ]]; then
         #echo wget --max-redirect=10 --header="Accept: application/octet-stream" \
@@ -395,6 +395,12 @@ else
     if [ "$?" -ne 0 ]; then
       echo "Failed to download asset $as_url."
       exit 1
+    fi
+    # move hysds-verdi release to pkgs
+    if [[ $as_name == hysds-verdi* ]]; then
+      mkdir -p $INSTALL_DIR/pkgs
+      mv hysds-verdi*.tar.gz $INSTALL_DIR/pkgs/
+      continue
     fi
     tar xvfz $as_name
   done
@@ -485,6 +491,6 @@ else
   link_repo $OPS hysds-cloud-functions
 fi
 
-# download hysds core packages and verdi image
+# download hysds core packages and docker registry image
 ${BASE_PATH}/download_latest.py $API_URL hysds lightweight-jobs -o ${INSTALL_DIR}/pkgs -s sdspkg.tar
-${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -s tar.gz
+${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^docker-registry"
