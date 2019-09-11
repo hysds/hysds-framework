@@ -9,7 +9,7 @@ from __future__ import absolute_import
 from future import standard_library
 
 standard_library.install_aliases()
-import os, sys, re, requests, json, logging, argparse, requests_cache
+import os, sys, re, requests, json, logging, argparse
 
 try:
     from urllib.parse import urlparse  # Python3
@@ -18,9 +18,6 @@ except ImportError:
 
 from query_releases import parse_url
 from download_asset import handle_redirects
-
-
-requests_cache.install_cache("hysds-framework")
 
 
 log_format = "[%(asctime)s: %(levelname)s/%(funcName)s] %(message)s"
