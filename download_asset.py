@@ -11,6 +11,7 @@ from __future__ import division
 from __future__ import absolute_import
 from builtins import open
 from future import standard_library
+
 standard_library.install_aliases()
 import requests, argparse
 
@@ -18,14 +19,13 @@ import requests, argparse
 def handle_redirects(url, path, token=None):
     """Download asset handling redirects to S3."""
 
-    headers = {
-        'Accept': 'application/octet-stream',
-    }
-    if token: headers['Authorization'] = 'token %s' % token
+    headers = {"Accept": "application/octet-stream"}
+    if token:
+        headers["Authorization"] = "token %s" % token
     r = requests.get(url, headers=headers, stream=True, verify=False)
-    with open(path, 'wb') as f:
-        for chunk in r.iter_content(chunk_size=1024): 
-            if chunk: # filter out keep-alive new chunks
+    with open(path, "wb") as f:
+        for chunk in r.iter_content(chunk_size=1024):
+            if chunk:  # filter out keep-alive new chunks
                 f.write(chunk)
     return path
 

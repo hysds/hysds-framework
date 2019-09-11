@@ -4,14 +4,15 @@ from __future__ import division
 from __future__ import absolute_import
 from builtins import str
 from future import standard_library
+
 standard_library.install_aliases()
 
 import download_latest
 import unittest
 import shutil
 
-class TestDownloadLatest(unittest.TestCase):
 
+class TestDownloadLatest(unittest.TestCase):
     def test_get_latest_assets(self):
         """
         Tests ability to get the latest release for a repo, which
@@ -24,8 +25,14 @@ class TestDownloadLatest(unittest.TestCase):
         repo = "hysds-dockerfiles"
         token = None
         suffix = "tar.gz"
-        assets = [i[0] for i in download_latest.get_latest_assets(api_url, owner, repo, token, suffix)]
+        assets = [
+            i[0]
+            for i in download_latest.get_latest_assets(
+                api_url, owner, repo, token, suffix
+            )
+        ]
         self.assertIn("hysds-verdi-latest.tar.gz", assets)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
