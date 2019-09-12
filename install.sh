@@ -322,15 +322,15 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone grq2 package
-  clone_dev_repo $OPS grq2 https://github.com/hysds/grq2.git
+  install_dev_repo $OPS grq2 https://github.com/hysds/grq2.git
   
   
   # clone tosca package
-  clone_dev_repo $OPS tosca https://github.com/hysds/tosca.git
+  install_dev_repo $OPS tosca https://github.com/hysds/tosca.git
   
   
   # clone pele package
-  clone_dev_repo $OPS pele https://github.com/hysds/pele.git
+  install_dev_repo $OPS pele https://github.com/hysds/pele.git
   
   
   # clone spyddder-man package
@@ -456,15 +456,15 @@ else
   
   
   # export latest grq2 package
-  link_repo $OPS grq2
+  install_repo $OPS grq2
   
   
   # export latest tosca package
-  link_repo $OPS tosca
+  install_repo $OPS tosca
   
   
   # export latest pele package
-  link_repo $OPS pele
+  install_repo $OPS pele
   
   
   # export latest spyddder-man package
