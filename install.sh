@@ -357,7 +357,9 @@ if [[ "$DEV" == 1 ]]; then
   clone_dev_repo $OPS hysds-cloud-functions https://github.com/hysds/hysds-cloud-functions.git
 
   # download latest develop verdi image
-  ${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^hysds-verdi-develop"
+  if [[ "$COMPONENT" == "mozart" ]]; then
+    ${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^hysds-verdi-develop"
+  fi
 else
   # print release if not specified
   if [[ "$RELEASE" == "" ]]; then
@@ -381,6 +383,12 @@ else
   for i in `${BASE_PATH}/query_releases.py $REL_API_URL -r $RELEASE`; do
     as_name=`echo $i | awk 'BEGIN{FS="|"}{print $1}'`
     as_url=`echo $i | awk 'BEGIN{FS="|"}{print $2}'`
+
+    # skip verdi docker image
+    if [[ "$as_name" =~ ^hysds-verdi && "$COMPONENT" != "mozart" ]]; then
+      continue
+    fi
+
     assets[$as_name]+=$as_url
     if [[ "$GIT_OAUTH_TOKEN" == "" ]]; then
         #echo wget --max-redirect=10 --header="Accept: application/octet-stream" \
@@ -491,6 +499,8 @@ else
   link_repo $OPS hysds-cloud-functions
 fi
 
-# download hysds core packages and docker registry image
-${BASE_PATH}/download_latest.py $API_URL hysds lightweight-jobs -o ${INSTALL_DIR}/pkgs -s sdspkg.tar
-${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^docker-registry"
+# download hysds core packages and docker registry image if mozart
+if [[ "$COMPONENT" == "mozart" ]]; then
+  ${BASE_PATH}/download_latest.py $API_URL hysds lightweight-jobs -o ${INSTALL_DIR}/pkgs -s sdspkg.tar
+  ${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^docker-registry"
+fi
