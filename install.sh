@@ -275,7 +275,7 @@ cd $OPS
 # install dev environment
 if [[ "$DEV" == 1 ]]; then
   # clone prov_es package
-  install_dev_repo $OPS prov_es https://github.com/hysds/prov_es.git
+  install_dev_repo $OPS prov_es https://github.com/hysds/prov_es.git develop-es7
   
   
   # clone osaka package
@@ -292,7 +292,7 @@ if [[ "$DEV" == 1 ]]; then
   # clone hysds package
   cd $OPS
   PACKAGE=hysds
-  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
+  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git develop-es7
   cd $OPS/$PACKAGE
   pip install -e .
   if [ "$?" -ne 0 ]; then
