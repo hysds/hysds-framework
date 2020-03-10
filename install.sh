@@ -286,7 +286,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds_commons package
-  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git
+  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git develop-es7
   
   
   # clone hysds package
