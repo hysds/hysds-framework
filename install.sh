@@ -310,27 +310,27 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone mozart package
-  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git
+  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git develop-es7
   
   
   # clone figaro package
-  install_dev_repo $OPS figaro https://github.com/hysds/figaro.git
+  install_dev_repo $OPS figaro https://github.com/hysds/figaro.git develop-es7
   
   
   # clone sdscli package
-  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git
+  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git develop-es7
   
   
   # clone grq2 package
-  install_dev_repo $OPS grq2 https://github.com/hysds/grq2.git
+  install_dev_repo $OPS grq2 https://github.com/hysds/grq2.git develop-es7
   
   
   # clone tosca package
-  install_dev_repo $OPS tosca https://github.com/hysds/tosca.git
+  install_dev_repo $OPS tosca https://github.com/hysds/tosca.git develop-es7
   
   
   # clone pele package
-  install_dev_repo $OPS pele https://github.com/hysds/pele.git
+  install_dev_repo $OPS pele https://github.com/hysds/pele.git develop-es7
   
   
   # clone spyddder-man package
@@ -338,11 +338,11 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone lightweight-jobs package
-  clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git
+  clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git develop-es7
   
   
   # clone container-builder package
-  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git
+  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git develop-es7
   
   
   # clone s3-bucket-listing package
