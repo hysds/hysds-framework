@@ -306,7 +306,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone chimera package
-  install_dev_repo $OPS chimera https://github.com/hysds/chimera.git
+  install_dev_repo $OPS chimera https://github.com/hysds/chimera.git develop-es7
   
   
   # clone mozart package
