@@ -31,10 +31,10 @@ jobs:
           name: Build
           command: |
             echo "GIT_OAUTH_TOKEN=${GIT_OAUTH_TOKEN}" > $HOME/.git_oauth_token
-            git clone https://github.com/hysds/hysds-dockerfiles.git
+            git clone -b develop-es1 --single-branch https://github.com/hysds/hysds-dockerfiles.git
             cd hysds-dockerfiles
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            ./build_release.sh $CIRCLE_TAG hysds master
+            ./build_release.sh $CIRCLE_TAG hysds develop-es1
             mv images ..
       - persist_to_workspace:
           root: images
@@ -80,25 +80,17 @@ workflows:
   test:
     jobs:
       - test
-  weekly:
-    triggers:
-      - schedule:
-          cron: "0 7 * * 0"
-          filters:
-            branches:
-              only:
-                - develop
     jobs:
       - test:
           filters:
             branches:
-              only: develop
+              only: develop-es1
   build-deploy:
     jobs:
       - build:
           filters:
             tags:
-              only: /^v.*/
+              only: /^v3.*/
             branches:
               ignore: /.*/
       - deploy:
@@ -106,6 +98,6 @@ workflows:
             - build
           filters:
             tags:
-              only: /^v.*/
+              only: /^v3.*/
             branches:
               ignore: /.*/
