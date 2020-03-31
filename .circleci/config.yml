@@ -98,7 +98,7 @@ workflows:
       - build:
           filters:
             tags:
-              only: /^v.*/
+              only: /^v4.*/
             branches:
               ignore: /.*/
       - deploy:
@@ -106,6 +106,6 @@ workflows:
             - build
           filters:
             tags:
-              only: /^v.*/
+              only: /^v4.*/
             branches:
               ignore: /.*/
