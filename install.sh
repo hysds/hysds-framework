@@ -275,7 +275,7 @@ cd $OPS
 # install dev environment
 if [[ "$DEV" == 1 ]]; then
   # clone prov_es package
-  install_dev_repo $OPS prov_es https://github.com/hysds/prov_es.git develop-es7
+  install_dev_repo $OPS prov_es https://github.com/hysds/prov_es.git
   
   
   # clone osaka package
@@ -286,13 +286,13 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds_commons package
-  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git develop-es7
+  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git
   
   
   # clone hysds package
   cd $OPS
   PACKAGE=hysds
-  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git develop-es7
+  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
   cd $OPS/$PACKAGE
   pip install -e .
   if [ "$?" -ne 0 ]; then
@@ -306,31 +306,31 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone chimera package
-  install_dev_repo $OPS chimera https://github.com/hysds/chimera.git develop-es7
+  install_dev_repo $OPS chimera https://github.com/hysds/chimera.git
   
   
   # clone mozart package
-  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git develop-es7
+  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git
   
   
   # clone figaro package
-  install_dev_repo $OPS figaro https://github.com/hysds/figaro.git develop-es7
+  install_dev_repo $OPS figaro https://github.com/hysds/figaro.git
   
   
   # clone sdscli package
-  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git develop-es7
+  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git
   
   
   # clone grq2 package
-  install_dev_repo $OPS grq2 https://github.com/hysds/grq2.git develop-es7
+  install_dev_repo $OPS grq2 https://github.com/hysds/grq2.git
   
   
   # clone tosca package
-  install_dev_repo $OPS tosca https://github.com/hysds/tosca.git develop-es7
+  install_dev_repo $OPS tosca https://github.com/hysds/tosca.git
   
   
   # clone pele package
-  install_dev_repo $OPS pele https://github.com/hysds/pele.git develop-es7
+  install_dev_repo $OPS pele https://github.com/hysds/pele.git
   
   
   # clone spyddder-man package
@@ -338,11 +338,11 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone lightweight-jobs package
-  clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git develop-es7
+  clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git
   
   
   # clone container-builder package
-  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git develop-es7
+  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git
   
   
   # clone s3-bucket-listing package
