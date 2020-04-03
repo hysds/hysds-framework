@@ -91,6 +91,27 @@ install_dev_repo() {
 }
 
 
+install_hysds_ui() {
+  cd $1
+  PACKAGE=$2
+  GIT_URL=$3
+  BRANCH=$4
+
+  if [ ! -z ${BRANCH} ]; then
+    git clone --single-branch -b $BRANCH $GIT_URL $PACKAGE
+  else
+    git clone $GIT_URL $PACKAGE
+  fi
+
+  cd $OPS/$PACKAGE
+  npm install --silent
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to run 'npm install --silent ' for $PACKAGE."
+    exit 1
+  fi
+}
+
+
 move_and_link_repo() {
   cd $1
   PACKAGE=$2
@@ -331,6 +352,10 @@ if [[ "$DEV" == 1 ]]; then
   
   # clone pele package
   install_dev_repo $OPS pele https://github.com/hysds/pele.git
+
+
+  # clone hysds_ui package
+  install_hysds_ui $OPS hysds_ui https://github.com/hysds/hysds_ui.git
   
   
   # clone spyddder-man package
@@ -473,6 +498,10 @@ else
   
   # export latest pele package
   install_repo $OPS pele
+
+
+  # export latest hysds_ui package
+  install_repo $OPS hysds_ui
   
   
   # export latest spyddder-man package
