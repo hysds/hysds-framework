@@ -334,20 +334,12 @@ if [[ "$DEV" == 1 ]]; then
   install_dev_repo $OPS mozart https://github.com/hysds/mozart.git
   
   
-  # clone figaro package
-  install_dev_repo $OPS figaro https://github.com/hysds/figaro.git
-  
-  
   # clone sdscli package
   install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git
   
   
   # clone grq2 package
   install_dev_repo $OPS grq2 https://github.com/hysds/grq2.git
-  
-  
-  # clone tosca package
-  install_dev_repo $OPS tosca https://github.com/hysds/tosca.git
   
   
   # clone pele package
@@ -480,20 +472,12 @@ else
   install_repo $OPS mozart
   
   
-  # export latest figaro package
-  install_repo $OPS figaro
-  
-  
   # export latest sdscli package
   install_repo $OPS sdscli
   
   
   # export latest grq2 package
   install_repo $OPS grq2
-  
-  
-  # export latest tosca package
-  install_repo $OPS tosca
   
   
   # export latest pele package
