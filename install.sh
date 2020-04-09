@@ -102,13 +102,6 @@ install_hysds_ui() {
   else
     git clone $GIT_URL $PACKAGE
   fi
-
-  cd $OPS/$PACKAGE
-  npm install --silent
-  if [ "$?" -ne 0 ]; then
-    echo "Failed to run 'npm install --silent ' for $PACKAGE."
-    exit 1
-  fi
 }
 
 
