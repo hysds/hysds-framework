@@ -478,7 +478,7 @@ else
 
 
   # export latest hysds_ui package
-  install_repo $OPS hysds_ui
+  link_repo $OPS hysds_ui
   
   
   # export latest spyddder-man package
