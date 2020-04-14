@@ -501,6 +501,6 @@ fi
 
 # download hysds core packages and docker registry image if mozart
 if [[ "$COMPONENT" == "mozart" ]]; then
-  ${BASE_PATH}/download_latest.py $API_URL hysds lightweight-jobs -o ${INSTALL_DIR}/pkgs -s sdspkg.tar
+  ${BASE_PATH}/download_latest.py $API_URL hysds lightweight-jobs -o ${INSTALL_DIR}/pkgs -r "^container-hysds_lightweight-jobs-v0"
   ${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^docker-registry"
 fi

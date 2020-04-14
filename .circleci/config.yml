@@ -79,8 +79,6 @@ workflows:
   version: 2
   test:
     jobs:
-      - test
-    jobs:
       - test:
           filters:
             branches:
