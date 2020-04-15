@@ -92,15 +92,13 @@ install_dev_repo() {
 
 
 install_hysds_ui() {
-  cd $1
+  OPS=$1
   PACKAGE=$2
-  GIT_URL=$3
-  BRANCH=$4
-
-  if [ ! -z ${BRANCH} ]; then
-    git clone --single-branch -b $BRANCH $GIT_URL $PACKAGE
-  else
-    git clone $GIT_URL $PACKAGE
+  cd $OPS/$PACKAGE
+  npm install --silent
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to run 'npm install --silent' for $PACKAGE."
+    exit 1
   fi
 }
 
@@ -340,7 +338,7 @@ if [[ "$DEV" == 1 ]]; then
 
 
   # clone hysds_ui package
-  install_hysds_ui $OPS hysds_ui https://github.com/hysds/hysds_ui.git
+  clone_dev_repo $OPS hysds_ui https://github.com/hysds/hysds_ui.git
   
   
   # clone spyddder-man package
@@ -505,8 +503,12 @@ else
   link_repo $OPS hysds-cloud-functions
 fi
 
-# download hysds core packages and docker registry image if mozart
+# additional tasks if installing mozart component
 if [[ "$COMPONENT" == "mozart" ]]; then
+  # download hysds core packages and docker registry image if mozart
   ${BASE_PATH}/download_latest.py $API_URL hysds lightweight-jobs -o ${INSTALL_DIR}/pkgs -r "^container-hysds_lightweight-jobs-v1"
   ${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^docker-registry"
+
+  # build hysds_ui
+  install_hysds_ui $OPS hysds_ui
 fi
