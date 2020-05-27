@@ -58,18 +58,9 @@ jobs:
             owner=$CIRCLE_PROJECT_USERNAME
             repo=$CIRCLE_PROJECT_REPONAME
             release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
-              "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
+              "https://api.github.com/repos/${owner}/${repo}/releases/tags/${CIRCLE_TAG}" \
               | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
             file=hysds-verdi-${CIRCLE_TAG}.tar.gz
-            curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
-              "Content-type: $(file -b --mime-type ${file})" \
-              --data-binary @${file} \
-              "https://uploads.github.com/repos/${owner}/${repo}/releases/${release_id}/assets?name=${file}"
-            repo=hysds-dockerfiles
-            release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
-              "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
-              | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
-            file=hysds-verdi-latest.tar.gz
             curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
               "Content-type: $(file -b --mime-type ${file})" \
               --data-binary @${file} \
