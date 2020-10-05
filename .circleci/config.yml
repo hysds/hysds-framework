@@ -3,6 +3,9 @@ jobs:
   test:
     docker:
       - image: hysds/pge-base:latest
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
     steps:
       - checkout
       - run:
@@ -16,6 +19,9 @@ jobs:
   build:
     docker:
       - image: docker:19.03-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
     steps:
       - checkout
       - setup_remote_docker:
@@ -43,6 +49,9 @@ jobs:
   deploy:
     docker:
       - image: alpine:latest
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
     steps:
       - run:
           name: Install dependencies
@@ -79,7 +88,10 @@ workflows:
   version: 2
   test:
     jobs:
-      - test
+      - test:
+          context:
+            - docker-hub-creds
+            - git-oauth-token
   weekly:
     triggers:
       - schedule:
@@ -90,18 +102,27 @@ workflows:
                 - develop
     jobs:
       - test:
+          context:
+            - docker-hub-creds
+            - git-oauth-token
           filters:
             branches:
               only: develop
   build-deploy:
     jobs:
       - build:
+          context:
+            - docker-hub-creds
+            - git-oauth-token
           filters:
             tags:
               only: /^v4.*/
             branches:
               ignore: /.*/
       - deploy:
+          context:
+            - docker-hub-creds
+            - git-oauth-token
           requires:
             - build
           filters:
