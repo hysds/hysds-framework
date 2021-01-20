@@ -72,7 +72,7 @@ jobs:
             file=hysds-verdi-${CIRCLE_TAG}.tar.gz
             curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
               "Content-type: $(file -b --mime-type ${file})" \
-              --data-binary @${file} \
+              -T "${file}" -XPOST \
               "https://uploads.github.com/repos/${owner}/${repo}/releases/${release_id}/assets?name=${file}"
             repo=hysds-dockerfiles
             release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
@@ -81,7 +81,7 @@ jobs:
             file=hysds-verdi-latest.tar.gz
             curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
               "Content-type: $(file -b --mime-type ${file})" \
-              --data-binary @${file} \
+              -T "${file}" -XPOST \
               "https://uploads.github.com/repos/${owner}/${repo}/releases/${release_id}/assets?name=${file}"
 
 workflows:
