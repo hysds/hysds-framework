@@ -326,7 +326,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone sdscli package
-  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git
+  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git celery-5.0.5
   
   
   # clone grq2 package
