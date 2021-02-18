@@ -304,7 +304,7 @@ if [[ "$DEV" == 1 ]]; then
   # clone hysds package
   cd $OPS
   PACKAGE=hysds
-  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
+  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git celery-5.0.5
   cd $OPS/$PACKAGE
   pip install -e .
   if [ "$?" -ne 0 ]; then
