@@ -358,7 +358,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds-dockerfiles package
-  clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git
+  clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git celery-5.0.5
   
   
   # clone hysds-cloud-functions package
