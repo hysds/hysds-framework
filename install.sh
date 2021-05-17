@@ -304,7 +304,7 @@ if [[ "$DEV" == 1 ]]; then
   # clone hysds package
   cd $OPS
   PACKAGE=hysds
-  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git celery-5.0.5
+  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
   cd $OPS/$PACKAGE
   pip install -e .
   if [ "$?" -ne 0 ]; then
@@ -322,11 +322,11 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone mozart package
-  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git
+  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git hotfix-pin-flask-exts
   
   
   # clone sdscli package
-  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git celery-5.0.5
+  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git
   
   
   # clone grq2 package
@@ -334,7 +334,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone pele package
-  install_dev_repo $OPS pele https://github.com/hysds/pele.git
+  install_dev_repo $OPS pele https://github.com/hysds/pele.git hotfix-pin-flask-exts
 
 
   # clone hysds_ui package
@@ -358,7 +358,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds-dockerfiles package
-  clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git celery-5.0.5
+  clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git
   
   
   # clone hysds-cloud-functions package
