@@ -1,4 +1,22 @@
 version: 2.1
+commands:
+  install_deps:
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache \
+              python3-dev py3-pip bash pigz build-base libffi-dev openssl-dev gcc musl-dev cargo
+            pip install \
+              docker-compose awscli
+  prep_env:
+    steps:
+      - run:
+          name: Prepare environment
+          command: |
+            mkdir -p images
+            echo "$DOCKER_PASS" | docker login -u $DOCKER_USER --password-stdin
+            echo "GIT_OAUTH_TOKEN=${GIT_OAUTH_TOKEN}" > $HOME/.git_oauth_token
 jobs:
   test:
     docker:
@@ -16,36 +34,544 @@ jobs:
             echo 'export PYTHONPATH="$CIRCLE_WORKING_DIRECTORY:$PYTHONPATH"' >> $BASH_ENV
             source $BASH_ENV
             pytest
-  build:
+  build-redis:
     docker:
-      - image: docker:19.03-git
+      - image: docker:20.10-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      build_tag:
+        type: string
+      final_tag:
+        type: string
     steps:
       - checkout
       - setup_remote_docker:
-          version: 19.03.12
+          version: 20.10.7
+      - install_deps
+      - prep_env
       - run:
-          name: Install dependencies
+          name: Build hysds/redis
           command: |
-            apk add --no-cache \
-              python3-dev py3-pip bash pigz build-base libffi-dev openssl-dev gcc musl-dev cargo
-            pip install \
-              docker-compose awscli
-      - run:
-          name: Build
-          command: |
-            echo "GIT_OAUTH_TOKEN=${GIT_OAUTH_TOKEN}" > $HOME/.git_oauth_token
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
             git clone https://github.com/hysds/hysds-dockerfiles.git
             cd hysds-dockerfiles
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
-            ./build_release.sh $CIRCLE_TAG hysds master
-            mv images ..
+            docker build --rm --force-rm -t hysds/redis:${build_tag} -f Dockerfile.hysds-redis .
+            docker tag hysds/redis:${build_tag} hysds/redis:<< parameters.final_tag >>
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker push hysds/redis:${build_tag}
+            fi
+            docker push hysds/redis:<< parameters.final_tag >>
+  build-elasticsearch:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Build hysds/elasticsearch
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            docker pull docker.io/elasticsearch:7.9.3
+            git clone https://github.com/hysds/hysds-dockerfiles.git
+            cd hysds-dockerfiles
+            docker build --rm --force-rm -t hysds/elasticsearch:${build_tag} -f Dockerfile.hysds-elasticsearch .
+            docker tag hysds/elasticsearch:${build_tag} hysds/elasticsearch:<< parameters.final_tag >>
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker push hysds/elasticsearch:${build_tag}
+            fi
+            docker push hysds/elasticsearch:<< parameters.final_tag >>
+  build-rabbitmq:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Build hysds/rabbitmq
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            git clone https://github.com/hysds/hysds-dockerfiles.git
+            cd hysds-dockerfiles
+            docker build --rm --force-rm -t hysds/rabbitmq:${build_tag} -f Dockerfile.hysds-rabbitmq .
+            docker tag hysds/rabbitmq:${build_tag} hysds/rabbitmq:<< parameters.final_tag >>
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker push hysds/rabbitmq:${build_tag}
+            fi
+            docker push hysds/rabbitmq:<< parameters.final_tag >>
+  build-hysds_base:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: master
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Build hysds/base
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            docker pull docker.io/centos:7
+            docker tag docker.io/centos:7 docker.io/centos:latest
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
+            cd hysds_base
+            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+              -t hysds/base:${build_tag} -f docker/Dockerfile .
+            docker tag hysds/base:${build_tag} hysds/base:<< parameters.final_tag >>
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker push hysds/base:${build_tag}
+            fi
+            docker push hysds/base:<< parameters.final_tag >>
+  build-hysds_cuda_base:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: master
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Build hysds/cuda-base
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            docker pull nvidia/cuda:11.4.1-runtime-centos7
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
+            cd hysds_base
+            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+              -t hysds/cuda-base:${build_tag} -f docker/Dockerfile.cuda .
+            docker tag hysds/cuda-base:${build_tag} hysds/cuda-base:<< parameters.final_tag >>
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker push hysds/cuda-base:${build_tag}
+            fi
+            docker push hysds/cuda-base:<< parameters.final_tag >>
+  build-hysds_dev:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: master
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Build hysds/dev
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            docker pull hysds/base:<< parameters.final_tag >>
+            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_dev.git hysds_dev
+            cd hysds_dev
+            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+              -t hysds/dev:${build_tag} -f docker/Dockerfile .
+            docker tag hysds/dev:${build_tag} hysds/dev:<< parameters.final_tag >>
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker push hysds/dev:${build_tag}
+            fi
+            docker push hysds/dev:<< parameters.final_tag >>
+  build-hysds_cuda_dev:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: master
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Build hysds/cuda-dev
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            docker pull hysds/cuda-base:<< parameters.final_tag >>
+            docker tag hysds/cuda-base:<< parameters.final_tag >> hysds/cuda-base:latest
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_dev.git hysds_dev
+            cd hysds_dev
+            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+              -t hysds/cuda-dev:${build_tag} -f docker/Dockerfile.cuda .
+            docker tag hysds/cuda-dev:${build_tag} hysds/cuda-dev:<< parameters.final_tag >>
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker push hysds/cuda-dev:${build_tag}
+            fi
+            docker push hysds/cuda-dev:<< parameters.final_tag >>
+  build-hysds_verdi_pge_base:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Build hysds/verdi, hysds/pge-base and hysds/cuda-pge-base
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=develop
+              export push_build_tag=0
+            fi
+            docker pull hysds/base:<< parameters.final_tag >>
+            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
+            docker pull hysds/dev:<< parameters.final_tag >>
+            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
+            docker pull hysds/cuda-base:<< parameters.final_tag >>
+            docker tag hysds/cuda-base:<< parameters.final_tag >> hysds/cuda-base:latest
+            docker pull hysds/cuda-dev:<< parameters.final_tag >>
+            docker tag hysds/cuda-dev:<< parameters.final_tag >> hysds/cuda-dev:latest
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
+            cd puppet-verdi
+            ./build_docker.sh $build_tag
+            cd ..
+            rm -rf puppet-verdi
+            for i in verdi pge-base; do
+              docker tag hysds/${i}:${build_tag} hysds/${i}:<< parameters.final_tag >>
+              if [ "$push_build_tag" -eq 1 ]; then
+                docker push hysds/${i}:${build_tag}
+              fi
+              docker push hysds/${i}:<< parameters.final_tag >>
+              if [ "$i" = "pge-base" ]; then
+                docker tag hysds/cuda-${i}:${build_tag} hysds/cuda-${i}:<< parameters.final_tag >>
+                if [ "$push_build_tag" -eq 1 ]; then
+                  docker push hysds/cuda-${i}:${build_tag}
+                fi
+                docker push hysds/cuda-${i}:<< parameters.final_tag >>
+              fi
+            done
+            cd images
+            docker save hysds/verdi:<< parameters.build_tag >> > hysds-verdi-<< parameters.build_tag >>.tar
+            pigz -f hysds-verdi-<< parameters.build_tag >>.tar
+            docker save hysds/verdi:<< parameters.final_tag >> > hysds-verdi-<< parameters.final_tag >>.tar
+            pigz -f hysds-verdi-<< parameters.final_tag >>.tar
       - persist_to_workspace:
           root: images
           paths:
             - "*"
+  build-hysds_mozart:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Build hysds/mozart
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=develop
+              export push_build_tag=0
+            fi 
+            docker pull hysds/base:<< parameters.final_tag >>
+            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
+            docker pull hysds/dev:<< parameters.final_tag >>
+            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-mozart.git
+            cd puppet-mozart
+            ./build_docker.sh $build_tag
+            cd ..
+            rm -rf puppet-mozart
+            docker tag hysds/mozart:${build_tag} hysds/mozart:<< parameters.final_tag >>
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker push hysds/mozart:${build_tag}
+            fi
+            docker push hysds/mozart:<< parameters.final_tag >>
+  build-hysds_metrics:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Build hysds/metrics
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=develop
+              export push_build_tag=0
+            fi 
+            docker pull hysds/base:<< parameters.final_tag >>
+            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
+            docker pull hysds/dev:<< parameters.final_tag >>
+            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-metrics.git
+            cd puppet-metrics
+            ./build_docker.sh $build_tag
+            cd ..
+            rm -rf puppet-metrics
+            docker tag hysds/metrics:${build_tag} hysds/metrics:<< parameters.final_tag >>
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker push hysds/metrics:${build_tag}
+            fi
+            docker push hysds/metrics:<< parameters.final_tag >>
+  build-hysds_grq:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Build hysds/grq
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=develop
+              export push_build_tag=0
+            fi 
+            docker pull hysds/base:<< parameters.final_tag >>
+            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
+            docker pull hysds/dev:<< parameters.final_tag >>
+            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-grq.git
+            cd puppet-grq
+            ./build_docker.sh $build_tag
+            cd ..
+            rm -rf puppet-grq
+            docker tag hysds/grq:${build_tag} hysds/grq:<< parameters.final_tag >>
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker push hysds/grq:${build_tag}
+            fi
+            docker push hysds/grq:<< parameters.final_tag >>
+  build-hysds_cont_int:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Build hysds/cont_int
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=develop
+              export push_build_tag=0
+            fi 
+            docker pull hysds/base:<< parameters.final_tag >>
+            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
+            docker pull hysds/dev:<< parameters.final_tag >>
+            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-cont_int.git
+            cd puppet-cont_int
+            ./build_docker.sh $build_tag
+            cd ..
+            rm -rf puppet-cont_int
+            docker tag hysds/cont_int:${build_tag} hysds/cont_int:<< parameters.final_tag >>
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker push hysds/cont_int:${build_tag}
+            fi
+            docker push hysds/cont_int:<< parameters.final_tag >>
   deploy:
     docker:
       - image: alpine:latest
@@ -110,10 +636,154 @@ workflows:
               only: develop
   build-deploy:
     jobs:
-      - build:
+      - build-redis:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
           context:
             - docker-hub-creds
             - git-oauth-token
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - build-elasticsearch:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - build-rabbitmq:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_base:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_dev:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_cuda_base:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_cuda_dev:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_cuda_base
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_verdi_pge_base:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+            - build-hysds_cuda_base
+            - build-hysds_cuda_dev
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_mozart:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_metrics:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_grq:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_cont_int:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
           filters:
             tags:
               only: /^v4.*/
@@ -124,7 +794,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build
+            - build-hysds_verdi_pge_base
           filters:
             tags:
               only: /^v4.*/
