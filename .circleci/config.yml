@@ -42,6 +42,12 @@ jobs:
           password: $DOCKER_PASS
     #resource_class: large
     parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: rockylinux
       build_tag:
         type: string
       final_tag:
@@ -61,9 +67,13 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            git clone https://github.com/hysds/hysds-dockerfiles.git
-            cd hysds-dockerfiles
-            docker build --rm --force-rm -t hysds/redis:${build_tag} -f Dockerfile.hysds-redis .
+            docker pull hysds/base:<< parameters.final_tag >>
+            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-redis.git redis
+            cd redis
+            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> \
+              --build-arg BRANCH=<< parameters.branch >> \
+              -t hysds/redis:${build_tag} -f docker/Dockerfile .
             docker tag hysds/redis:${build_tag} hysds/redis:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/redis:${build_tag}
@@ -153,7 +163,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: master
+        default: rockylinux
       build_tag:
         type: string
       final_tag:
@@ -173,8 +183,7 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            docker pull docker.io/centos:7
-            docker tag docker.io/centos:7 docker.io/centos:latest
+            docker pull docker.io/rockylinux:8
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
             docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
@@ -800,3 +809,136 @@ workflows:
               only: /^v4.*/
             branches:
               ignore: /.*/
+  aggregate:
+    jobs:
+      - build-redis:
+          build_tag: ""
+          final_tag: rockylinux
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+          filters:
+            branches:
+              only: aggregate-ci-builds
+      #- build-elasticsearch:
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    filters:
+      #      branches:
+      #        only: aggregate-ci-builds
+      #- build-rabbitmq:
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    filters:
+      #      branches:
+      #        only: aggregate-ci-builds
+      - build-hysds_base:
+          build_tag: ""
+          final_tag: rockylinux
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            branches:
+              only: aggregate-ci-builds
+      #- build-hysds_dev:
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_base
+      #    filters:
+      #      branches:
+      #        only: aggregate-ci-builds
+      #- build-hysds_cuda_base:
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    filters:
+      #      branches:
+      #        only: aggregate-ci-builds
+      #- build-hysds_cuda_dev:
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_cuda_base
+      #    filters:
+      #      branches:
+      #        only: aggregate-ci-builds
+      #- build-hysds_verdi_pge_base:
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_base
+      #      - build-hysds_dev
+      #      - build-hysds_cuda_base
+      #      - build-hysds_cuda_dev
+      #    filters:
+      #      branches:
+      #        only: aggregate-ci-builds
+      #- build-hysds_mozart:
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_base
+      #      - build-hysds_dev
+      #    filters:
+      #      branches:
+      #        only: aggregate-ci-builds
+      #- build-hysds_metrics:
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_base
+      #      - build-hysds_dev
+      #    filters:
+      #      branches:
+      #        only: aggregate-ci-builds
+      #- build-hysds_grq:
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_base
+      #      - build-hysds_dev
+      #    filters:
+      #      branches:
+      #        only: aggregate-ci-builds
+      #- build-hysds_cont_int:
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_base
+      #      - build-hysds_dev
+      #    filters:
+      #      branches:
+      #        only: aggregate-ci-builds
