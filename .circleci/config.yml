@@ -47,7 +47,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: rockylinux
+        default: master
       build_tag:
         type: string
       final_tag:
@@ -126,7 +126,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: rockylinux
+        default: develop
       build_tag:
         type: string
       final_tag:
@@ -168,7 +168,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: rockylinux
+        default: develop
       build_tag:
         type: string
       final_tag:
@@ -211,7 +211,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: rockylinux
+        default: develop
       build_tag:
         type: string
       final_tag:
@@ -255,7 +255,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: rockylinux
+        default: develop
       build_tag:
         type: string
       final_tag:
@@ -299,7 +299,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: rockylinux
+        default: develop
       build_tag:
         type: string
       final_tag:
@@ -343,23 +343,20 @@ jobs:
         default: hysds
       puppet_branch:
         type: string
-        #default: docker
-        default: rockylinux
+        default: docker
       build_tag:
         type: string
       final_tag:
         type: string
       framework_branch:
         type: string
-        #default: develop
-        default: rockylinux
+        default: develop
       hysds_release:
         type: string
         default: develop
       base_branch:
         type: string
-        #default: develop
-        default: rockylinux
+        default: develop
     steps:
       - checkout
       - setup_remote_docker:
@@ -420,13 +417,22 @@ jobs:
       org:
         type: string
         default: hysds
-      branch:
+      puppet_branch:
         type: string
-        default: rockylinux
+        default: docker
       build_tag:
         type: string
       final_tag:
         type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
     steps:
       - checkout
       - setup_remote_docker:
@@ -439,16 +445,14 @@ jobs:
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
-              export build_tag=develop
+              export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
-            fi 
+            fi
             docker pull hysds/base:<< parameters.final_tag >>
-            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             docker pull hysds/dev:<< parameters.final_tag >>
-            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
-            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-mozart.git
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-mozart.git
             cd puppet-mozart
-            ./build_docker.sh $build_tag
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-mozart
             docker tag hysds/mozart:${build_tag} hysds/mozart:<< parameters.final_tag >>
@@ -467,13 +471,22 @@ jobs:
       org:
         type: string
         default: hysds
-      branch:
+      puppet_branch:
         type: string
-        default: rockylinux
+        default: docker
       build_tag:
         type: string
       final_tag:
         type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
     steps:
       - checkout
       - setup_remote_docker:
@@ -486,16 +499,14 @@ jobs:
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
-              export build_tag=develop
+              export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
-            fi 
+            fi
             docker pull hysds/base:<< parameters.final_tag >>
-            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             docker pull hysds/dev:<< parameters.final_tag >>
-            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
-            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-metrics.git
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-metrics.git
             cd puppet-metrics
-            ./build_docker.sh $build_tag
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-metrics
             docker tag hysds/metrics:${build_tag} hysds/metrics:<< parameters.final_tag >>
@@ -514,13 +525,22 @@ jobs:
       org:
         type: string
         default: hysds
-      branch:
+      puppet_branch:
         type: string
-        default: rockylinux
+        default: docker
       build_tag:
         type: string
       final_tag:
         type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
     steps:
       - checkout
       - setup_remote_docker:
@@ -533,16 +553,14 @@ jobs:
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
-              export build_tag=develop
+              export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
-            fi 
+            fi
             docker pull hysds/base:<< parameters.final_tag >>
-            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             docker pull hysds/dev:<< parameters.final_tag >>
-            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
-            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-grq.git
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-grq.git
             cd puppet-grq
-            ./build_docker.sh $build_tag
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-grq
             docker tag hysds/grq:${build_tag} hysds/grq:<< parameters.final_tag >>
@@ -561,13 +579,22 @@ jobs:
       org:
         type: string
         default: hysds
-      branch:
+      puppet_branch:
         type: string
-        default: rockylinux
+        default: docker
       build_tag:
         type: string
       final_tag:
         type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
     steps:
       - checkout
       - setup_remote_docker:
@@ -580,16 +607,14 @@ jobs:
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
-              export build_tag=develop
+              export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
-            fi 
+            fi
             docker pull hysds/base:<< parameters.final_tag >>
-            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             docker pull hysds/dev:<< parameters.final_tag >>
-            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
-            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-cont_int.git
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-cont_int.git
             cd puppet-cont_int
-            ./build_docker.sh $build_tag
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-cont_int
             docker tag hysds/cont_int:${build_tag} hysds/cont_int:<< parameters.final_tag >>
@@ -840,78 +865,103 @@ workflows:
               ignore: /.*/
   rockylinux:
     jobs:
-      - build-redis:
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base
-          filters:
-            branches:
-              only: rockylinux
-      - build-elasticsearch:
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          filters:
-            branches:
-              only: rockylinux
-      - build-rabbitmq:
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_base:
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_dev:
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_cuda_base:
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_cuda_dev:
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_cuda_base
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_verdi_pge_base:
+      #- build-redis:
+      #    branch: rockylinux
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_base
+      #    filters:
+      #      branches:
+      #        only: rockylinux
+      #- build-elasticsearch:
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    filters:
+      #      branches:
+      #        only: rockylinux
+      #- build-rabbitmq:
+      #    branch: rockylinux
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    filters:
+      #      branches:
+      #        only: rockylinux
+      #- build-hysds_base:
+      #    branch: rockylinux
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    filters:
+      #      branches:
+      #        only: rockylinux
+      #- build-hysds_dev:
+      #    branch: rockylinux
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_base
+      #    filters:
+      #      branches:
+      #        only: rockylinux
+      #- build-hysds_cuda_base:
+      #    branch: rockylinux
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_base
+      #    filters:
+      #      branches:
+      #        only: rockylinux
+      #- build-hysds_cuda_dev:
+      #    branch: rockylinux
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_cuda_base
+      #    filters:
+      #      branches:
+      #        only: rockylinux
+      #- build-hysds_verdi_pge_base:
+      #    puppet_branch: rockylinux
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    framework_branch: rockylinux
+      #    hysds_release: develop
+      #    base_branch: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_base
+      #      - build-hysds_dev
+      #      - build-hysds_cuda_base
+      #      - build-hysds_cuda_dev
+      #    filters:
+      #      branches:
+      #        only: rockylinux
+      - build-hysds_mozart:
+          puppet_branch: rockylinux
           build_tag: ""
           final_tag: rockylinux
           framework_branch: rockylinux
@@ -920,29 +970,19 @@ workflows:
           context:
             - docker-hub-creds
             - git-oauth-token
-          requires:
-            - build-hysds_base
-            - build-hysds_dev
-            - build-hysds_cuda_base
-            - build-hysds_cuda_dev
-          filters:
-            branches:
-              only: rockylinux
-      #- build-hysds_mozart:
-      #    build_tag: ""
-      #    final_tag: rockylinux
-      #    context:
-      #      - docker-hub-creds
-      #      - git-oauth-token
       #    requires:
       #      - build-hysds_base
       #      - build-hysds_dev
-      #    filters:
-      #      branches:
-      #        only: rockylinux
+          filters:
+            branches:
+              only: rockylinux
       #- build-hysds_metrics:
+      #    puppet_branch: rockylinux
       #    build_tag: ""
       #    final_tag: rockylinux
+      #    framework_branch: rockylinux
+      #    hysds_release: develop
+      #    base_branch: rockylinux
       #    context:
       #      - docker-hub-creds
       #      - git-oauth-token
@@ -953,8 +993,12 @@ workflows:
       #      branches:
       #        only: rockylinux
       #- build-hysds_grq:
+      #    puppet_branch: rockylinux
       #    build_tag: ""
       #    final_tag: rockylinux
+      #    framework_branch: rockylinux
+      #    hysds_release: develop
+      #    base_branch: rockylinux
       #    context:
       #      - docker-hub-creds
       #      - git-oauth-token
@@ -965,8 +1009,12 @@ workflows:
       #      branches:
       #        only: rockylinux
       #- build-hysds_cont_int:
+      #    puppet_branch: rockylinux
       #    build_tag: ""
       #    final_tag: rockylinux
+      #    framework_branch: rockylinux
+      #    hysds_release: develop
+      #    base_branch: rockylinux
       #    context:
       #      - docker-hub-creds
       #      - git-oauth-token
@@ -976,14 +1024,14 @@ workflows:
       #    filters:
       #      branches:
       #        only: rockylinux
-      - deploy:
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_verdi_pge_base
-          filters:
-            branches:
-              only: rockylinux
+      #- deploy:
+      #    build_tag: ""
+      #    final_tag: rockylinux
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_verdi_pge_base
+      #    filters:
+      #      branches:
+      #        only: rockylinux
