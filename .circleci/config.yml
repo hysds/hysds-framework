@@ -868,6 +868,8 @@ workflows:
           context:
             - docker-hub-creds
             - git-oauth-token
+          requires:
+            - build-hysds_base
           filters:
             branches:
               only: aggregate-ci-builds
