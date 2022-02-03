@@ -71,7 +71,9 @@ jobs:
             docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-redis.git redis
             cd redis
-            ./build_docker.sh $build_tag << parameters.org >> << parameters.branch >> << parameters.final_tag >>
+            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> \
+              --build-arg BRANCH=<< parameters.branch >> \
+              -t hysds/redis:${build_tag} -f docker/Dockerfile .
             docker tag hysds/redis:${build_tag} hysds/redis:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/redis:${build_tag}
@@ -147,7 +149,7 @@ jobs:
             docker pull docker.io/rabbitmq:3-management
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/rabbitmq.git
             cd rabbitmq
-            ./build_docker.sh $build_tag << parameters.org >> << parameters.branch >> << parameters.final_tag >>
+            docker build --rm --force-rm -t hysds/rabbitmq:${build_tag} -f Dockerfile.hysds-rabbitmq .
             docker tag hysds/rabbitmq:${build_tag} hysds/rabbitmq:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/rabbitmq:${build_tag}
@@ -209,7 +211,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: master
+        default: rockylinux
       build_tag:
         type: string
       final_tag:
@@ -229,10 +231,11 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            docker pull nvidia/cuda:11.4.1-runtime-centos7
+            docker pull hysds/base:<< parameters.final_tag >>
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
-            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+            docker build --rm --force-rm --build-arg TAG=<< parameters.final_tag >> \
+              --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
               -t hysds/cuda-base:${build_tag} -f docker/Dockerfile.cuda .
             docker tag hysds/cuda-base:${build_tag} hysds/cuda-base:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
@@ -252,7 +255,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: master
+        default: rockylinux
       build_tag:
         type: string
       final_tag:
@@ -273,10 +276,10 @@ jobs:
               export push_build_tag=0
             fi
             docker pull hysds/base:<< parameters.final_tag >>
-            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_dev.git hysds_dev
             cd hysds_dev
-            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+            docker build --rm --force-rm --build-arg TAG=<< parameters.final_tag >> \
+              --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
               -t hysds/dev:${build_tag} -f docker/Dockerfile .
             docker tag hysds/dev:${build_tag} hysds/dev:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
@@ -296,7 +299,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: master
+        default: rockylinux
       build_tag:
         type: string
       final_tag:
@@ -317,10 +320,10 @@ jobs:
               export push_build_tag=0
             fi
             docker pull hysds/cuda-base:<< parameters.final_tag >>
-            docker tag hysds/cuda-base:<< parameters.final_tag >> hysds/cuda-base:latest
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_dev.git hysds_dev
             cd hysds_dev
-            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+            docker build --rm --force-rm --build-arg TAG=<< parameters.final_tag >> \
+              --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
               -t hysds/cuda-dev:${build_tag} -f docker/Dockerfile.cuda .
             docker tag hysds/cuda-dev:${build_tag} hysds/cuda-dev:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
@@ -340,7 +343,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: docker
+        default: rockylinux
       build_tag:
         type: string
       final_tag:
@@ -357,20 +360,16 @@ jobs:
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
-              export build_tag=develop
+              export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
             docker pull hysds/base:<< parameters.final_tag >>
-            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             docker pull hysds/dev:<< parameters.final_tag >>
-            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
             docker pull hysds/cuda-base:<< parameters.final_tag >>
-            docker tag hysds/cuda-base:<< parameters.final_tag >> hysds/cuda-base:latest
             docker pull hysds/cuda-dev:<< parameters.final_tag >>
-            docker tag hysds/cuda-dev:<< parameters.final_tag >> hysds/cuda-dev:latest
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
-            ./build_docker.sh $build_tag
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.branch >> << parameters.final_tag >>
             cd ..
             rm -rf puppet-verdi
             for i in verdi pge-base; do
@@ -409,7 +408,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: docker
+        default: rockylinux
       build_tag:
         type: string
       final_tag:
@@ -456,7 +455,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: docker
+        default: rockylinux
       build_tag:
         type: string
       final_tag:
@@ -503,7 +502,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: docker
+        default: rockylinux
       build_tag:
         type: string
       final_tag:
@@ -550,7 +549,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: docker
+        default: rockylinux
       build_tag:
         type: string
       final_tag:
@@ -852,51 +851,51 @@ workflows:
           filters:
             branches:
               only: aggregate-ci-builds
-      #- build-hysds_dev:
-      #    build_tag: ""
-      #    final_tag: rockylinux
-      #    context:
-      #      - docker-hub-creds
-      #      - git-oauth-token
-      #    requires:
-      #      - build-hysds_base
-      #    filters:
-      #      branches:
-      #        only: aggregate-ci-builds
-      #- build-hysds_cuda_base:
-      #    build_tag: ""
-      #    final_tag: rockylinux
-      #    context:
-      #      - docker-hub-creds
-      #      - git-oauth-token
-      #    filters:
-      #      branches:
-      #        only: aggregate-ci-builds
-      #- build-hysds_cuda_dev:
-      #    build_tag: ""
-      #    final_tag: rockylinux
-      #    context:
-      #      - docker-hub-creds
-      #      - git-oauth-token
-      #    requires:
-      #      - build-hysds_cuda_base
-      #    filters:
-      #      branches:
-      #        only: aggregate-ci-builds
-      #- build-hysds_verdi_pge_base:
-      #    build_tag: ""
-      #    final_tag: rockylinux
-      #    context:
-      #      - docker-hub-creds
-      #      - git-oauth-token
-      #    requires:
-      #      - build-hysds_base
-      #      - build-hysds_dev
-      #      - build-hysds_cuda_base
-      #      - build-hysds_cuda_dev
-      #    filters:
-      #      branches:
-      #        only: aggregate-ci-builds
+      - build-hysds_dev:
+          build_tag: ""
+          final_tag: rockylinux
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+          filters:
+            branches:
+              only: aggregate-ci-builds
+      - build-hysds_cuda_base:
+          build_tag: ""
+          final_tag: rockylinux
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            branches:
+              only: aggregate-ci-builds
+      - build-hysds_cuda_dev:
+          build_tag: ""
+          final_tag: rockylinux
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_cuda_base
+          filters:
+            branches:
+              only: aggregate-ci-builds
+      - build-hysds_verdi_pge_base:
+          build_tag: ""
+          final_tag: rockylinux
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+            - build-hysds_cuda_base
+            - build-hysds_cuda_dev
+          filters:
+            branches:
+              only: aggregate-ci-builds
       #- build-hysds_mozart:
       #    build_tag: ""
       #    final_tag: rockylinux
@@ -945,3 +944,12 @@ workflows:
       #    filters:
       #      branches:
       #        only: aggregate-ci-builds
+      - deploy:
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_verdi_pge_base
+          filters:
+            branches:
+              only: aggregate-ci-builds
