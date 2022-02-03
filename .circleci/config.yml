@@ -387,8 +387,10 @@ jobs:
               fi
             done
             cd images
-            docker save hysds/verdi:<< parameters.build_tag >> > hysds-verdi-<< parameters.build_tag >>.tar
-            pigz -f hysds-verdi-<< parameters.build_tag >>.tar
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker save hysds/verdi:<< parameters.build_tag >> > hysds-verdi-<< parameters.build_tag >>.tar
+              pigz -f hysds-verdi-<< parameters.build_tag >>.tar
+            fi
             docker save hysds/verdi:<< parameters.final_tag >> > hysds-verdi-<< parameters.final_tag >>.tar
             pigz -f hysds-verdi-<< parameters.final_tag >>.tar
       - persist_to_workspace:
@@ -589,6 +591,17 @@ jobs:
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
+    parameters:
+      org:
+        type: string
+        default: $CIRCLE_PROJECT_USERNAME
+      repo:
+        type: string
+        default: $CIRCLE_PROJECT_REPONAME
+      build_tag:
+        type: string
+      final_tag:
+        type: string
     steps:
       - run:
           name: Install dependencies
@@ -600,26 +613,34 @@ jobs:
       - run:
           name: Deploy
           command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
             cd images
-            owner=$CIRCLE_PROJECT_USERNAME
-            repo=$CIRCLE_PROJECT_REPONAME
+            org=<< parameters.org >>
+            repo=<< parameters.repo >>
             release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
-              "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
+              "https://api.github.com/repos/${org}/${repo}/releases/latest" \
               | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
-            file=hysds-verdi-${CIRCLE_TAG}.tar.gz
-            curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
-              "Content-type: $(file -b --mime-type ${file})" \
-              -T "${file}" -XPOST \
-              "https://uploads.github.com/repos/${owner}/${repo}/releases/${release_id}/assets?name=${file}"
+            if [ "$push_build_tag" -eq 1 ]; then
+              file=hysds-verdi-<< parameters.build_tag >>.tar.gz
+              curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
+                "Content-type: $(file -b --mime-type ${file})" \
+                -T "${file}" -XPOST \
+                "https://uploads.github.com/repos/${org}/${repo}/releases/${release_id}/assets?name=${file}"
+            fi
             repo=hysds-dockerfiles
             release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
-              "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
+              "https://api.github.com/repos/${org}/${repo}/releases/latest" \
               | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
-            file=hysds-verdi-latest.tar.gz
+            file=hysds-verdi-<< parameters.final_tag >>.tar.gz
             curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
               "Content-type: $(file -b --mime-type ${file})" \
               -T "${file}" -XPOST \
-              "https://uploads.github.com/repos/${owner}/${repo}/releases/${release_id}/assets?name=${file}"
+              "https://uploads.github.com/repos/${org}/${repo}/releases/${release_id}/assets?name=${file}"
 
 workflows:
   version: 2
@@ -947,6 +968,8 @@ workflows:
       #      branches:
       #        only: aggregate-ci-builds
       - deploy:
+          build_tag: ""
+          final_tag: rockylinux
           context:
             - docker-hub-creds
             - git-oauth-token
