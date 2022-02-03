@@ -381,7 +381,7 @@ jobs:
             docker pull hysds/cuda-dev:<< parameters.final_tag >>
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
-            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.franework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-verdi
             for i in verdi pge-base; do
