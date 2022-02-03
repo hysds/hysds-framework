@@ -618,8 +618,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache \
-              curl file
+            apk add --no-cache curl file
+            echo "@community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+            apk add --no-cache github-cli@community
       - attach_workspace:
           at: images
       - run:
@@ -634,25 +635,16 @@ jobs:
             cd images
             org=<< parameters.org >>
             repo=<< parameters.repo >>
-            release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
-              "https://api.github.com/repos/${org}/${repo}/releases/latest" \
-              | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
+            echo $GIT_OAUTH_TOKEN | gh auth login --with-token
+            tag=$(gh release list -R ${org}/${repo} -L 1 | awk 'BEGIN{FS=":"}{print $1}')
             if [ "$push_build_tag" -eq 1 ]; then
               file=hysds-verdi-<< parameters.build_tag >>.tar.gz
-              curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
-                "Content-type: $(file -b --mime-type ${file})" \
-                -T "${file}" -XPOST \
-                "https://uploads.github.com/repos/${org}/${repo}/releases/${release_id}/assets?name=${file}"
+              gh release upload ${tag} ${file} -R ${org}/${repo} --clobber
             fi
             repo=hysds-dockerfiles
-            release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
-              "https://api.github.com/repos/${org}/${repo}/releases/latest" \
-              | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
+            tag=$(gh release list -R ${org}/${repo} -L 1 | awk 'BEGIN{FS=":"}{print $1}')
             file=hysds-verdi-<< parameters.final_tag >>.tar.gz
-            curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
-              "Content-type: $(file -b --mime-type ${file})" \
-              -T "${file}" -XPOST \
-              "https://uploads.github.com/repos/${org}/${repo}/releases/${release_id}/assets?name=${file}"
+            gh release upload ${tag} ${file} -R ${org}/${repo} --clobber
 
 workflows:
   version: 2
