@@ -149,7 +149,7 @@ jobs:
             docker pull docker.io/rabbitmq:3-management
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/rabbitmq.git
             cd rabbitmq
-            docker build --rm --force-rm -t hysds/rabbitmq:${build_tag} -f Dockerfile .
+            docker build --rm --force-rm -t hysds/rabbitmq:${build_tag} -f docker/Dockerfile .
             docker tag hysds/rabbitmq:${build_tag} hysds/rabbitmq:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/rabbitmq:${build_tag}
