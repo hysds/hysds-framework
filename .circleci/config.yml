@@ -341,13 +341,25 @@ jobs:
       org:
         type: string
         default: hysds
-      branch:
+      puppet_branch:
         type: string
+        #default: docker
         default: rockylinux
       build_tag:
         type: string
       final_tag:
         type: string
+      framework_branch:
+        type: string
+        #default: develop
+        default: rockylinux
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        #default: develop
+        default: rockylinux
     steps:
       - checkout
       - setup_remote_docker:
@@ -367,9 +379,9 @@ jobs:
             docker pull hysds/dev:<< parameters.final_tag >>
             docker pull hysds/cuda-base:<< parameters.final_tag >>
             docker pull hysds/cuda-dev:<< parameters.final_tag >>
-            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
-            ./build_docker.sh $build_tag << parameters.org >> << parameters.branch >> << parameters.final_tag >>
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.branch >> << parameters.franework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-verdi
             for i in verdi pge-base; do
@@ -910,6 +922,9 @@ workflows:
       - build-hysds_verdi_pge_base:
           build_tag: ""
           final_tag: rockylinux
+          framework_branch: rockylinux
+          hysds_release: develop
+          base_branch: rockylinux
           context:
             - docker-hub-creds
             - git-oauth-token
