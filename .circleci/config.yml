@@ -834,7 +834,7 @@ workflows:
               only: /^v4.*/
             branches:
               ignore: /.*/
-  aggregate:
+  rockylinux:
     jobs:
       - build-redis:
           build_tag: ""
@@ -846,7 +846,7 @@ workflows:
             - build-hysds_base
           filters:
             branches:
-              only: aggregate-ci-builds
+              only: rockylinux
       - build-elasticsearch:
           build_tag: ""
           final_tag: rockylinux
@@ -855,7 +855,7 @@ workflows:
             - git-oauth-token
           filters:
             branches:
-              only: aggregate-ci-builds
+              only: rockylinux
       - build-rabbitmq:
           build_tag: ""
           final_tag: rockylinux
@@ -864,7 +864,7 @@ workflows:
             - git-oauth-token
           filters:
             branches:
-              only: aggregate-ci-builds
+              only: rockylinux
       - build-hysds_base:
           build_tag: ""
           final_tag: rockylinux
@@ -873,7 +873,7 @@ workflows:
             - git-oauth-token
           filters:
             branches:
-              only: aggregate-ci-builds
+              only: rockylinux
       - build-hysds_dev:
           build_tag: ""
           final_tag: rockylinux
@@ -884,7 +884,7 @@ workflows:
             - build-hysds_base
           filters:
             branches:
-              only: aggregate-ci-builds
+              only: rockylinux
       - build-hysds_cuda_base:
           build_tag: ""
           final_tag: rockylinux
@@ -895,7 +895,7 @@ workflows:
             - build-hysds_base
           filters:
             branches:
-              only: aggregate-ci-builds
+              only: rockylinux
       - build-hysds_cuda_dev:
           build_tag: ""
           final_tag: rockylinux
@@ -906,7 +906,7 @@ workflows:
             - build-hysds_cuda_base
           filters:
             branches:
-              only: aggregate-ci-builds
+              only: rockylinux
       - build-hysds_verdi_pge_base:
           build_tag: ""
           final_tag: rockylinux
@@ -920,7 +920,7 @@ workflows:
             - build-hysds_cuda_dev
           filters:
             branches:
-              only: aggregate-ci-builds
+              only: rockylinux
       #- build-hysds_mozart:
       #    build_tag: ""
       #    final_tag: rockylinux
@@ -932,7 +932,7 @@ workflows:
       #      - build-hysds_dev
       #    filters:
       #      branches:
-      #        only: aggregate-ci-builds
+      #        only: rockylinux
       #- build-hysds_metrics:
       #    build_tag: ""
       #    final_tag: rockylinux
@@ -944,7 +944,7 @@ workflows:
       #      - build-hysds_dev
       #    filters:
       #      branches:
-      #        only: aggregate-ci-builds
+      #        only: rockylinux
       #- build-hysds_grq:
       #    build_tag: ""
       #    final_tag: rockylinux
@@ -956,7 +956,7 @@ workflows:
       #      - build-hysds_dev
       #    filters:
       #      branches:
-      #        only: aggregate-ci-builds
+      #        only: rockylinux
       #- build-hysds_cont_int:
       #    build_tag: ""
       #    final_tag: rockylinux
@@ -968,7 +968,7 @@ workflows:
       #      - build-hysds_dev
       #    filters:
       #      branches:
-      #        only: aggregate-ci-builds
+      #        only: rockylinux
       - deploy:
           build_tag: ""
           final_tag: rockylinux
@@ -979,4 +979,4 @@ workflows:
             - build-hysds_verdi_pge_base
           filters:
             branches:
-              only: aggregate-ci-builds
+              only: rockylinux
