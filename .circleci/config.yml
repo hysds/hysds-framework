@@ -71,9 +71,7 @@ jobs:
             docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-redis.git redis
             cd redis
-            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> \
-              --build-arg BRANCH=<< parameters.branch >> \
-              -t hysds/redis:${build_tag} -f docker/Dockerfile .
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.branch >> << parameters.final_tag >>
             docker tag hysds/redis:${build_tag} hysds/redis:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/redis:${build_tag}
@@ -107,9 +105,7 @@ jobs:
               export push_build_tag=0
             fi
             docker pull docker.io/elasticsearch:7.9.3
-            git clone https://github.com/hysds/hysds-dockerfiles.git
-            cd hysds-dockerfiles
-            docker build --rm --force-rm -t hysds/elasticsearch:${build_tag} -f Dockerfile.hysds-elasticsearch .
+            docker tag docker.io/elasticsearch:7.9.3 hysds/elasticsearch:${build_tag}
             docker tag hysds/elasticsearch:${build_tag} hysds/elasticsearch:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/elasticsearch:${build_tag}
@@ -123,6 +119,12 @@ jobs:
           password: $DOCKER_PASS
     #resource_class: large
     parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: rockylinux
       build_tag:
         type: string
       final_tag:
@@ -142,9 +144,10 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            git clone https://github.com/hysds/hysds-dockerfiles.git
-            cd hysds-dockerfiles
-            docker build --rm --force-rm -t hysds/rabbitmq:${build_tag} -f Dockerfile.hysds-rabbitmq .
+            docker pull docker.io/rabbitmq:3-management
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/rabbitmq.git
+            cd rabbitmq
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.branch >> << parameters.final_tag >>
             docker tag hysds/rabbitmq:${build_tag} hysds/rabbitmq:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/rabbitmq:${build_tag}
@@ -822,24 +825,24 @@ workflows:
           filters:
             branches:
               only: aggregate-ci-builds
-      #- build-elasticsearch:
-      #    build_tag: ""
-      #    final_tag: rockylinux
-      #    context:
-      #      - docker-hub-creds
-      #      - git-oauth-token
-      #    filters:
-      #      branches:
-      #        only: aggregate-ci-builds
-      #- build-rabbitmq:
-      #    build_tag: ""
-      #    final_tag: rockylinux
-      #    context:
-      #      - docker-hub-creds
-      #      - git-oauth-token
-      #    filters:
-      #      branches:
-      #        only: aggregate-ci-builds
+      - build-elasticsearch:
+          build_tag: ""
+          final_tag: rockylinux
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            branches:
+              only: aggregate-ci-builds
+      - build-rabbitmq:
+          build_tag: ""
+          final_tag: rockylinux
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            branches:
+              only: aggregate-ci-builds
       - build-hysds_base:
           build_tag: ""
           final_tag: rockylinux
