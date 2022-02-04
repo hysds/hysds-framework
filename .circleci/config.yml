@@ -42,6 +42,12 @@ jobs:
           password: $DOCKER_PASS
     #resource_class: large
     parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: master
       build_tag:
         type: string
       final_tag:
@@ -61,9 +67,12 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            git clone https://github.com/hysds/hysds-dockerfiles.git
-            cd hysds-dockerfiles
-            docker build --rm --force-rm -t hysds/redis:${build_tag} -f Dockerfile.hysds-redis .
+            docker pull hysds/base:<< parameters.final_tag >>
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-redis.git redis
+            cd redis
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.branch >> << parameters.final_tag >>
+            cd ..
+            rm -rf redis
             docker tag hysds/redis:${build_tag} hysds/redis:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/redis:${build_tag}
@@ -97,9 +106,7 @@ jobs:
               export push_build_tag=0
             fi
             docker pull docker.io/elasticsearch:7.9.3
-            git clone https://github.com/hysds/hysds-dockerfiles.git
-            cd hysds-dockerfiles
-            docker build --rm --force-rm -t hysds/elasticsearch:${build_tag} -f Dockerfile.hysds-elasticsearch .
+            docker tag docker.io/elasticsearch:7.9.3 hysds/elasticsearch:${build_tag}
             docker tag hysds/elasticsearch:${build_tag} hysds/elasticsearch:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/elasticsearch:${build_tag}
@@ -113,6 +120,12 @@ jobs:
           password: $DOCKER_PASS
     #resource_class: large
     parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: develop
       build_tag:
         type: string
       final_tag:
@@ -132,9 +145,10 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            git clone https://github.com/hysds/hysds-dockerfiles.git
-            cd hysds-dockerfiles
-            docker build --rm --force-rm -t hysds/rabbitmq:${build_tag} -f Dockerfile.hysds-rabbitmq .
+            docker pull docker.io/rabbitmq:3-management
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/rabbitmq.git
+            cd rabbitmq
+            docker build --rm --force-rm -t hysds/rabbitmq:${build_tag} -f docker/Dockerfile .
             docker tag hysds/rabbitmq:${build_tag} hysds/rabbitmq:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/rabbitmq:${build_tag}
@@ -153,7 +167,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: master
+        default: develop
       build_tag:
         type: string
       final_tag:
@@ -173,8 +187,7 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            docker pull docker.io/centos:7
-            docker tag docker.io/centos:7 docker.io/centos:latest
+            docker pull docker.io/rockylinux:8
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
             docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
@@ -197,7 +210,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: master
+        default: develop
       build_tag:
         type: string
       final_tag:
@@ -217,10 +230,11 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            docker pull nvidia/cuda:11.4.1-runtime-centos7
+            docker pull hysds/base:<< parameters.final_tag >>
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
-            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+            docker build --rm --force-rm --build-arg TAG=<< parameters.final_tag >> \
+              --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
               -t hysds/cuda-base:${build_tag} -f docker/Dockerfile.cuda .
             docker tag hysds/cuda-base:${build_tag} hysds/cuda-base:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
@@ -240,7 +254,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: master
+        default: develop
       build_tag:
         type: string
       final_tag:
@@ -261,10 +275,10 @@ jobs:
               export push_build_tag=0
             fi
             docker pull hysds/base:<< parameters.final_tag >>
-            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_dev.git hysds_dev
             cd hysds_dev
-            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+            docker build --rm --force-rm --build-arg TAG=<< parameters.final_tag >> \
+              --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
               -t hysds/dev:${build_tag} -f docker/Dockerfile .
             docker tag hysds/dev:${build_tag} hysds/dev:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
@@ -284,7 +298,7 @@ jobs:
         default: hysds
       branch:
         type: string
-        default: master
+        default: develop
       build_tag:
         type: string
       final_tag:
@@ -305,10 +319,10 @@ jobs:
               export push_build_tag=0
             fi
             docker pull hysds/cuda-base:<< parameters.final_tag >>
-            docker tag hysds/cuda-base:<< parameters.final_tag >> hysds/cuda-base:latest
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_dev.git hysds_dev
             cd hysds_dev
-            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+            docker build --rm --force-rm --build-arg TAG=<< parameters.final_tag >> \
+              --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
               -t hysds/cuda-dev:${build_tag} -f docker/Dockerfile.cuda .
             docker tag hysds/cuda-dev:${build_tag} hysds/cuda-dev:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
@@ -326,13 +340,22 @@ jobs:
       org:
         type: string
         default: hysds
-      branch:
+      puppet_branch:
         type: string
         default: docker
       build_tag:
         type: string
       final_tag:
         type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
     steps:
       - checkout
       - setup_remote_docker:
@@ -345,20 +368,16 @@ jobs:
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
-              export build_tag=develop
+              export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
             docker pull hysds/base:<< parameters.final_tag >>
-            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             docker pull hysds/dev:<< parameters.final_tag >>
-            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
             docker pull hysds/cuda-base:<< parameters.final_tag >>
-            docker tag hysds/cuda-base:<< parameters.final_tag >> hysds/cuda-base:latest
             docker pull hysds/cuda-dev:<< parameters.final_tag >>
-            docker tag hysds/cuda-dev:<< parameters.final_tag >> hysds/cuda-dev:latest
-            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
-            ./build_docker.sh $build_tag
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-verdi
             for i in verdi pge-base; do
@@ -376,8 +395,10 @@ jobs:
               fi
             done
             cd images
-            docker save hysds/verdi:<< parameters.build_tag >> > hysds-verdi-<< parameters.build_tag >>.tar
-            pigz -f hysds-verdi-<< parameters.build_tag >>.tar
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker save hysds/verdi:<< parameters.build_tag >> > hysds-verdi-<< parameters.build_tag >>.tar
+              pigz -f hysds-verdi-<< parameters.build_tag >>.tar
+            fi
             docker save hysds/verdi:<< parameters.final_tag >> > hysds-verdi-<< parameters.final_tag >>.tar
             pigz -f hysds-verdi-<< parameters.final_tag >>.tar
       - persist_to_workspace:
@@ -395,13 +416,22 @@ jobs:
       org:
         type: string
         default: hysds
-      branch:
+      puppet_branch:
         type: string
         default: docker
       build_tag:
         type: string
       final_tag:
         type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
     steps:
       - checkout
       - setup_remote_docker:
@@ -414,16 +444,14 @@ jobs:
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
-              export build_tag=develop
+              export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
-            fi 
+            fi
             docker pull hysds/base:<< parameters.final_tag >>
-            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             docker pull hysds/dev:<< parameters.final_tag >>
-            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
-            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-mozart.git
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-mozart.git
             cd puppet-mozart
-            ./build_docker.sh $build_tag
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-mozart
             docker tag hysds/mozart:${build_tag} hysds/mozart:<< parameters.final_tag >>
@@ -442,13 +470,22 @@ jobs:
       org:
         type: string
         default: hysds
-      branch:
+      puppet_branch:
         type: string
         default: docker
       build_tag:
         type: string
       final_tag:
         type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
     steps:
       - checkout
       - setup_remote_docker:
@@ -461,16 +498,14 @@ jobs:
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
-              export build_tag=develop
+              export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
-            fi 
+            fi
             docker pull hysds/base:<< parameters.final_tag >>
-            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             docker pull hysds/dev:<< parameters.final_tag >>
-            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
-            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-metrics.git
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-metrics.git
             cd puppet-metrics
-            ./build_docker.sh $build_tag
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-metrics
             docker tag hysds/metrics:${build_tag} hysds/metrics:<< parameters.final_tag >>
@@ -489,13 +524,22 @@ jobs:
       org:
         type: string
         default: hysds
-      branch:
+      puppet_branch:
         type: string
         default: docker
       build_tag:
         type: string
       final_tag:
         type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
     steps:
       - checkout
       - setup_remote_docker:
@@ -508,16 +552,14 @@ jobs:
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
-              export build_tag=develop
+              export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
-            fi 
+            fi
             docker pull hysds/base:<< parameters.final_tag >>
-            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             docker pull hysds/dev:<< parameters.final_tag >>
-            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
-            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-grq.git
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-grq.git
             cd puppet-grq
-            ./build_docker.sh $build_tag
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-grq
             docker tag hysds/grq:${build_tag} hysds/grq:<< parameters.final_tag >>
@@ -536,13 +578,22 @@ jobs:
       org:
         type: string
         default: hysds
-      branch:
+      puppet_branch:
         type: string
         default: docker
       build_tag:
         type: string
       final_tag:
         type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
     steps:
       - checkout
       - setup_remote_docker:
@@ -555,16 +606,14 @@ jobs:
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
-              export build_tag=develop
+              export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
-            fi 
+            fi
             docker pull hysds/base:<< parameters.final_tag >>
-            docker tag hysds/base:<< parameters.final_tag >> hysds/base:latest
             docker pull hysds/dev:<< parameters.final_tag >>
-            docker tag hysds/dev:<< parameters.final_tag >> hysds/dev:latest
-            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-cont_int.git
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-cont_int.git
             cd puppet-cont_int
-            ./build_docker.sh $build_tag
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-cont_int
             docker tag hysds/cont_int:${build_tag} hysds/cont_int:<< parameters.final_tag >>
@@ -578,37 +627,48 @@ jobs:
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
+    parameters:
+      org:
+        type: string
+        default: $CIRCLE_PROJECT_USERNAME
+      repo:
+        type: string
+        default: $CIRCLE_PROJECT_REPONAME
+      build_tag:
+        type: string
+      final_tag:
+        type: string
     steps:
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache \
-              curl file
+            apk add --no-cache curl file
+            echo "@community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+            apk add --no-cache github-cli@community
       - attach_workspace:
           at: images
       - run:
           name: Deploy
           command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
             cd images
-            owner=$CIRCLE_PROJECT_USERNAME
-            repo=$CIRCLE_PROJECT_REPONAME
-            release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
-              "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
-              | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
-            file=hysds-verdi-${CIRCLE_TAG}.tar.gz
-            curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
-              "Content-type: $(file -b --mime-type ${file})" \
-              -T "${file}" -XPOST \
-              "https://uploads.github.com/repos/${owner}/${repo}/releases/${release_id}/assets?name=${file}"
+            org=<< parameters.org >>
+            repo=<< parameters.repo >>
+            echo $GIT_OAUTH_TOKEN | gh auth login --with-token
+            tag=$(gh release list -R ${org}/${repo} -L 1 | awk 'BEGIN{FS=":"}{print $1}')
+            if [ "$push_build_tag" -eq 1 ]; then
+              file=hysds-verdi-<< parameters.build_tag >>.tar.gz
+              gh release upload ${tag} ${file} -R ${org}/${repo} --clobber
+            fi
             repo=hysds-dockerfiles
-            release_id=$(curl -s -H "Authorization: token $GIT_OAUTH_TOKEN" \
-              "https://api.github.com/repos/${owner}/${repo}/releases/latest" \
-              | grep '^  "id":' | awk '{print $2}' | sed 's/,//')
-            file=hysds-verdi-latest.tar.gz
-            curl -H "Authorization: token $GIT_OAUTH_TOKEN" -H \
-              "Content-type: $(file -b --mime-type ${file})" \
-              -T "${file}" -XPOST \
-              "https://uploads.github.com/repos/${owner}/${repo}/releases/${release_id}/assets?name=${file}"
+            tag=$(gh release list -R ${org}/${repo} -L 1 | awk 'BEGIN{FS=":"}{print $1}')
+            file=hysds-verdi-<< parameters.final_tag >>.tar.gz
+            gh release upload ${tag} ${file} -R ${org}/${repo} --clobber
 
 workflows:
   version: 2
@@ -634,14 +694,189 @@ workflows:
           filters:
             branches:
               only: develop
-  build-deploy:
+  build-deploy-develop:
     jobs:
       - build-redis:
+          branch: master
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+          filters:
+            branches:
+              only: develop
+      - build-elasticsearch:
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            branches:
+              only: develop
+      - build-rabbitmq:
+          branch: develop
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            branches:
+              only: develop
+      - build-hysds_base:
+          branch: develop
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            branches:
+              only: develop
+      - build-hysds_dev:
+          branch: develop
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+          filters:
+            branches:
+              only: develop
+      - build-hysds_cuda_base:
+          branch: develop
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+          filters:
+            branches:
+              only: develop
+      - build-hysds_cuda_dev:
+          branch: develop
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_cuda_base
+          filters:
+            branches:
+              only: develop
+      - build-hysds_verdi_pge_base:
+          puppet_branch: docker
+          build_tag: ""
+          final_tag: develop
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+            - build-hysds_cuda_base
+            - build-hysds_cuda_dev
+          filters:
+            branches:
+              only: develop
+      - build-hysds_mozart:
+          puppet_branch: docker
+          build_tag: ""
+          final_tag: develop
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+          filters:
+            branches:
+              only: develop
+      - build-hysds_metrics:
+          puppet_branch: docker
+          build_tag: ""
+          final_tag: develop
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+          filters:
+            branches:
+              only: develop
+      - build-hysds_grq:
+          puppet_branch: docker
+          build_tag: ""
+          final_tag: develop
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+          filters:
+            branches:
+              only: develop
+      - build-hysds_cont_int:
+          puppet_branch: docker
+          build_tag: ""
+          final_tag: develop
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+          filters:
+            branches:
+              only: develop
+      - deploy:
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_verdi_pge_base
+          filters:
+            branches:
+              only: develop
+  build-deploy-release:
+    jobs:
+      - build-redis:
+          branch: master
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
             - docker-hub-creds
             - git-oauth-token
+          requires:
+            - build-hysds_base
           filters:
             tags:
               only: /^v4.*/
@@ -659,6 +894,7 @@ workflows:
             branches:
               ignore: /.*/
       - build-rabbitmq:
+          branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
@@ -670,6 +906,7 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_base:
+          branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
@@ -681,6 +918,7 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_dev:
+          branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
@@ -694,17 +932,21 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_cuda_base:
+          branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
             - docker-hub-creds
             - git-oauth-token
+          requires:
+            - build-hysds_base
           filters:
             tags:
               only: /^v4.*/
             branches:
               ignore: /.*/
       - build-hysds_cuda_dev:
+          branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
@@ -718,8 +960,12 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_verdi_pge_base:
+          puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -734,8 +980,12 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_mozart:
+          puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -748,8 +998,12 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_metrics:
+          puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -762,8 +1016,12 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_grq:
+          puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -776,8 +1034,12 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_cont_int:
+          puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -790,6 +1052,8 @@ workflows:
             branches:
               ignore: /.*/
       - deploy:
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
           context:
             - docker-hub-creds
             - git-oauth-token
