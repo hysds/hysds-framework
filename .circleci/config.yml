@@ -694,14 +694,189 @@ workflows:
           filters:
             branches:
               only: develop
-  build-deploy:
+  build-deploy-develop:
     jobs:
       - build-redis:
+          branch: master
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+          filters:
+            branches:
+              only: develop
+      - build-elasticsearch:
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            branches:
+              only: develop
+      - build-rabbitmq:
+          branch: develop
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            branches:
+              only: develop
+      - build-hysds_base:
+          branch: develop
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            branches:
+              only: develop
+      - build-hysds_dev:
+          branch: develop
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+          filters:
+            branches:
+              only: develop
+      - build-hysds_cuda_base:
+          branch: develop
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+          filters:
+            branches:
+              only: develop
+      - build-hysds_cuda_dev:
+          branch: develop
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_cuda_base
+          filters:
+            branches:
+              only: develop
+      - build-hysds_verdi_pge_base:
+          puppet_branch: docker
+          build_tag: ""
+          final_tag: develop
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+            - build-hysds_cuda_base
+            - build-hysds_cuda_dev
+          filters:
+            branches:
+              only: develop
+      - build-hysds_mozart:
+          puppet_branch: docker
+          build_tag: ""
+          final_tag: develop
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+          filters:
+            branches:
+              only: develop
+      - build-hysds_metrics:
+          puppet_branch: docker
+          build_tag: ""
+          final_tag: develop
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+          filters:
+            branches:
+              only: develop
+      - build-hysds_grq:
+          puppet_branch: docker
+          build_tag: ""
+          final_tag: develop
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+          filters:
+            branches:
+              only: develop
+      - build-hysds_cont_int:
+          puppet_branch: docker
+          build_tag: ""
+          final_tag: develop
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base
+            - build-hysds_dev
+          filters:
+            branches:
+              only: develop
+      - deploy:
+          build_tag: ""
+          final_tag: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_verdi_pge_base
+          filters:
+            branches:
+              only: develop
+  build-deploy-release:
+    jobs:
+      - build-redis:
+          branch: master
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
             - docker-hub-creds
             - git-oauth-token
+          requires:
+            - build-hysds_base
           filters:
             tags:
               only: /^v4.*/
@@ -719,6 +894,7 @@ workflows:
             branches:
               ignore: /.*/
       - build-rabbitmq:
+          branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
@@ -730,6 +906,7 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_base:
+          branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
@@ -741,6 +918,7 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_dev:
+          branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
@@ -754,17 +932,21 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_cuda_base:
+          branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
             - docker-hub-creds
             - git-oauth-token
+          requires:
+            - build-hysds_base
           filters:
             tags:
               only: /^v4.*/
             branches:
               ignore: /.*/
       - build-hysds_cuda_dev:
+          branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
@@ -778,8 +960,12 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_verdi_pge_base:
+          puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -794,8 +980,12 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_mozart:
+          puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -808,8 +998,12 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_metrics:
+          puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -822,8 +1016,12 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_grq:
+          puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -836,8 +1034,12 @@ workflows:
             branches:
               ignore: /.*/
       - build-hysds_cont_int:
+          puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -862,175 +1064,3 @@ workflows:
               only: /^v4.*/
             branches:
               ignore: /.*/
-  rockylinux:
-    jobs:
-      - build-redis:
-          branch: rockylinux
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base
-          filters:
-            branches:
-              only: rockylinux
-      - build-elasticsearch:
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          filters:
-            branches:
-              only: rockylinux
-      - build-rabbitmq:
-          branch: rockylinux
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_base:
-          branch: rockylinux
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_dev:
-          branch: rockylinux
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_cuda_base:
-          branch: rockylinux
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_cuda_dev:
-          branch: rockylinux
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_cuda_base
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_verdi_pge_base:
-          puppet_branch: rockylinux
-          build_tag: ""
-          final_tag: rockylinux
-          framework_branch: rockylinux
-          hysds_release: develop
-          base_branch: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base
-            - build-hysds_dev
-            - build-hysds_cuda_base
-            - build-hysds_cuda_dev
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_mozart:
-          puppet_branch: rockylinux
-          build_tag: ""
-          final_tag: rockylinux
-          framework_branch: rockylinux
-          hysds_release: develop
-          base_branch: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base
-            - build-hysds_dev
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_metrics:
-          puppet_branch: rockylinux
-          build_tag: ""
-          final_tag: rockylinux
-          framework_branch: rockylinux
-          hysds_release: develop
-          base_branch: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base
-            - build-hysds_dev
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_grq:
-          puppet_branch: rockylinux
-          build_tag: ""
-          final_tag: rockylinux
-          framework_branch: rockylinux
-          hysds_release: develop
-          base_branch: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base
-            - build-hysds_dev
-          filters:
-            branches:
-              only: rockylinux
-      - build-hysds_cont_int:
-          puppet_branch: rockylinux
-          build_tag: ""
-          final_tag: rockylinux
-          framework_branch: rockylinux
-          hysds_release: develop
-          base_branch: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base
-            - build-hysds_dev
-          filters:
-            branches:
-              only: rockylinux
-      - deploy:
-          build_tag: ""
-          final_tag: rockylinux
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_verdi_pge_base
-          filters:
-            branches:
-              only: rockylinux
