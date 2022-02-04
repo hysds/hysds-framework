@@ -669,6 +669,70 @@ jobs:
             tag=$(gh release list -R ${org}/${repo} -L 1 | awk 'BEGIN{FS=":"}{print $1}')
             file=hysds-verdi-<< parameters.final_tag >>.tar.gz
             gh release upload ${tag} ${file} -R ${org}/${repo} --clobber
+  export-support-assets:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Load support assets and save to files
+          command: |
+            mkdir -p assets
+            cd assets
+            docker pull registry:2
+            docker save registry:2 > docker-registry-2.tar
+            pigz -f docker-registry-2.tar
+            docker pull hysds/verdi:develop-es1
+            docker save hysds/verdi:develop-es1 > hysds-verdi-develop-es1.tar
+            pigz -f hysds-verdi-develop-es1.tar
+            docker pull hysds/logstash:7.1.1
+            docker tag hysds/logstash:7.1.1 logstash:7.1.1
+            docker save logstash:7.1.1 > logstash-7.1.1.tar
+            pigz -f logstash-7.1.1.tar
+            docker pull hysds/logstash:7.9.3
+            docker tag hysds/logstash:7.9.3 logstash:7.9.3
+            docker save logstash:7.9.3 > logstash-7.9.3.tar
+            pigz -f logstash-7.9.3.tar
+      - persist_to_workspace:
+          root: assets
+          paths:
+            - "*"
+  deploy-support-assets:
+    docker:
+      - image: alpine:latest
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    parameters:
+      org:
+        type: string
+        default: $CIRCLE_PROJECT_USERNAME
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache curl file
+            echo "@community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+            apk add --no-cache github-cli@community
+      - attach_workspace:
+          at: assets
+      - run:
+          name: Deploy
+          command: |
+            cd assets
+            org=<< parameters.org >>
+            repo=hysds-dockerfiles
+            tag=$(gh release list -R ${org}/${repo} -L 1 | awk 'BEGIN{FS=":"}{print $1}')
+            for file in *; do
+              gh release upload ${tag} ${file} -R ${org}/${repo} --clobber
+            done
 
 workflows:
   version: 2
@@ -1059,6 +1123,26 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_verdi_pge_base
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - export-support-assets:
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - deploy-support-assets:
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - export-support-assets
           filters:
             tags:
               only: /^v4.*/
