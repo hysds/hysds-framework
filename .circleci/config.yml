@@ -187,7 +187,6 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            docker pull docker.io/rockylinux:8
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
             docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
@@ -1028,8 +1027,8 @@ workflows:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
-          framework_branch: develop
-          hysds_release: develop
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
           base_branch: develop
           context:
             - docker-hub-creds
@@ -1048,8 +1047,8 @@ workflows:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
-          framework_branch: develop
-          hysds_release: develop
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
           base_branch: develop
           context:
             - docker-hub-creds
@@ -1066,8 +1065,8 @@ workflows:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
-          framework_branch: develop
-          hysds_release: develop
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
           base_branch: develop
           context:
             - docker-hub-creds
@@ -1084,8 +1083,8 @@ workflows:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
-          framework_branch: develop
-          hysds_release: develop
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
           base_branch: develop
           context:
             - docker-hub-creds
@@ -1102,8 +1101,8 @@ workflows:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
-          framework_branch: develop
-          hysds_release: develop
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
           base_branch: develop
           context:
             - docker-hub-creds
