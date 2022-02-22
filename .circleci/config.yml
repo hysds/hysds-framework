@@ -362,7 +362,7 @@ jobs:
       - install_deps
       - prep_env
       - run:
-          name: Build hysds/verdi, hysds/pge-base and hysds/cuda-pge-base
+          name: Build hysds/pge-base and hysds/verdi
           command: |
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
@@ -372,8 +372,6 @@ jobs:
             fi
             docker pull hysds/base:<< parameters.final_tag >>
             docker pull hysds/dev:<< parameters.final_tag >>
-            docker pull hysds/cuda-base:<< parameters.final_tag >>
-            docker pull hysds/cuda-dev:<< parameters.final_tag >>
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
             ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
@@ -385,13 +383,6 @@ jobs:
                 docker push hysds/${i}:${build_tag}
               fi
               docker push hysds/${i}:<< parameters.final_tag >>
-              if [ "$i" = "pge-base" ]; then
-                docker tag hysds/cuda-${i}:${build_tag} hysds/cuda-${i}:<< parameters.final_tag >>
-                if [ "$push_build_tag" -eq 1 ]; then
-                  docker push hysds/cuda-${i}:${build_tag}
-                fi
-                docker push hysds/cuda-${i}:<< parameters.final_tag >>
-              fi
             done
             cd images
             if [ "$push_build_tag" -eq 1 ]; then
@@ -404,6 +395,60 @@ jobs:
           root: images
           paths:
             - "*"
+  build-hysds_cuda_pge_base:
+    docker:
+      - image: docker:20.10-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    #resource_class: large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      puppet_branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - install_deps
+      - prep_env
+      - run:
+          name: Build hysds/cuda-pge-base
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            docker pull hysds/cuda-base:<< parameters.final_tag >>
+            docker pull hysds/cuda-dev:<< parameters.final_tag >>
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
+            cd puppet-verdi
+            ./build_docker_cuda.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
+            cd ..
+            rm -rf puppet-verdi
+            docker tag hysds/cuda-pge-base:${build_tag} hysds/cuda-pge-base:<< parameters.final_tag >>
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker push hysds/cuda-pge-base:${build_tag}
+            fi
+            docker push hysds/cuda-pge-base:<< parameters.final_tag >>
   build-hysds_mozart:
     docker:
       - image: docker:20.10-git
@@ -850,6 +895,20 @@ workflows:
           requires:
             - build-hysds_base
             - build-hysds_dev
+          filters:
+            branches:
+              only: develop
+      - build-hysds_cuda_pge_base:
+          puppet_branch: docker
+          build_tag: ""
+          final_tag: develop
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
             - build-hysds_cuda_base
             - build-hysds_cuda_dev
           filters:
@@ -1036,6 +1095,22 @@ workflows:
           requires:
             - build-hysds_base
             - build-hysds_dev
+          filters:
+            tags:
+              only: /^v4.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_cuda_pge_base:
+          puppet_branch: docker
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
             - build-hysds_cuda_base
             - build-hysds_cuda_dev
           filters:
