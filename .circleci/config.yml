@@ -954,7 +954,7 @@ workflows:
           final_tag: develop-centos7
           framework_branch: develop
           hysds_release: develop
-          base_branch: NSDS-1951
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -982,7 +982,7 @@ workflows:
               only: develop
       - build-hysds_cuda_pge_base:
           name: build-hysds_cuda_pge_base-centos7
-          puppet_branch: develop-centos7
+          puppet_branch: docker-centos7
           build_tag: ""
           final_tag: develop-centos7
           framework_branch: develop
@@ -1015,7 +1015,7 @@ workflows:
               only: develop
       - build-hysds_mozart:
           name: build-hysds_mozart-centos7
-          puppet_branch: develop-centos7
+          puppet_branch: docker-centos7
           build_tag: ""
           final_tag: develop-centos7
           framework_branch: develop
@@ -1048,7 +1048,7 @@ workflows:
               only: develop
       - build-hysds_metrics:
           name: build-hysds_metrics-centos7
-          puppet_branch: develop-centos7
+          puppet_branch: docker-centos7
           build_tag: ""
           final_tag: develop-centos7
           framework_branch: develop
@@ -1081,7 +1081,7 @@ workflows:
               only: develop
       - build-hysds_grq:
           name: build-hysds_grq-centos7
-          puppet_branch: develop-centos7
+          puppet_branch: docker-centos7
           build_tag: ""
           final_tag: develop-centos7
           framework_branch: develop
@@ -1114,7 +1114,7 @@ workflows:
               only: develop
       - build-hysds_cont_int:
           name: build-hysds_cont_int-centos7
-          puppet_branch: develop-centos7
+          puppet_branch: docker-centos7
           build_tag: ""
           final_tag: develop-centos7
           framework_branch: develop
@@ -1445,7 +1445,7 @@ workflows:
             - build-hysds_base
           filters:
             branches:
-              only: develop
+              only: NSDS-1951
       - build-hysds_cuda_base:
           name: build-hysds_cuda_base-centos7
           branch: NSDS-1951
