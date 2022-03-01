@@ -7,8 +7,7 @@ commands:
           command: |
             apk add --no-cache \
               python3-dev py3-pip bash pigz build-base libffi-dev openssl-dev gcc musl-dev cargo
-            pip install \
-              docker-compose awscli
+
   prep_env:
     steps:
       - run:
@@ -846,6 +845,17 @@ workflows:
           filters:
             branches:
               only: develop
+      - build-hysds_base:
+          name: build-hysds_base-centos7
+          branch: develop-centos7
+          build_tag: ""
+          final_tag: develop-centos7
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            branches:
+              only: develop
       - build-hysds_dev:
           branch: develop
           build_tag: ""
@@ -855,6 +865,19 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base
+          filters:
+            branches:
+              only: develop
+      - build-hysds_dev:
+          name: build-hysds_dev-centos7
+          branch: develop-centos7
+          build_tag: ""
+          final_tag: develop-centos7
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-centos7
           filters:
             branches:
               only: develop
@@ -870,6 +893,19 @@ workflows:
           filters:
             branches:
               only: develop
+      - build-hysds_cuda_base:
+          name: build-hysds_cuda_base-centos7
+          branch: develop-centos7
+          build_tag: ""
+          final_tag: develop-centos7
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-centos7
+          filters:
+            branches:
+              only: develop
       - build-hysds_cuda_dev:
           branch: develop
           build_tag: ""
@@ -879,6 +915,19 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_cuda_base
+          filters:
+            branches:
+              only: develop
+      - build-hysds_cuda_dev:
+          name: build-hysds_cuda_dev-centos7
+          branch: develop-centos7
+          build_tag: ""
+          final_tag: develop-centos7
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_cuda_base-centos7
           filters:
             branches:
               only: develop
@@ -898,6 +947,23 @@ workflows:
           filters:
             branches:
               only: develop
+      - build-hysds_verdi_pge_base:
+          name: build-hysds_verdi_pge_base-centos7
+          puppet_branch: docker-centos7
+          build_tag: ""
+          final_tag: develop-centos7
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: NSDS-1951
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-centos7
+            - build-hysds_dev-centos7
+          filters:
+            branches:
+              only: develop
       - build-hysds_cuda_pge_base:
           puppet_branch: docker
           build_tag: ""
@@ -911,6 +977,23 @@ workflows:
           requires:
             - build-hysds_cuda_base
             - build-hysds_cuda_dev
+          filters:
+            branches:
+              only: develop
+      - build-hysds_cuda_pge_base:
+          name: build-hysds_cuda_pge_base-centos7
+          puppet_branch: develop-centos7
+          build_tag: ""
+          final_tag: develop-centos7
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop-centos7
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_cuda_base-centos7
+            - build-hysds_cuda_dev-centos7
           filters:
             branches:
               only: develop
@@ -930,6 +1013,23 @@ workflows:
           filters:
             branches:
               only: develop
+      - build-hysds_mozart:
+          name: build-hysds_mozart-centos7
+          puppet_branch: develop-centos7
+          build_tag: ""
+          final_tag: develop-centos7
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop-centos7
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-centos7
+            - build-hysds_dev-centos7
+          filters:
+            branches:
+              only: develop
       - build-hysds_metrics:
           puppet_branch: docker
           build_tag: ""
@@ -943,6 +1043,23 @@ workflows:
           requires:
             - build-hysds_base
             - build-hysds_dev
+          filters:
+            branches:
+              only: develop
+      - build-hysds_metrics:
+          name: build-hysds_metrics-centos7
+          puppet_branch: develop-centos7
+          build_tag: ""
+          final_tag: develop-centos7
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop-centos7
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-centos7
+            - build-hysds_dev-centos7
           filters:
             branches:
               only: develop
@@ -962,6 +1079,23 @@ workflows:
           filters:
             branches:
               only: develop
+      - build-hysds_grq:
+          name: build-hysds_grq-centos7
+          puppet_branch: develop-centos7
+          build_tag: ""
+          final_tag: develop-centos7
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop-centos7
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-centos7
+            - build-hysds_dev-centos7
+          filters:
+            branches:
+              only: develop
       - build-hysds_cont_int:
           puppet_branch: docker
           build_tag: ""
@@ -978,6 +1112,23 @@ workflows:
           filters:
             branches:
               only: develop
+      - build-hysds_cont_int:
+          name: build-hysds_cont_int-centos7
+          puppet_branch: develop-centos7
+          build_tag: ""
+          final_tag: develop-centos7
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop-centos7
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-centos7
+            - build-hysds_dev-centos7
+          filters:
+            branches:
+              only: develop
       - deploy:
           build_tag: ""
           final_tag: develop
@@ -986,6 +1137,18 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_verdi_pge_base
+          filters:
+            branches:
+              only: develop
+      - deploy:
+          name: deploy-centos7
+          build_tag: ""
+          final_tag: develop-centos7
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_verdi_pge_base-centos7
           filters:
             branches:
               only: develop
