@@ -1703,7 +1703,7 @@ workflows:
             branches:
               only: NSDS-1951
       - build-hysds_cuda_pge_base:
-          puppet_branch: develop
+          puppet_branch: docker
           build_tag: ""
           final_tag: develop
           framework_branch: develop
