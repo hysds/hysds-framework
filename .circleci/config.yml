@@ -1655,7 +1655,7 @@ workflows:
             - build-hysds_cuda_base
           filters:
             branches:
-              only: develop
+              only: NSDS-1951
       - build-hysds_cuda_dev:
           name: build-hysds_cuda_dev-centos7
           branch: NSDS-1951
