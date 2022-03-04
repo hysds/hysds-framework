@@ -954,7 +954,7 @@ workflows:
           final_tag: develop-centos7
           framework_branch: develop
           hysds_release: develop
-          base_branch: develop
+          base_branch: develop-centos7
           context:
             - docker-hub-creds
             - git-oauth-token
