@@ -1325,7 +1325,7 @@ workflows:
           name: build-hysds_verdi_pge_base-centos7
           puppet_branch: docker-centos7
           build_tag: ${CIRCLE_TAG}-centos7
-          final_tag: latest
+          final_tag: latest-centos7
           framework_branch: $CIRCLE_TAG
           hysds_release: $CIRCLE_TAG
           base_branch: develop-centos7
@@ -1435,7 +1435,7 @@ workflows:
           name: build-hysds_metrics-centos7
           puppet_branch: docker-centos7
           build_tag: ${CIRCLE_TAG}-centos7
-          final_tag: latest
+          final_tag: latest-centos7
           framework_branch: $CIRCLE_TAG
           hysds_release: $CIRCLE_TAG
           base_branch: develop-centos7
