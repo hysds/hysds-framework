@@ -13,9 +13,22 @@ from builtins import open
 from future import standard_library
 
 standard_library.install_aliases()
-import requests, argparse
+import argparse
+import requests
+import backoff
 
 
+def backoff_max_value():
+    """Return max value for backoff."""
+    return 32
+
+
+def backoff_max_tries():
+    """Return max tries for backoff."""
+    return 5
+
+
+@backoff.on_exception(backoff.expo, Exception, max_tries=backoff_max_tries, max_value=backoff_max_value)
 def handle_redirects(url, path, token=None):
     """Download asset handling redirects to S3."""
 
@@ -23,6 +36,8 @@ def handle_redirects(url, path, token=None):
     if token:
         headers["Authorization"] = "token %s" % token
     r = requests.get(url, headers=headers, stream=True, verify=False)
+    if not (200 <= r.status_code < 400):
+        raise requests.exceptions.HTTPError(r.text)
     with open(path, "wb") as f:
         for chunk in r.iter_content(chunk_size=1024):
             if chunk:  # filter out keep-alive new chunks
