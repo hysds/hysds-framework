@@ -37,7 +37,7 @@ def handle_redirects(url, path, token=None):
         headers["Authorization"] = "token %s" % token
     r = requests.get(url, headers=headers, stream=True, verify=False)
     if not (200 <= r.status_code < 400):
-        raise requests.exceptions.HTTPError(r.text)
+        raise requests.exceptions.HTTPError(r.status_code, r.text)
     with open(path, "wb") as f:
         for chunk in r.iter_content(chunk_size=1024):
             if chunk:  # filter out keep-alive new chunks
