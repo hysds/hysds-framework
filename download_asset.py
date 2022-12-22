@@ -20,15 +20,15 @@ import backoff
 
 def backoff_max_value():
     """Return max value for backoff."""
-    return 32
+    return 64
 
 
-def backoff_max_tries():
-    """Return max tries for backoff."""
-    return 5
+def backoff_max_time():
+    """Total time it will retry the function"""
+    return 600
 
 
-@backoff.on_exception(backoff.expo, Exception, max_tries=backoff_max_tries, max_value=backoff_max_value)
+@backoff.on_exception(backoff.expo, Exception, max_tries=backoff_max_time, max_value=backoff_max_value)
 def handle_redirects(url, path, token=None):
     """Download asset handling redirects to S3."""
 
