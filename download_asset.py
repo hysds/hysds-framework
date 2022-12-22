@@ -28,7 +28,7 @@ def backoff_max_time():
     return 600
 
 
-@backoff.on_exception(backoff.expo, Exception, max_tries=backoff_max_time, max_value=backoff_max_value)
+@backoff.on_exception(backoff.expo, Exception, max_time=backoff_max_time, max_value=backoff_max_value)
 def handle_redirects(url, path, token=None):
     """Download asset handling redirects to S3."""
 
