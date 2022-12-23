@@ -216,6 +216,9 @@ source $INSTALL_DIR/bin/activate
 pip install -U pip
 pip install -U setuptools
 
+# Need to install backoff due to download_assets needing it
+pip install backoff
+
 
 # force install supervisor
 if [ ! -e "$INSTALL_DIR/bin/supervisord" ]; then
