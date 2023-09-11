@@ -363,6 +363,7 @@ jobs:
       - run:
           name: Build hysds/pge-base and hysds/verdi
           command: |
+            set -ex
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
@@ -390,6 +391,7 @@ jobs:
             fi
             docker save hysds/verdi:<< parameters.final_tag >> > hysds-verdi-<< parameters.final_tag >>.tar
             pigz -f hysds-verdi-<< parameters.final_tag >>.tar
+            ls -al
       - persist_to_workspace:
           root: images
           paths:
@@ -693,6 +695,8 @@ jobs:
       - run:
           name: Deploy
           command: |
+            set -ex
+            ls -al
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
