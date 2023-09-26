@@ -736,17 +736,25 @@ jobs:
             docker pull registry:2
             docker save registry:2 > docker-registry-2.tar
             pigz -f docker-registry-2.tar
+
             docker pull hysds/verdi:develop-es1
             docker save hysds/verdi:develop-es1 > hysds-verdi-develop-es1.tar
             pigz -f hysds-verdi-develop-es1.tar
+
             docker pull hysds/logstash:7.1.1
             docker tag hysds/logstash:7.1.1 logstash:7.1.1
             docker save logstash:7.1.1 > logstash-7.1.1.tar
             pigz -f logstash-7.1.1.tar
+
             docker pull hysds/logstash:7.9.3
             docker tag hysds/logstash:7.9.3 logstash:7.9.3
             docker save logstash:7.9.3 > logstash-7.9.3.tar
             pigz -f logstash-7.9.3.tar
+
+            docker pull opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.3
+            docker tag opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.3 logstash-oss:7.16.3
+            docker save logstash-oss:7.16.3 > logstash-oss-7.16.3.tar
+            pigz -f logstash-oss-7.16.3.tar
       - persist_to_workspace:
           root: assets
           paths:
