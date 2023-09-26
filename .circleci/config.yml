@@ -696,7 +696,6 @@ jobs:
           name: Deploy
           command: |
             set -ex
-            ls -al
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
@@ -704,6 +703,7 @@ jobs:
               export push_build_tag=0
             fi
             cd images
+            ls -al
             org=<< parameters.org >>
             repo=<< parameters.repo >>
             echo $GIT_OAUTH_TOKEN | gh auth login --with-token
