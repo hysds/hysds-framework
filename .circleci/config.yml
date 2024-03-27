@@ -848,19 +848,19 @@ workflows:
             branches:
               only: develop
       - build-hysds_base:
-          branch: develop
+          branch: HC-522
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-522
           context:
             - docker-hub-creds
             - git-oauth-token
           filters:
             branches:
-              only: develop
+              only: HC-522
       - build-hysds_dev:
-          branch: develop
+          branch: HC-522
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-522
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -868,11 +868,11 @@ workflows:
             - build-hysds_base
           filters:
             branches:
-              only: develop
+              only: HC-522
       - build-hysds_cuda_base:
-          branch: develop
+          branch: HC-522
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-522
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -880,11 +880,11 @@ workflows:
             - build-hysds_base
           filters:
             branches:
-              only: develop
+              only: HC-522
       - build-hysds_cuda_dev:
-          branch: develop
+          branch: HC-522
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-522
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -892,14 +892,14 @@ workflows:
             - build-hysds_cuda_base
           filters:
             branches:
-              only: develop
+              only: HC-522
       - build-hysds_verdi_pge_base:
           puppet_branch: docker
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
-          hysds_release: develop
-          base_branch: develop
+          final_tag: HC-522
+          framework_branch: HC-522
+          hysds_release: HC-522
+          base_branch: HC-522
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -908,14 +908,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-522
       - build-hysds_cuda_pge_base:
-          puppet_branch: docker
+          puppet_branch: HC-522
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
-          hysds_release: develop
-          base_branch: develop
+          final_tag: HC-522
+          framework_branch: HC-522
+          hysds_release: HC-522
+          base_branch: HC-522
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -924,14 +924,14 @@ workflows:
             - build-hysds_cuda_dev
           filters:
             branches:
-              only: develop
+              only: HC-522
       - build-hysds_mozart:
-          puppet_branch: docker
+          puppet_branch: HC-522
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
-          hysds_release: develop
-          base_branch: develop
+          final_tag: HC-522
+          framework_branch: HC-522
+          hysds_release: HC-522
+          base_branch: HC-522
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -940,14 +940,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-522
       - build-hysds_metrics:
-          puppet_branch: docker
+          puppet_branch: HC-522
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
-          hysds_release: develop
-          base_branch: develop
+          final_tag: HC-522
+          framework_branch: HC-522
+          hysds_release: HC-522
+          base_branch: HC-522
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -956,14 +956,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-522
       - build-hysds_grq:
-          puppet_branch: docker
+          puppet_branch: HC-522
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
-          hysds_release: develop
-          base_branch: develop
+          final_tag: HC-522
+          framework_branch: HC-522
+          hysds_release: HC-522
+          base_branch: HC-522
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -972,14 +972,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-522
       - build-hysds_cont_int:
-          puppet_branch: docker
+          puppet_branch: HC-522
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
-          hysds_release: develop
-          base_branch: develop
+          final_tag: HC-522
+          framework_branch: HC-522
+          hysds_release: HC-522
+          base_branch: HC-522
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -988,10 +988,10 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-522
       - deploy:
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-522
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -999,7 +999,7 @@ workflows:
             - build-hysds_verdi_pge_base
           filters:
             branches:
-              only: develop
+              only: HC-522
   build-deploy-release:
     jobs:
       - build-redis:
@@ -1201,36 +1201,36 @@ workflows:
               only: /^v5.*/
             branches:
               ignore: /.*/
-      - deploy:
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_verdi_pge_base
-          filters:
-            tags:
-              only: /^v5.*/
-            branches:
-              ignore: /.*/
-      - export-support-assets:
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          filters:
-            tags:
-              only: /^v5.*/
-            branches:
-              ignore: /.*/
-      - deploy-support-assets:
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - export-support-assets
-          filters:
-            tags:
-              only: /^v5.*/
-            branches:
-              ignore: /.*/
+      #- deploy:
+      #    build_tag: $CIRCLE_TAG
+      #    final_tag: latest
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - build-hysds_verdi_pge_base
+      #    filters:
+      #      tags:
+      #        only: /^v5.*/
+      #      branches:
+      #        ignore: /.*/
+      #- export-support-assets:
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    filters:
+      #      tags:
+      #        only: /^v5.*/
+      #      branches:
+      #        ignore: /.*/
+      #- deploy-support-assets:
+      #    context:
+      #      - docker-hub-creds
+      #      - git-oauth-token
+      #    requires:
+      #      - export-support-assets
+      #    filters:
+      #      tags:
+      #        only: /^v5.*/
+      #      branches:
+      #        ignore: /.*/
