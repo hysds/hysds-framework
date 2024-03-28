@@ -894,7 +894,7 @@ workflows:
             branches:
               only: HC-522
       - build-hysds_verdi_pge_base:
-          puppet_branch: docker
+          puppet_branch: HC-522
           build_tag: ""
           final_tag: HC-522
           framework_branch: HC-522
