@@ -897,7 +897,7 @@ workflows:
           puppet_branch: HC-522
           build_tag: ""
           final_tag: HC-522
-          framework_branch: HC-522
+          framework_branch: develop
           hysds_release: HC-522
           base_branch: HC-522
           context:
@@ -913,7 +913,7 @@ workflows:
           puppet_branch: HC-522
           build_tag: ""
           final_tag: HC-522
-          framework_branch: HC-522
+          framework_branch: develop
           hysds_release: HC-522
           base_branch: HC-522
           context:
@@ -929,7 +929,7 @@ workflows:
           puppet_branch: HC-522
           build_tag: ""
           final_tag: HC-522
-          framework_branch: HC-522
+          framework_branch: develop
           hysds_release: HC-522
           base_branch: HC-522
           context:
@@ -945,7 +945,7 @@ workflows:
           puppet_branch: HC-522
           build_tag: ""
           final_tag: HC-522
-          framework_branch: HC-522
+          framework_branch: develop
           hysds_release: HC-522
           base_branch: HC-522
           context:
@@ -961,7 +961,7 @@ workflows:
           puppet_branch: HC-522
           build_tag: ""
           final_tag: HC-522
-          framework_branch: HC-522
+          framework_branch: develop
           hysds_release: HC-522
           base_branch: HC-522
           context:
@@ -977,7 +977,7 @@ workflows:
           puppet_branch: HC-522
           build_tag: ""
           final_tag: HC-522
-          framework_branch: HC-522
+          framework_branch: develop
           hysds_release: HC-522
           base_branch: HC-522
           context:
