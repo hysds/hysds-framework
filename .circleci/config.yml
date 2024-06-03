@@ -897,7 +897,7 @@ workflows:
           puppet_branch: HC-522
           build_tag: ""
           final_tag: HC-522
-          framework_branch: develop
+          framework_branch: HC-522
           hysds_release: develop
           base_branch: HC-522
           context:
