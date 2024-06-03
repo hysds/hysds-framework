@@ -214,7 +214,8 @@ source $INSTALL_DIR/bin/activate
 
 # install latest pip and setuptools
 pip install -U pip
-pip install -U setuptools
+# Pin until https://github.com/pypa/setuptools/issues/4399 is fixed
+pip install "setuptools<70.0"
 
 # Need to install backoff due to download_assets needing it
 pip install backoff
