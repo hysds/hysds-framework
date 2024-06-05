@@ -203,7 +203,7 @@ fi
 
 # create virtualenv if not found
 if [ ! -e "$INSTALL_DIR/bin/activate" ]; then
-  virtualenv --system-site-packages $INSTALL_DIR
+  virtualenv --system-site-packages $INSTALL_DIR --no-setuptools
   echo "Created virtualenv at $INSTALL_DIR."
 fi
 
@@ -216,9 +216,7 @@ source $INSTALL_DIR/bin/activate
 echo "*****pip list before*****"
 pip list
 echo "*****pip list before*****"
-pip install "setuptools<70.0"
-# install latest pip and setuptools
-pip install -U pip
+pip install -U pip 'setuptools<70.0'
 echo "*****pip list after*****"
 pip list
 echo "*****pip list after*****"
