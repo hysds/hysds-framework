@@ -212,10 +212,16 @@ fi
 source $INSTALL_DIR/bin/activate
 
 
+# Pin until https://github.com/pypa/setuptools/issues/4399 is fixed
+echo "*****pip list before*****"
+pip list
+echo "*****pip list before*****"
+pip install "setuptools<70.0"
 # install latest pip and setuptools
 pip install -U pip
-# Pin until https://github.com/pypa/setuptools/issues/4399 is fixed
-pip install "setuptools<70.0"
+echo "*****pip list after*****"
+pip list
+echo "*****pip list after*****"
 
 # Need to install backoff due to download_assets needing it
 pip install backoff
