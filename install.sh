@@ -213,13 +213,7 @@ source $INSTALL_DIR/bin/activate
 
 
 # Pin until https://github.com/pypa/setuptools/issues/4399 is fixed
-echo "*****pip list before*****"
-pip list
-echo "*****pip list before*****"
 pip install -U pip 'setuptools<70.0'
-echo "*****pip list after*****"
-pip list
-echo "*****pip list after*****"
 
 # Need to install backoff due to download_assets needing it
 pip install backoff
@@ -227,7 +221,7 @@ pip install backoff
 
 # force install supervisor
 if [ ! -e "$INSTALL_DIR/bin/supervisord" ]; then
-  pip install --ignore-installed supervisor
+  pip install supervisor
 fi
 
 
