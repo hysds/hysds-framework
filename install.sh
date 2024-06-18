@@ -213,6 +213,7 @@ source $INSTALL_DIR/bin/activate
 
 
 # Pin until https://github.com/pypa/setuptools/issues/4399 is fixed
+# Related PR: https://github.com/pypa/setuptools/pull/4422
 pip install -U pip 'setuptools<70.0'
 
 # Need to install backoff due to download_assets needing it
