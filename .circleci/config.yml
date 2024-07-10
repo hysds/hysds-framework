@@ -894,7 +894,7 @@ workflows:
             branches:
               only: develop
       - build-hysds_verdi_pge_base:
-          puppet_branch: develop
+          puppet_branch: docker
           build_tag: ""
           final_tag: develop
           framework_branch: develop
@@ -910,7 +910,7 @@ workflows:
             branches:
               only: develop
       - build-hysds_cuda_pge_base:
-          puppet_branch: develop
+          puppet_branch: docker
           build_tag: ""
           final_tag: develop
           framework_branch: develop
@@ -926,7 +926,7 @@ workflows:
             branches:
               only: develop
       - build-hysds_mozart:
-          puppet_branch: develop
+          puppet_branch: docker
           build_tag: ""
           final_tag: develop
           framework_branch: develop
@@ -942,7 +942,7 @@ workflows:
             branches:
               only: develop
       - build-hysds_metrics:
-          puppet_branch: develop
+          puppet_branch: docker
           build_tag: ""
           final_tag: develop
           framework_branch: develop
@@ -958,7 +958,7 @@ workflows:
             branches:
               only: develop
       - build-hysds_grq:
-          puppet_branch: develop
+          puppet_branch: docker
           build_tag: ""
           final_tag: develop
           framework_branch: develop
@@ -974,7 +974,7 @@ workflows:
             branches:
               only: develop
       - build-hysds_cont_int:
-          puppet_branch: develop
+          puppet_branch: docker
           build_tag: ""
           final_tag: develop
           framework_branch: develop
