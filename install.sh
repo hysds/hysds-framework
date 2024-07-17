@@ -202,6 +202,8 @@ fi
 
 
 # create virtualenv if not found
+# Specify --no-setuptools option to create virtual environment without installing
+# setuptools in the event we have to pin to a specific version
 if [ ! -e "$INSTALL_DIR/bin/activate" ]; then
   virtualenv --system-site-packages $INSTALL_DIR
   echo "Created virtualenv at $INSTALL_DIR."
@@ -212,17 +214,16 @@ fi
 source $INSTALL_DIR/bin/activate
 
 
-# install latest pip and setuptools
-pip install -U pip
-pip install -U setuptools
+# Combining installs in case we have to pin setuptools in the future
+pip install -U pip setuptools
 
 # Need to install backoff due to download_assets needing it
 pip install backoff
 
 
-# force install supervisor
+# to force re-install of dependencies, use --ignore-installed
 if [ ! -e "$INSTALL_DIR/bin/supervisord" ]; then
-  pip install --ignore-installed supervisor
+  pip install supervisor
 fi
 
 
