@@ -914,7 +914,7 @@ workflows:
           build_tag: ""
           final_tag: HC-522-update
           framework_branch: HC-522-update
-          hysds_release: HC-522-update
+          hysds_release: develop
           base_branch: HC-522-update
           context:
             - docker-hub-creds
