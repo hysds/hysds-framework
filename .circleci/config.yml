@@ -926,12 +926,12 @@ workflows:
             branches:
               only: HC-522-update
       - build-hysds_mozart:
-          puppet_branch: docker
+          puppet_branch: HC-522-update
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-522-update
+          framework_branch: HC-522-update
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-522-update
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -940,14 +940,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-522-update
       - build-hysds_metrics:
-          puppet_branch: docker
+          puppet_branch: HC-522-update
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-522-update
+          framework_branch: HC-522-update
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-522-update
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -956,14 +956,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-522-update
       - build-hysds_grq:
-          puppet_branch: docker
+          puppet_branch: HC-522-update
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-522-update
+          framework_branch: HC-522-update
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-522-update
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -972,14 +972,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-522-update
       - build-hysds_cont_int:
-          puppet_branch: docker
+          puppet_branch: HC-522-update
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-522-update
+          framework_branch: HC-522-update
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-522-update
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -988,7 +988,7 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-522-update
       - deploy:
           build_tag: ""
           final_tag: HC-522-update
