@@ -35,7 +35,7 @@ jobs:
             pytest
   build-redis:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -54,7 +54,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -79,7 +79,7 @@ jobs:
             docker push hysds/redis:<< parameters.final_tag >>
   build-elasticsearch:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -92,7 +92,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -113,7 +113,7 @@ jobs:
             docker push hysds/elasticsearch:<< parameters.final_tag >>
   build-rabbitmq:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -132,7 +132,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -155,7 +155,7 @@ jobs:
             docker push hysds/rabbitmq:<< parameters.final_tag >>
   build-hysds_base:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -174,7 +174,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -197,7 +197,7 @@ jobs:
             docker push hysds/base:<< parameters.final_tag >>
   build-hysds_cuda_base:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -216,7 +216,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -241,7 +241,7 @@ jobs:
             docker push hysds/cuda-base:<< parameters.final_tag >>
   build-hysds_dev:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -260,7 +260,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -285,7 +285,7 @@ jobs:
             docker push hysds/dev:<< parameters.final_tag >>
   build-hysds_cuda_dev:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -304,7 +304,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -329,7 +329,7 @@ jobs:
             docker push hysds/cuda-dev:<< parameters.final_tag >>
   build-hysds_verdi_pge_base:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -357,7 +357,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -398,7 +398,7 @@ jobs:
             - "*"
   build-hysds_cuda_pge_base:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -426,7 +426,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -452,7 +452,7 @@ jobs:
             docker push hysds/cuda-pge-base:<< parameters.final_tag >>
   build-hysds_mozart:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -480,7 +480,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -506,7 +506,7 @@ jobs:
             docker push hysds/mozart:<< parameters.final_tag >>
   build-hysds_metrics:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -534,7 +534,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -560,7 +560,7 @@ jobs:
             docker push hysds/metrics:<< parameters.final_tag >>
   build-hysds_grq:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -588,7 +588,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -614,7 +614,7 @@ jobs:
             docker push hysds/grq:<< parameters.final_tag >>
   build-hysds_cont_int:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -642,7 +642,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
@@ -718,14 +718,14 @@ jobs:
             gh release upload ${tag} ${file} -R ${org}/${repo} --clobber
   export-support-assets:
     docker:
-      - image: docker:20.10.23-git
+      - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.23
+          version: default
       - install_deps
       - prep_env
       - run:
