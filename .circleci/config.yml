@@ -897,9 +897,9 @@ workflows:
           puppet_branch: HC-557
           build_tag: ""
           final_tag: HC-557
-          framework_branch: HC-557
-          hysds_release: HC-557
-          base_branch: HC-557
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -913,9 +913,9 @@ workflows:
           puppet_branch: HC-557
           build_tag: ""
           final_tag: HC-557
-          framework_branch: HC-557
-          hysds_release: HC-557
-          base_branch: HC-557
+          framework_branch: develop
+          hysds_release: develop
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
