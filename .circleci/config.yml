@@ -898,7 +898,7 @@ workflows:
           build_tag: ""
           final_tag: HC-562
           framework_branch: HC-562
-          hysds_release: HC-562
+          hysds_release: develop
           base_branch: HC-562
           context:
             - docker-hub-creds
@@ -914,7 +914,7 @@ workflows:
           build_tag: ""
           final_tag: HC-562
           framework_branch: HC-562
-          hysds_release: HC-562
+          hysds_release: develop
           base_branch: HC-562
           context:
             - docker-hub-creds
