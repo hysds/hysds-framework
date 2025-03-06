@@ -425,8 +425,8 @@ else
     tar xvfz $as_name
   done
   rm -rf *.tar.gz
-  rm hysds_commons*.tar.gz
-  rm pele*.tar.gz
+  rm -rf hysds_commons-*
+  rm -rf pele-*
   
   # export latest prov_es package
   install_repo $OPS prov_es
