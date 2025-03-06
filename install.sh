@@ -442,6 +442,7 @@ else
   
   # export latest hysds_commons package
   #install_repo $OPS hysds_commons
+  echo "***** Patching HySDS Commons with v1.1.2.1"
   install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git v1.1.2.1
   
   
@@ -480,6 +481,7 @@ else
   
   # export latest pele package
   #install_repo $OPS pele
+   echo "***** Patching Pele with v1.2.0.1"
   install_dev_repo $OPS pele https://github.com/hysds/pele.git v1.2.0.1
 
   # export latest hysds_ui package
