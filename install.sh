@@ -448,16 +448,16 @@ else
   
   
   # export latest hysds package
-  #cd $OPS
-  #PACKAGE=hysds
-  #PACKAGE_DIR=${PACKAGE}-!(dockerfiles*|cloud-functions*|ops-bot*)
-  #ln -sf $PACKAGE_DIR $PACKAGE
-  #cd $OPS/$PACKAGE
-  #pip install -e .
-  #if [ "$?" -ne 0 ]; then
-  #  echo "Failed to run 'pip install -e .' for $PACKAGE."
-  #  exit 1
-  #fi
+  cd $OPS
+  PACKAGE=hysds
+  PACKAGE_DIR=${PACKAGE}-!(dockerfiles*|cloud-functions*|ops-bot*)
+  ln -sf $PACKAGE_DIR $PACKAGE
+  cd $OPS/$PACKAGE
+  pip install -e .
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to run 'pip install -e .' for $PACKAGE."
+    exit 1
+  fi
   echo "***** Patching HySDS with v1.3.2.1 *****"
   install_dev_repo $OPS hysds https://github.com/hysds/hysds.git v1.3.2.1
   
