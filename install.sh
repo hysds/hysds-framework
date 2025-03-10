@@ -428,6 +428,7 @@ else
   rm -rf *.tar.gz
   rm -rf hysds_commons-*
   rm -rf pele-*
+  rm -rf hysds-*
   
   # export latest prov_es package
   install_repo $OPS prov_es
@@ -442,21 +443,23 @@ else
   
   # export latest hysds_commons package
   #install_repo $OPS hysds_commons
-  echo "***** Patching HySDS Commons with v1.1.2.1"
+  echo "***** Patching HySDS Commons with v1.1.2.1 *****"
   install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git v1.1.2.1
   
   
   # export latest hysds package
-  cd $OPS
-  PACKAGE=hysds
-  PACKAGE_DIR=${PACKAGE}-!(dockerfiles*|cloud-functions*|ops-bot*)
-  ln -sf $PACKAGE_DIR $PACKAGE
-  cd $OPS/$PACKAGE
-  pip install -e .
-  if [ "$?" -ne 0 ]; then
-    echo "Failed to run 'pip install -e .' for $PACKAGE."
-    exit 1
-  fi
+  #cd $OPS
+  #PACKAGE=hysds
+  #PACKAGE_DIR=${PACKAGE}-!(dockerfiles*|cloud-functions*|ops-bot*)
+  #ln -sf $PACKAGE_DIR $PACKAGE
+  #cd $OPS/$PACKAGE
+  #pip install -e .
+  #if [ "$?" -ne 0 ]; then
+  #  echo "Failed to run 'pip install -e .' for $PACKAGE."
+  #  exit 1
+  #fi
+  echo "***** Patching HySDS with v1.3.2.1 *****"
+  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds.git v1.3.2.1
   
   
   # export latest sciflo package
@@ -481,7 +484,7 @@ else
   
   # export latest pele package
   #install_repo $OPS pele
-   echo "***** Patching Pele with v1.2.0.1"
+   echo "***** Patching Pele with v1.2.0.1 *****"
   install_dev_repo $OPS pele https://github.com/hysds/pele.git v1.2.0.1
 
   # export latest hysds_ui package
