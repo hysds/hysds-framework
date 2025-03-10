@@ -428,8 +428,8 @@ else
   rm -rf *.tar.gz
   rm -rf hysds_commons-*
   rm -rf pele-*
-  rm -rf hysds-*
-  
+  rm -rf hysds-1.3.2
+
   # export latest prov_es package
   install_repo $OPS prov_es
   
