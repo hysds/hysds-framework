@@ -459,7 +459,7 @@ else
   #  exit 1
   #fi
   echo "***** Patching HySDS with v1.3.2.1 *****"
-  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds.git v1.3.2.1
+  install_dev_repo $OPS hysds https://github.com/hysds/hysds.git v1.3.2.1
   
   
   # export latest sciflo package
