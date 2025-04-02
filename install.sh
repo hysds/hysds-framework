@@ -302,10 +302,12 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds_commons package
+  echo "************ Installing hyds_commons with branch develop-dit *************"
   install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git develop-dit
   
   
   # clone hysds package
+  echo "************ Installing hyds with branch develop-dit ************"
   cd $OPS
   PACKAGE=hysds
   clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git develop-dit
@@ -330,6 +332,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone sdscli package
+  echo "************ Installing sdscli with branch HC-539 ************"
   install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git HC-539
   
   
