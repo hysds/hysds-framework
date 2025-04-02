@@ -302,13 +302,13 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds_commons package
-  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git
+  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git develop-dit
   
   
   # clone hysds package
   cd $OPS
   PACKAGE=hysds
-  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
+  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git develop-dit
   cd $OPS/$PACKAGE
   pip install -e .
   if [ "$?" -ne 0 ]; then
@@ -330,7 +330,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone sdscli package
-  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git
+  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git HC-539
   
   
   # clone grq2 package
