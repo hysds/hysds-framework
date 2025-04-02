@@ -899,7 +899,7 @@ workflows:
           final_tag: develop-dit
           framework_branch: develop-dit
           hysds_release: develop
-          base_branch: docker-dit
+          base_branch: develop-dit
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -908,14 +908,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: docker-dit
+              only: develop-dit
       - build-hysds_cuda_pge_base:
           puppet_branch: docker-dit
           build_tag: ""
           final_tag: develop-dit
           framework_branch: develop-dit
           hysds_release: develop
-          base_branch: docker-dit
+          base_branch: develop-dit
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -924,14 +924,14 @@ workflows:
             - build-hysds_cuda_dev
           filters:
             branches:
-              only: docker-dit
+              only: develop-dit
       - build-hysds_mozart:
-          puppet_branch: docker
+          puppet_branch: docker-dit
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: develop-dit
+          framework_branch: develop-dit
           hysds_release: develop
-          base_branch: develop
+          base_branch: develop-dit
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -940,14 +940,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: develop-dit
       - build-hysds_metrics:
-          puppet_branch: docker
+          puppet_branch: docker-dit
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: develop-dit
+          framework_branch: develop-dit
           hysds_release: develop
-          base_branch: develop
+          base_branch: develop-dit
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -956,14 +956,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: develop-dit
       - build-hysds_grq:
-          puppet_branch: docker
+          puppet_branch: docker-dit
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: develop-dit
+          framework_branch: develop-dit
           hysds_release: develop
-          base_branch: develop
+          base_branch: develop-dit
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -972,14 +972,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: develop-dit
       - build-hysds_cont_int:
-          puppet_branch: docker
+          puppet_branch: docker-dit
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: develop-dit
+          framework_branch: develop-dit
           hysds_release: develop
-          base_branch: develop
+          base_branch: develop-dit
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -988,7 +988,7 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: develop-dit
       - deploy:
           build_tag: ""
           final_tag: develop-dit
