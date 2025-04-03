@@ -302,9 +302,10 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds_commons package
-  echo "************ Installing hyds_commons with branch develop-dit *************"
-  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git develop-dit
-  
+  # TODO: Un-comment this out once the OpenSearch DIT updates are made to the AMI
+  # echo "************ Installing hyds_commons with branch develop-dit *************"
+  # install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git develop-dit
+  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git
   
   # clone hysds package
   echo "************ Installing hyds with branch develop-dit ************"
