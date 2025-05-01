@@ -215,7 +215,7 @@ source $INSTALL_DIR/bin/activate
 
 
 # Combining installs in case we have to pin setuptools in the future
-pip install -U pip setuptools
+pip install -U pip "setuptools<80.0.0"
 
 # Need to install backoff due to download_assets needing it
 pip install backoff
