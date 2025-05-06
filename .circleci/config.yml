@@ -193,7 +193,7 @@ jobs:
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
             docker buildx build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-              -t hysds/base:${build_tag} -f docker/Dockerfile --platform linux/amd64,linux/arm64 --builder container .
+              -t hysds/base:${build_tag} -f docker/Dockerfile --platform linux/amd64 --builder container .
             docker tag hysds/base:${build_tag} hysds/base:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/base:${build_tag}
