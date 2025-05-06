@@ -178,6 +178,10 @@ jobs:
       - install_deps
       - prep_env
       - run:
+          name: docker container driver setup
+          command: |
+            docker buildx create --name container --driver=docker-container
+      - run:
           name: Build hysds/base
           command: |
             export build_tag=<< parameters.build_tag >>
@@ -188,8 +192,8 @@ jobs:
             fi
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
-            docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-              -t hysds/base:${build_tag} -f docker/Dockerfile --platform linux/amd64,linux/arm64 .
+            docker buildx build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+              -t hysds/base:${build_tag} -f docker/Dockerfile --platform linux/amd64,linux/arm64 --builder container .
             docker tag hysds/base:${build_tag} hysds/base:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/base:${build_tag}
