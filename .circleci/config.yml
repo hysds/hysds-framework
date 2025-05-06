@@ -147,7 +147,7 @@ jobs:
             docker pull docker.io/rabbitmq:3-management
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/rabbitmq.git
             cd rabbitmq
-            docker build --rm --force-rm -t hysds/rabbitmq:${build_tag} -f docker/Dockerfile .
+            docker build --rm --force-rm -t hysds/rabbitmq:${build_tag} -f docker/Dockerfile --platform linux/amd64,linux/arm64 .
             docker tag hysds/rabbitmq:${build_tag} hysds/rabbitmq:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/rabbitmq:${build_tag}
@@ -189,7 +189,7 @@ jobs:
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
             docker build --rm --force-rm --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-              -t hysds/base:${build_tag} -f docker/Dockerfile .
+              -t hysds/base:${build_tag} -f docker/Dockerfile --platform linux/amd64,linux/arm64 .
             docker tag hysds/base:${build_tag} hysds/base:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/base:${build_tag}
@@ -233,7 +233,7 @@ jobs:
             cd hysds_base
             docker build --rm --force-rm --build-arg TAG=<< parameters.final_tag >> \
               --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-              -t hysds/cuda-base:${build_tag} -f docker/Dockerfile.cuda .
+              -t hysds/cuda-base:${build_tag} -f docker/Dockerfile.cuda --platform linux/amd64,linux/arm64 .
             docker tag hysds/cuda-base:${build_tag} hysds/cuda-base:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/cuda-base:${build_tag}
@@ -277,7 +277,7 @@ jobs:
             cd hysds_dev
             docker build --rm --force-rm --build-arg TAG=<< parameters.final_tag >> \
               --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-              -t hysds/dev:${build_tag} -f docker/Dockerfile .
+              -t hysds/dev:${build_tag} -f docker/Dockerfile --platform linux/amd64,linux/arm64 .
             docker tag hysds/dev:${build_tag} hysds/dev:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/dev:${build_tag}
@@ -321,7 +321,7 @@ jobs:
             cd hysds_dev
             docker build --rm --force-rm --build-arg TAG=<< parameters.final_tag >> \
               --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-              -t hysds/cuda-dev:${build_tag} -f docker/Dockerfile.cuda .
+              -t hysds/cuda-dev:${build_tag} -f docker/Dockerfile.cuda --platform linux/amd64,linux/arm64 .
             docker tag hysds/cuda-dev:${build_tag} hysds/cuda-dev:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/cuda-dev:${build_tag}
