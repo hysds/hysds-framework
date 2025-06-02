@@ -338,7 +338,8 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone grq2 package
-  install_dev_repo $OPS grq2 https://github.com/hysds/grq2.git
+  echo "************ Installing grq2 with branch develop-dit ************"
+  install_dev_repo $OPS grq2 https://github.com/hysds/grq2.git develop-dit
   
   
   # clone pele package
