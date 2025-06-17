@@ -908,7 +908,7 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-563
       - build-hysds_cuda_pge_base:
           puppet_branch: HC-563
           build_tag: ""
