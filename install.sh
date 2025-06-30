@@ -6,8 +6,6 @@ BASE_PATH=$(cd "${BASE_PATH}"; pwd)
 # turn on extglob
 shopt -s extglob
 
-set -ex
-
 cmdname=$(basename $0)
 
 
