@@ -6,6 +6,7 @@ BASE_PATH=$(cd "${BASE_PATH}"; pwd)
 # turn on extglob
 shopt -s extglob
 
+
 cmdname=$(basename $0)
 
 
@@ -290,24 +291,24 @@ cd $OPS
 # install dev environment
 if [[ "$DEV" == 1 ]]; then
   # clone prov_es package
-  install_dev_repo $OPS prov_es https://github.com/hysds/prov_es.git HC-563
+  install_dev_repo $OPS prov_es https://github.com/hysds/prov_es.git
   
   
   # clone osaka package
   pip install -U pyasn1
   pip install -U pyasn1-modules
   pip install -U python-dateutil
-  install_dev_repo $OPS osaka https://github.com/hysds/osaka.git HC-563
+  install_dev_repo $OPS osaka https://github.com/hysds/osaka.git
   
   
   # clone hysds_commons package
-  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git HC-563
+  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git
   
   
   # clone hysds package
   cd $OPS
   PACKAGE=hysds
-  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git HC-563
+  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
   cd $OPS/$PACKAGE
   pip install -e .
   if [ "$?" -ne 0 ]; then
@@ -317,27 +318,27 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone sciflo package
-  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git HC-563
+  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git
   
   
   # clone chimera package
-  install_dev_repo $OPS chimera https://github.com/hysds/chimera.git HC-563
+  install_dev_repo $OPS chimera https://github.com/hysds/chimera.git
   
   
   # clone mozart package
-  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git HC-563
+  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git
   
   
   # clone sdscli package
-  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git HC-563
+  install_dev_repo $OPS sdscli https://github.com/hysds/sdscli.git
   
   
   # clone grq2 package
-  install_dev_repo $OPS grq2 https://github.com/hysds/grq2.git HC-563
+  install_dev_repo $OPS grq2 https://github.com/hysds/grq2.git
   
   
   # clone pele package
-  install_dev_repo $OPS pele https://github.com/hysds/pele.git HC-563
+  install_dev_repo $OPS pele https://github.com/hysds/pele.git
 
 
   # clone hysds_ui package
@@ -345,15 +346,15 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone spyddder-man package
-  clone_dev_repo $OPS spyddder-man https://github.com/hysds/spyddder-man.git HC-563
+  clone_dev_repo $OPS spyddder-man https://github.com/hysds/spyddder-man.git
   
   
   # clone lightweight-jobs package
-  clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git HC-563
+  clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git
   
   
   # clone container-builder package
-  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git HC-563
+  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git
   
   
   # clone s3-bucket-listing package
@@ -365,7 +366,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds-cloud-functions package
-  clone_dev_repo $OPS hysds-cloud-functions https://github.com/hysds/hysds-cloud-functions.git HC-563
+  clone_dev_repo $OPS hysds-cloud-functions https://github.com/hysds/hysds-cloud-functions.git
 
   # download latest develop verdi image
   if [[ "$COMPONENT" == "mozart" ]]; then

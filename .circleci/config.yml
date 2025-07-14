@@ -848,19 +848,19 @@ workflows:
             branches:
               only: develop
       - build-hysds_base:
-          branch: HC-563
+          branch: develop
           build_tag: ""
-          final_tag: HC-563
+          final_tag: develop
           context:
             - docker-hub-creds
             - git-oauth-token
           filters:
             branches:
-              only: HC-563
+              only: develop
       - build-hysds_dev:
           branch: HC-563
           build_tag: ""
-          final_tag: HC-563
+          final_tag: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -868,11 +868,11 @@ workflows:
             - build-hysds_base
           filters:
             branches:
-              only: HC-563
+              only: develop
       - build-hysds_cuda_base:
-          branch: HC-563
+          branch: develop
           build_tag: ""
-          final_tag: HC-563
+          final_tag: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -880,11 +880,11 @@ workflows:
             - build-hysds_base
           filters:
             branches:
-              only: HC-563
+              only: develop
       - build-hysds_cuda_dev:
           branch: develop
           build_tag: ""
-          final_tag: HC-563
+          final_tag: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -892,14 +892,14 @@ workflows:
             - build-hysds_cuda_base
           filters:
             branches:
-              only: HC-563
+              only: develop
       - build-hysds_verdi_pge_base:
-          puppet_branch: HC-563
+          puppet_branch: develop
           build_tag: ""
-          final_tag: HC-563
-          framework_branch: HC-563
+          final_tag: develop
+          framework_branch: develop
           hysds_release: develop
-          base_branch: HC-563
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -908,14 +908,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: HC-563
+              only: develop
       - build-hysds_cuda_pge_base:
-          puppet_branch: HC-563
+          puppet_branch: docker
           build_tag: ""
-          final_tag: HC-563
-          framework_branch: HC-563
+          final_tag: develop
+          framework_branch: develop
           hysds_release: develop
-          base_branch: HC-563
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -924,14 +924,14 @@ workflows:
             - build-hysds_cuda_dev
           filters:
             branches:
-              only: HC-563
+              only: develop
       - build-hysds_mozart:
-          puppet_branch: HC-563
+          puppet_branch: docker
           build_tag: ""
-          final_tag: HC-563
-          framework_branch: HC-563
+          final_tag: develop
+          framework_branch: develop
           hysds_release: develop
-          base_branch: HC-563
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -940,14 +940,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: HC-563
+              only: develop
       - build-hysds_metrics:
-          puppet_branch: HC-563
+          puppet_branch: docker
           build_tag: ""
-          final_tag: HC-563
-          framework_branch: HC-563
+          final_tag: develop
+          framework_branch: develop
           hysds_release: develop
-          base_branch: HC-563
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -956,14 +956,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: HC-563
+              only: develop
       - build-hysds_grq:
-          puppet_branch: HC-563
+          puppet_branch: docker
           build_tag: ""
-          final_tag: HC-563
-          framework_branch: HC-563
+          final_tag: develop
+          framework_branch: develop
           hysds_release: develop
-          base_branch: HC-563
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -972,14 +972,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: HC-563
+              only: develop
       - build-hysds_cont_int:
-          puppet_branch: HC-563
+          puppet_branch: docker
           build_tag: ""
-          final_tag: HC-563
-          framework_branch: HC-563
+          final_tag: develop
+          framework_branch: develop
           hysds_release: develop
-          base_branch: HC-563
+          base_branch: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -988,10 +988,10 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: HC-563
+              only: develop
       - deploy:
           build_tag: ""
-          final_tag: HC-563
+          final_tag: develop
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -999,7 +999,7 @@ workflows:
             - build-hysds_verdi_pge_base
           filters:
             branches:
-              only: HC-563
+              only: develop
   build-deploy-release:
     jobs:
       - build-redis:
