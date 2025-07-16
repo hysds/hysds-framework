@@ -335,8 +335,8 @@ if [[ "$DEV" == 1 ]]; then
   
   # clone sdscli package
   echo "************ Installing sdscli with branch HC-539 ************"
-  install_dev_repo $OPS sdscli https://github.com/sdskit/sdscli.git HC-539
-  
+  install_dev_repo $OPS sdscli https://github.com/hysds/sdscli.git HC-539
+
   
   # clone grq2 package
   echo "************ Installing grq2 with branch develop-dit ************"
