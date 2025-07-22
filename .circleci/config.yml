@@ -251,6 +251,7 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASS
     #resource_class: large
+    resource_class: arm.medium
     parameters:
       org:
         type: string
@@ -282,7 +283,7 @@ jobs:
             cd hysds_dev
             docker build --rm --force-rm --build-arg TAG=<< parameters.final_tag >> \
               --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-              -t hysds/dev:${build_tag} -f docker/Dockerfile --platform linux/amd64,linux/arm64 .
+              -t hysds/dev:${build_tag} -f docker/Dockerfile .
             docker tag hysds/dev:${build_tag} hysds/dev:<< parameters.final_tag >>
             if [ "$push_build_tag" -eq 1 ]; then
               docker push hysds/dev:${build_tag}
@@ -339,6 +340,7 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASS
     #resource_class: large
+    resource_class: arm.medium
     parameters:
       org:
         type: string
@@ -462,6 +464,7 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASS
     #resource_class: large
+    resource_class: arm.medium
     parameters:
       org:
         type: string
@@ -516,6 +519,7 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASS
     #resource_class: large
+    resource_class: arm.medium
     parameters:
       org:
         type: string
@@ -570,6 +574,7 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASS
     #resource_class: large
+    resource_class: arm.medium
     parameters:
       org:
         type: string
