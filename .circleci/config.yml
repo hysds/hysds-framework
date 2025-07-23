@@ -1013,7 +1013,7 @@ workflows:
             - build-hysds_base
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - build-elasticsearch:
@@ -1024,7 +1024,7 @@ workflows:
             - git-oauth-token
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - build-rabbitmq:
@@ -1036,7 +1036,7 @@ workflows:
             - git-oauth-token
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - build-hysds_base:
@@ -1048,7 +1048,7 @@ workflows:
             - git-oauth-token
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - build-hysds_dev:
@@ -1062,7 +1062,7 @@ workflows:
             - build-hysds_base
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - build-hysds_cuda_base:
@@ -1076,7 +1076,7 @@ workflows:
             - build-hysds_base
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - build-hysds_cuda_dev:
@@ -1090,7 +1090,7 @@ workflows:
             - build-hysds_cuda_base
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - build-hysds_verdi_pge_base:
@@ -1108,7 +1108,7 @@ workflows:
             - build-hysds_dev
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - build-hysds_cuda_pge_base:
@@ -1126,7 +1126,7 @@ workflows:
             - build-hysds_cuda_dev
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - build-hysds_mozart:
@@ -1144,7 +1144,7 @@ workflows:
             - build-hysds_dev
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - build-hysds_metrics:
@@ -1162,7 +1162,7 @@ workflows:
             - build-hysds_dev
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - build-hysds_grq:
@@ -1180,7 +1180,7 @@ workflows:
             - build-hysds_dev
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - build-hysds_cont_int:
@@ -1198,7 +1198,7 @@ workflows:
             - build-hysds_dev
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - deploy:
@@ -1211,7 +1211,7 @@ workflows:
             - build-hysds_verdi_pge_base
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - export-support-assets:
@@ -1220,7 +1220,7 @@ workflows:
             - git-oauth-token
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
       - deploy-support-assets:
@@ -1231,6 +1231,6 @@ workflows:
             - export-support-assets
           filters:
             tags:
-              only: /^v5.*/
+              only: /^v6.*/
             branches:
               ignore: /.*/
