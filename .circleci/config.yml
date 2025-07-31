@@ -904,7 +904,7 @@ workflows:
             branches:
               only: develop-hc-567
       - build-hysds_verdi_pge_base:
-          puppet_branch: docker-hc-567
+          puppet_branch: develop-hc-567
           build_tag: ""
           final_tag: develop-hc-567
           framework_branch: develop-hc-567
@@ -920,7 +920,7 @@ workflows:
             branches:
               only: develop-hc-567
       - build-hysds_cuda_pge_base:
-          puppet_branch: docker-hc-567
+          puppet_branch: develop-hc-567
           build_tag: ""
           final_tag: develop-hc-567
           framework_branch: develop-hc-567
@@ -936,7 +936,7 @@ workflows:
             branches:
               only: develop-hc-567
       - build-hysds_mozart:
-          puppet_branch: docker-hc-567
+          puppet_branch: develop-hc-567
           build_tag: ""
           final_tag: develop-hc-567
           framework_branch: develop-hc-567
@@ -952,7 +952,7 @@ workflows:
             branches:
               only: develop-hc-567
       - build-hysds_metrics:
-          puppet_branch: docker-hc-567
+          puppet_branch: develop-hc-567
           build_tag: ""
           final_tag: develop-hc-567
           framework_branch: develop-hc-567
@@ -968,7 +968,7 @@ workflows:
             branches:
               only: develop-hc-567
       - build-hysds_grq:
-          puppet_branch: docker-hc-567
+          puppet_branch: develop-hc-567
           build_tag: ""
           final_tag: develop-hc-567
           framework_branch: develop-hc-567
