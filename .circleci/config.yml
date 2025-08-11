@@ -848,9 +848,9 @@ workflows:
             branches:
               only: develop
       - build-hysds_base:
-          branch: develop
+          branch: HC-579
           build_tag: ""
-          final_tag: develop
+          final_tag: hc-579
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -858,9 +858,9 @@ workflows:
             branches:
               only: develop
       - build-hysds_dev:
-          branch: develop
+          branch: HC-579
           build_tag: ""
-          final_tag: develop
+          final_tag: hc-579
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -894,12 +894,12 @@ workflows:
             branches:
               only: develop
       - build-hysds_verdi_pge_base:
-          puppet_branch: docker
+          puppet_branch: HC-579
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: hc-579
+          framework_branch: HC-579
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-579
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -926,12 +926,12 @@ workflows:
             branches:
               only: develop
       - build-hysds_mozart:
-          puppet_branch: docker
+          puppet_branch: HC-579
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: hc-579
+          framework_branch: HC-579
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-579
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -942,12 +942,12 @@ workflows:
             branches:
               only: develop
       - build-hysds_metrics:
-          puppet_branch: docker
+          puppet_branch: HC-579
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: hc-579
+          framework_branch: HC-579
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-579
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -958,12 +958,12 @@ workflows:
             branches:
               only: develop
       - build-hysds_grq:
-          puppet_branch: docker
+          puppet_branch: HC-579
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: hc-579
+          framework_branch: HC-579
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-579
           context:
             - docker-hub-creds
             - git-oauth-token
