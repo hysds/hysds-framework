@@ -991,7 +991,7 @@ workflows:
               only: develop
       - deploy:
           build_tag: ""
-          final_tag: develop
+          final_tag: hc-579
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -999,7 +999,7 @@ workflows:
             - build-hysds_verdi_pge_base
           filters:
             branches:
-              only: develop
+              only: HC-579
   build-deploy-release:
     jobs:
       - build-redis:
