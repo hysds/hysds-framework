@@ -370,8 +370,8 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            docker pull hysds/base:<< parameters.final_tag >>
-            docker pull hysds/dev:<< parameters.final_tag >>
+            docker pull hysds/base:<< parameters.build_tag >>
+            docker pull hysds/dev:<< parameters.build_tag >>
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
             ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
