@@ -343,9 +343,6 @@ jobs:
         default: docker
       build_tag:
         type: string
-      base_image_tag:
-        type: string
-        default: latest
       final_tag:
         type: string
       framework_branch:
@@ -373,11 +370,11 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            docker pull hysds/base:develop
-            docker pull hysds/dev:develop
+            docker pull hysds/base:<< parameters.final_tag >>
+            docker pull hysds/dev:<< parameters.final_tag >>
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
-            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.base_image_tag >> << parameters.final_tag >> << parameters.base_branch >>
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-verdi
             for i in verdi pge-base; do
@@ -851,9 +848,9 @@ workflows:
             branches:
               only: develop
       - build-hysds_base:
-          branch: develop
+          branch: HC-589
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-589
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -861,9 +858,9 @@ workflows:
             branches:
               only: HC-589
       - build-hysds_dev:
-          branch: develop
+          branch: HC-589
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-589
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -899,7 +896,7 @@ workflows:
       - build-hysds_verdi_pge_base:
           puppet_branch: HC-589
           build_tag: ""
-          base_image_tag: latest
+          base_image_tag: HC-589
           final_tag: HC-589
           framework_branch: HC-589
           hysds_release: develop
