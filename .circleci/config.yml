@@ -896,7 +896,6 @@ workflows:
       - build-hysds_verdi_pge_base:
           puppet_branch: HC-589
           build_tag: ""
-          base_image_tag: HC-589
           final_tag: HC-589
           framework_branch: HC-589
           hysds_release: develop
