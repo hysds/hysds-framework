@@ -343,6 +343,9 @@ jobs:
         default: docker
       build_tag:
         type: string
+      base_image_tag:
+        type: string
+        default: latest
       final_tag:
         type: string
       framework_branch:
@@ -374,7 +377,7 @@ jobs:
             docker pull hysds/dev:develop
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
-            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.base_image_tag >> << parameters.final_tag >> << parameters.base_branch >>
             cd ..
             rm -rf puppet-verdi
             for i in verdi pge-base; do
@@ -896,6 +899,7 @@ workflows:
       - build-hysds_verdi_pge_base:
           puppet_branch: docker
           build_tag: ""
+          base_image_tag: latest
           final_tag: HC-589
           framework_branch: HC-589
           hysds_release: develop
