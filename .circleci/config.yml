@@ -896,8 +896,8 @@ workflows:
       - build-hysds_verdi_pge_base:
           puppet_branch: docker
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-589
+          framework_branch: HC-589
           hysds_release: develop
           base_branch: develop
           context:
@@ -912,8 +912,8 @@ workflows:
       - build-hysds_cuda_pge_base:
           puppet_branch: docker
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-589
+          framework_branch: HC-589
           hysds_release: develop
           base_branch: develop
           context:
@@ -991,7 +991,7 @@ workflows:
               only: develop
       - deploy:
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-589
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -999,7 +999,7 @@ workflows:
             - build-hysds_verdi_pge_base
           filters:
             branches:
-              only: develop
+              only: HC-589
   build-deploy-release:
     jobs:
       - build-redis:

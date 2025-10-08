@@ -298,7 +298,7 @@ if [[ "$DEV" == 1 ]]; then
   pip install -U pyasn1
   pip install -U pyasn1-modules
   pip install -U python-dateutil
-  install_dev_repo $OPS osaka https://github.com/hysds/osaka.git
+  install_dev_repo $OPS osaka https://github.com/hysds/osaka.git HC-589
   
   
   # clone hysds_commons package
