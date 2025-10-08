@@ -856,7 +856,7 @@ workflows:
             - git-oauth-token
           filters:
             branches:
-              only: develop
+              only: HC-589
       - build-hysds_dev:
           branch: develop
           build_tag: ""
