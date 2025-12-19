@@ -214,8 +214,11 @@ fi
 source $INSTALL_DIR/bin/activate
 
 
-# Combining installs in case we have to pin setuptools in the future
-pip install -U pip "setuptools<80.0.0"
+# pin setuptool and pip;
+# pip 25.2 is backwards compatible with projects that use the modern PEP 660 
+# standard for editable installs. However, it lacks backwards compatibility
+# with the legacy setup.py develop method, which was fully removed in pip 25.3
+pip install -U "pip<25.2" "setuptools<80.0.0"
 
 # Need to install backoff due to download_assets needing it
 pip install backoff
