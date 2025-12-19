@@ -695,7 +695,7 @@ jobs:
       - run:
           name: Deploy
           command: |
-            set -ex
+            set -e
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
             if [ -z "$build_tag" ]; then
@@ -706,14 +706,16 @@ jobs:
             ls -al
             org=<< parameters.org >>
             repo=<< parameters.repo >>
+            set +x
             echo $GIT_OAUTH_TOKEN | gh auth login --with-token
+            set -x
             tag=$(gh release list -R ${org}/${repo} -L 1 | awk 'BEGIN{FS=":"}{print $1}')
             if [ "$push_build_tag" -eq 1 ]; then
               file=hysds-verdi-<< parameters.build_tag >>.tar.gz
               gh release upload ${tag} ${file} -R ${org}/${repo} --clobber
             fi
             repo=hysds-dockerfiles
-            tag=$(gh release list -R ${org}/${repo} -L 1 | awk 'BEGIN{FS=":"}{print $1}')
+            tag=<< parameters.build_tag >>
             file=hysds-verdi-<< parameters.final_tag >>.tar.gz
             gh release upload ${tag} ${file} -R ${org}/${repo} --clobber
   export-support-assets:
@@ -1005,7 +1007,7 @@ workflows:
       - build-redis:
           branch: master
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1018,7 +1020,7 @@ workflows:
               ignore: /.*/
       - build-elasticsearch:
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1030,7 +1032,7 @@ workflows:
       - build-rabbitmq:
           branch: develop
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1042,7 +1044,7 @@ workflows:
       - build-hysds_base:
           branch: develop
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1054,7 +1056,7 @@ workflows:
       - build-hysds_dev:
           branch: develop
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1068,7 +1070,7 @@ workflows:
       - build-hysds_cuda_base:
           branch: develop
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1082,7 +1084,7 @@ workflows:
       - build-hysds_cuda_dev:
           branch: develop
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1096,7 +1098,7 @@ workflows:
       - build-hysds_verdi_pge_base:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           framework_branch: $CIRCLE_TAG
           hysds_release: $CIRCLE_TAG
           base_branch: develop
@@ -1114,7 +1116,7 @@ workflows:
       - build-hysds_cuda_pge_base:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           framework_branch: $CIRCLE_TAG
           hysds_release: $CIRCLE_TAG
           base_branch: develop
@@ -1132,7 +1134,7 @@ workflows:
       - build-hysds_mozart:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           framework_branch: $CIRCLE_TAG
           hysds_release: $CIRCLE_TAG
           base_branch: develop
@@ -1150,7 +1152,7 @@ workflows:
       - build-hysds_metrics:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           framework_branch: $CIRCLE_TAG
           hysds_release: $CIRCLE_TAG
           base_branch: develop
@@ -1168,7 +1170,7 @@ workflows:
       - build-hysds_grq:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           framework_branch: $CIRCLE_TAG
           hysds_release: $CIRCLE_TAG
           base_branch: develop
@@ -1186,7 +1188,7 @@ workflows:
       - build-hysds_cont_int:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           framework_branch: $CIRCLE_TAG
           hysds_release: $CIRCLE_TAG
           base_branch: develop
@@ -1203,7 +1205,7 @@ workflows:
               ignore: /.*/
       - deploy:
           build_tag: $CIRCLE_TAG
-          final_tag: latest
+          final_tag: $CIRCLE_TAG
           context:
             - docker-hub-creds
             - git-oauth-token
