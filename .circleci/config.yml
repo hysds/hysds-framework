@@ -971,19 +971,19 @@ workflows:
             branches:
               only: develop
       - build-hysds_base:
-          branch: develop
+          branch: HC-567
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-567
           context:
             - docker-hub-creds
             - git-oauth-token
           filters:
             branches:
-              only: develop
+              only: HC-567
       - build-hysds_dev:
-          branch: develop
+          branch: HC-567
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-567
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -991,11 +991,11 @@ workflows:
             - build-hysds_base
           filters:
             branches:
-              only: develop
+              only: HC-567
       - build-hysds_cuda_base:
-          branch: develop
+          branch: HC-567
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-567
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1003,11 +1003,11 @@ workflows:
             - build-hysds_base
           filters:
             branches:
-              only: develop
+              only: HC-567
       - build-hysds_cuda_dev:
-          branch: develop
+          branch: HC-567
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-567
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1017,12 +1017,12 @@ workflows:
             branches:
               only: develop
       - build-hysds_verdi_pge_base:
-          puppet_branch: docker
+          puppet_branch: HC-567
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-567
+          framework_branch: HC-567
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-567
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1031,14 +1031,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-567
       - build-hysds_cuda_pge_base:
-          puppet_branch: docker
+          puppet_branch: HC-567
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-567
+          framework_branch: HC-567
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-567
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1047,14 +1047,14 @@ workflows:
             - build-hysds_cuda_dev
           filters:
             branches:
-              only: develop
+              only: HC-567
       - build-hysds_mozart:
-          puppet_branch: docker
+          puppet_branch: HC-567
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-567
+          framework_branch: HC-567
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-567
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1063,14 +1063,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-567
       - build-hysds_metrics:
-          puppet_branch: docker
+          puppet_branch: HC-567
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-567
+          framework_branch: HC-567
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-567
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1079,14 +1079,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-567
       - build-hysds_grq:
-          puppet_branch: docker
+          puppet_branch: HC-567
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-567
+          framework_branch: HC-567
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-567
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1095,14 +1095,14 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-567
       - build-hysds_cont_int:
-          puppet_branch: docker
+          puppet_branch: HC-567
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-567
+          framework_branch: HC-567
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-567
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1111,10 +1111,10 @@ workflows:
             - build-hysds_dev
           filters:
             branches:
-              only: develop
+              only: HC-567
       - deploy:
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-567
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -1122,7 +1122,7 @@ workflows:
             - build-hysds_verdi_pge_base
           filters:
             branches:
-              only: develop
+              only: HC-567
   build-deploy-release:
     jobs:
       - build-redis:
