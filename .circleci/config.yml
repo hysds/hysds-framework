@@ -186,13 +186,12 @@ jobs:
                 -t hysds/rabbitmq:<< parameters.final_tag >> \
                 -f docker/Dockerfile . --push
             fi
-  build-hysds_base:
+  build-hysds_base-amd64:
     docker:
       - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
-    resource_class: large
     parameters:
       org:
         type: string
@@ -212,7 +211,7 @@ jobs:
       - setup_buildx
       - prep_env
       - run:
-          name: Build hysds/base
+          name: Build hysds/base (amd64)
           command: |
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
@@ -222,17 +221,107 @@ jobs:
             fi
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
-            # Build and push multi-platform image
+            # Build and push amd64 image
             if [ "$push_build_tag" -eq 1 ]; then
-              docker buildx build --platform linux/amd64,linux/arm64 \
+              docker buildx build --platform linux/amd64 \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-                -t hysds/base:${build_tag} -t hysds/base:<< parameters.final_tag >> \
+                -t hysds/base:${build_tag}-amd64 -t hysds/base:<< parameters.final_tag >>-amd64 \
                 -f docker/Dockerfile . --push
             else
-              docker buildx build --platform linux/amd64,linux/arm64 \
+              docker buildx build --platform linux/amd64 \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-                -t hysds/base:<< parameters.final_tag >> \
+                -t hysds/base:<< parameters.final_tag >>-amd64 \
                 -f docker/Dockerfile . --push
+            fi
+  build-hysds_base-arm64:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: arm.medium
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: develop
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Build hysds/base (arm64)
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
+            cd hysds_base
+            # Build and push arm64 image
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker buildx build --platform linux/arm64 \
+                --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+                -t hysds/base:${build_tag}-arm64 -t hysds/base:<< parameters.final_tag >>-arm64 \
+                -f docker/Dockerfile . --push
+            else
+              docker buildx build --platform linux/arm64 \
+                --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+                -t hysds/base:<< parameters.final_tag >>-arm64 \
+                -f docker/Dockerfile . --push
+            fi
+  build-hysds_base-manifest:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: develop
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - setup_remote_docker:
+          version: default
+      - prep_env
+      - run:
+          name: Create multi-platform manifest for hysds/base
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Create and push manifest
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker manifest create hysds/base:${build_tag} \
+                hysds/base:${build_tag}-amd64 \
+                hysds/base:${build_tag}-arm64
+              docker manifest push hysds/base:${build_tag}
+              
+              docker manifest create hysds/base:<< parameters.final_tag >> \
+                hysds/base:<< parameters.final_tag >>-amd64 \
+                hysds/base:<< parameters.final_tag >>-arm64
+              docker manifest push hysds/base:<< parameters.final_tag >>
+            else
+              docker manifest create hysds/base:<< parameters.final_tag >> \
+                hysds/base:<< parameters.final_tag >>-amd64 \
+                hysds/base:<< parameters.final_tag >>-arm64
+              docker manifest push hysds/base:<< parameters.final_tag >>
             fi
   build-hysds_cuda_base:
     docker:
@@ -970,13 +1059,36 @@ workflows:
           filters:
             branches:
               only: develop
-      - build-hysds_base:
+      - build-hysds_base-amd64:
           branch: HC-567
           build_tag: ""
           final_tag: HC-567
           context:
             - docker-hub-creds
             - git-oauth-token
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_base-arm64:
+          branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_base-manifest:
+          branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-amd64
+            - build-hysds_base-arm64
           filters:
             branches:
               only: HC-567
@@ -988,7 +1100,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base
+            - build-hysds_base-manifest
           filters:
             branches:
               only: HC-567
@@ -1000,7 +1112,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base
+            - build-hysds_base-manifest
           filters:
             branches:
               only: HC-567
