@@ -688,19 +688,22 @@ jobs:
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_dev.git hysds_dev
             cd hysds_dev
             
-            # Build and push amd64 image
+            # Build and push amd64 image (without buildx to create single-platform images)
             if [ "$push_build_tag" -eq 1 ]; then
-              docker buildx build --platform linux/amd64 \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >>-amd64 \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/cuda-dev:${build_tag} -t hysds/cuda-dev:<< parameters.final_tag >>-amd64 \
-                -f docker/Dockerfile.cuda . --push
+                -f docker/Dockerfile.cuda .
+              docker push hysds/cuda-dev:${build_tag}
+              docker push hysds/cuda-dev:<< parameters.final_tag >>-amd64
             else
-              docker buildx build --platform linux/amd64 \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >>-amd64 \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/cuda-dev:<< parameters.final_tag >>-amd64 \
-                -f docker/Dockerfile.cuda . --push
+                -f docker/Dockerfile.cuda .
+              docker push hysds/cuda-dev:<< parameters.final_tag >>-amd64
             fi
   build-hysds_cuda_dev-arm64:
     docker:
@@ -743,19 +746,22 @@ jobs:
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_dev.git hysds_dev
             cd hysds_dev
             
-            # Build and push arm64 image
+            # Build and push arm64 image (without buildx to create single-platform images)
             if [ "$push_build_tag" -eq 1 ]; then
-              docker buildx build --platform linux/arm64 \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >>-arm64 \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/cuda-dev:${build_tag} -t hysds/cuda-dev:<< parameters.final_tag >>-arm64 \
-                -f docker/Dockerfile.cuda . --push
+                -f docker/Dockerfile.cuda .
+              docker push hysds/cuda-dev:${build_tag}
+              docker push hysds/cuda-dev:<< parameters.final_tag >>-arm64
             else
-              docker buildx build --platform linux/arm64 \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >>-arm64 \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/cuda-dev:<< parameters.final_tag >>-arm64 \
-                -f docker/Dockerfile.cuda . --push
+                -f docker/Dockerfile.cuda .
+              docker push hysds/cuda-dev:<< parameters.final_tag >>-arm64
             fi
   build-hysds_cuda_dev-manifest:
     docker:
@@ -851,12 +857,12 @@ jobs:
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
             
-            # Set environment variables for amd64 builds
-            export DOCKER_BUILDX_PLATFORM="linux/amd64"
-            export USE_BUILDX=1
-            
-            # Build with the final architecture-specific tag directly
+            # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
             ./build_docker.sh << parameters.final_tag >>-amd64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-amd64 << parameters.base_branch >>
+            
+            # Push the images
+            docker push hysds/pge-base:<< parameters.final_tag >>-amd64
+            docker push hysds/verdi:<< parameters.final_tag >>-amd64
             
             cd ..
             rm -rf puppet-verdi
@@ -911,12 +917,12 @@ jobs:
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
             
-            # Set environment variables for arm64 builds
-            export DOCKER_BUILDX_PLATFORM="linux/arm64"
-            export USE_BUILDX=1
-            
-            # Build with the final architecture-specific tag directly
+            # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
             ./build_docker.sh << parameters.final_tag >>-arm64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-arm64 << parameters.base_branch >>
+            
+            # Push the images
+            docker push hysds/pge-base:<< parameters.final_tag >>-arm64
+            docker push hysds/verdi:<< parameters.final_tag >>-arm64
             
             cd ..
             rm -rf puppet-verdi
@@ -1052,12 +1058,11 @@ jobs:
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
             
-            # Set environment variables for amd64 builds
-            export DOCKER_BUILDX_PLATFORM="linux/amd64"
-            export USE_BUILDX=1
-            
-            # Build with the final architecture-specific tag directly
+            # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
             ./build_docker_cuda.sh << parameters.final_tag >>-amd64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-amd64 << parameters.base_branch >>
+            
+            # Push the image
+            docker push hysds/cuda-pge-base:<< parameters.final_tag >>-amd64
             
             cd ..
             rm -rf puppet-verdi
@@ -1112,12 +1117,11 @@ jobs:
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
             
-            # Set environment variables for arm64 builds
-            export DOCKER_BUILDX_PLATFORM="linux/arm64"
-            export USE_BUILDX=1
-            
-            # Build with the final architecture-specific tag directly
+            # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
             ./build_docker_cuda.sh << parameters.final_tag >>-arm64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-arm64 << parameters.base_branch >>
+            
+            # Push the image
+            docker push hysds/cuda-pge-base:<< parameters.final_tag >>-arm64
             
             cd ..
             rm -rf puppet-verdi
