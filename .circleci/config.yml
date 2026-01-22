@@ -224,11 +224,13 @@ jobs:
             # Build and push amd64 image
             if [ "$push_build_tag" -eq 1 ]; then
               docker buildx build --platform linux/amd64 \
+                --provenance=false \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/base:${build_tag}-amd64 -t hysds/base:<< parameters.final_tag >>-amd64 \
                 -f docker/Dockerfile . --push
             else
               docker buildx build --platform linux/amd64 \
+                --provenance=false \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/base:<< parameters.final_tag >>-amd64 \
                 -f docker/Dockerfile . --push
@@ -272,11 +274,13 @@ jobs:
             # Build and push arm64 image
             if [ "$push_build_tag" -eq 1 ]; then
               docker buildx build --platform linux/arm64 \
+                --provenance=false \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/base:${build_tag}-arm64 -t hysds/base:<< parameters.final_tag >>-arm64 \
                 -f docker/Dockerfile . --push
             else
               docker buildx build --platform linux/arm64 \
+                --provenance=false \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/base:<< parameters.final_tag >>-arm64 \
                 -f docker/Dockerfile . --push
