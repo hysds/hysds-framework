@@ -221,19 +221,20 @@ jobs:
             fi
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
-            # Build and push amd64 image
+            # Build and push amd64 image (without buildx to create single-platform images)
             if [ "$push_build_tag" -eq 1 ]; then
-              docker buildx build --platform linux/amd64 \
-                --provenance=false \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/base:${build_tag}-amd64 -t hysds/base:<< parameters.final_tag >>-amd64 \
-                -f docker/Dockerfile . --push
+                -f docker/Dockerfile .
+              docker push hysds/base:${build_tag}-amd64
+              docker push hysds/base:<< parameters.final_tag >>-amd64
             else
-              docker buildx build --platform linux/amd64 \
-                --provenance=false \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/base:<< parameters.final_tag >>-amd64 \
-                -f docker/Dockerfile . --push
+                -f docker/Dockerfile .
+              docker push hysds/base:<< parameters.final_tag >>-amd64
             fi
   build-hysds_base-arm64:
     docker:
@@ -271,19 +272,20 @@ jobs:
             fi
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
-            # Build and push arm64 image
+            # Build and push arm64 image (without buildx to create single-platform images)
             if [ "$push_build_tag" -eq 1 ]; then
-              docker buildx build --platform linux/arm64 \
-                --provenance=false \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/base:${build_tag}-arm64 -t hysds/base:<< parameters.final_tag >>-arm64 \
-                -f docker/Dockerfile . --push
+                -f docker/Dockerfile .
+              docker push hysds/base:${build_tag}-arm64
+              docker push hysds/base:<< parameters.final_tag >>-arm64
             else
-              docker buildx build --platform linux/arm64 \
-                --provenance=false \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/base:<< parameters.final_tag >>-arm64 \
-                -f docker/Dockerfile . --push
+                -f docker/Dockerfile .
+              docker push hysds/base:<< parameters.final_tag >>-arm64
             fi
   build-hysds_base-manifest:
     docker:
@@ -371,21 +373,22 @@ jobs:
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
             
-            # Build and push amd64 image
+            # Build and push amd64 image (without buildx to create single-platform images)
             if [ "$push_build_tag" -eq 1 ]; then
-              docker buildx build --platform linux/amd64 \
-                --provenance=false \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >> \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/cuda-base:${build_tag}-amd64 -t hysds/cuda-base:<< parameters.final_tag >>-amd64 \
-                -f docker/Dockerfile.cuda . --push
+                -f docker/Dockerfile.cuda .
+              docker push hysds/cuda-base:${build_tag}-amd64
+              docker push hysds/cuda-base:<< parameters.final_tag >>-amd64
             else
-              docker buildx build --platform linux/amd64 \
-                --provenance=false \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >> \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/cuda-base:<< parameters.final_tag >>-amd64 \
-                -f docker/Dockerfile.cuda . --push
+                -f docker/Dockerfile.cuda .
+              docker push hysds/cuda-base:<< parameters.final_tag >>-amd64
             fi
   build-hysds_cuda_base-arm64:
     docker:
@@ -427,21 +430,22 @@ jobs:
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
             
-            # Build and push arm64 image
+            # Build and push arm64 image (without buildx to create single-platform images)
             if [ "$push_build_tag" -eq 1 ]; then
-              docker buildx build --platform linux/arm64 \
-                --provenance=false \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >> \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/cuda-base:${build_tag}-arm64 -t hysds/cuda-base:<< parameters.final_tag >>-arm64 \
-                -f docker/Dockerfile.cuda . --push
+                -f docker/Dockerfile.cuda .
+              docker push hysds/cuda-base:${build_tag}-arm64
+              docker push hysds/cuda-base:<< parameters.final_tag >>-arm64
             else
-              docker buildx build --platform linux/arm64 \
-                --provenance=false \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >> \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/cuda-base:<< parameters.final_tag >>-arm64 \
-                -f docker/Dockerfile.cuda . --push
+                -f docker/Dockerfile.cuda .
+              docker push hysds/cuda-base:<< parameters.final_tag >>-arm64
             fi
   build-hysds_cuda_base-manifest:
     docker:
@@ -529,21 +533,22 @@ jobs:
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_dev.git hysds_dev
             cd hysds_dev
             
-            # Build and push amd64 image
+            # Build and push amd64 image (without buildx to create single-platform images)
             if [ "$push_build_tag" -eq 1 ]; then
-              docker buildx build --platform linux/amd64 \
-                --provenance=false \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >> \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/dev:${build_tag}-amd64 -t hysds/dev:<< parameters.final_tag >>-amd64 \
-                -f docker/Dockerfile . --push
+                -f docker/Dockerfile .
+              docker push hysds/dev:${build_tag}-amd64
+              docker push hysds/dev:<< parameters.final_tag >>-amd64
             else
-              docker buildx build --platform linux/amd64 \
-                --provenance=false \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >> \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/dev:<< parameters.final_tag >>-amd64 \
-                -f docker/Dockerfile . --push
+                -f docker/Dockerfile .
+              docker push hysds/dev:<< parameters.final_tag >>-amd64
             fi
   build-hysds_dev-arm64:
     docker:
@@ -585,21 +590,22 @@ jobs:
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_dev.git hysds_dev
             cd hysds_dev
             
-            # Build and push arm64 image
+            # Build and push arm64 image (without buildx to create single-platform images)
             if [ "$push_build_tag" -eq 1 ]; then
-              docker buildx build --platform linux/arm64 \
-                --provenance=false \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >> \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/dev:${build_tag}-arm64 -t hysds/dev:<< parameters.final_tag >>-arm64 \
-                -f docker/Dockerfile . --push
+                -f docker/Dockerfile .
+              docker push hysds/dev:${build_tag}-arm64
+              docker push hysds/dev:<< parameters.final_tag >>-arm64
             else
-              docker buildx build --platform linux/arm64 \
-                --provenance=false \
+              docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >> \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
                 -t hysds/dev:<< parameters.final_tag >>-arm64 \
-                -f docker/Dockerfile . --push
+                -f docker/Dockerfile .
+              docker push hysds/dev:<< parameters.final_tag >>-arm64
             fi
   build-hysds_dev-manifest:
     docker:
