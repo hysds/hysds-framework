@@ -1507,7 +1507,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_cuda_base
+            - build-hysds_cuda_base-manifest
           filters:
             branches:
               only: develop
@@ -1570,7 +1570,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_cuda_base
+            - build-hysds_cuda_base-manifest
             - build-hysds_cuda_dev
           filters:
             branches:
@@ -1587,7 +1587,7 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base-manifest
-            - build-hysds_dev
+            - build-hysds_dev-manifest
           filters:
             branches:
               only: HC-567
@@ -1603,7 +1603,7 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base-manifest
-            - build-hysds_dev
+            - build-hysds_dev-manifest
           filters:
             branches:
               only: HC-567
@@ -1619,7 +1619,7 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base-manifest
-            - build-hysds_dev
+            - build-hysds_dev-manifest
           filters:
             branches:
               only: HC-567
@@ -1635,7 +1635,7 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base-manifest
-            - build-hysds_dev
+            - build-hysds_dev-manifest
           filters:
             branches:
               only: HC-567
@@ -1646,7 +1646,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_verdi_pge_base
+            - build-hysds_verdi_pge_base-manifest
           filters:
             branches:
               only: HC-567
@@ -1822,7 +1822,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_cuda_base
+            - build-hysds_cuda_base-manifest
           filters:
             tags:
               only: /^v6.*/
@@ -1893,7 +1893,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_cuda_base
+            - build-hysds_cuda_base-manifest
             - build-hysds_cuda_dev
           filters:
             tags:
@@ -1912,7 +1912,7 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base-manifest
-            - build-hysds_dev
+            - build-hysds_dev-manifest
           filters:
             tags:
               only: /^v6.*/
@@ -1930,7 +1930,7 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base-manifest
-            - build-hysds_dev
+            - build-hysds_dev-manifest
           filters:
             tags:
               only: /^v6.*/
@@ -1948,7 +1948,7 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base-manifest
-            - build-hysds_dev
+            - build-hysds_dev-manifest
           filters:
             tags:
               only: /^v6.*/
@@ -1966,7 +1966,7 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base-manifest
-            - build-hysds_dev
+            - build-hysds_dev-manifest
           filters:
             tags:
               only: /^v6.*/
@@ -1979,7 +1979,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_verdi_pge_base
+            - build-hysds_verdi_pge_base-manifest
           filters:
             tags:
               only: /^v6.*/
