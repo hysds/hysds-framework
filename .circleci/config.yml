@@ -1245,7 +1245,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base
+            - build-hysds_base-manifest
           filters:
             tags:
               only: /^v6.*/
@@ -1274,13 +1274,40 @@ workflows:
               only: /^v6.*/
             branches:
               ignore: /.*/
-      - build-hysds_base:
+      - build-hysds_base-amd64:
           branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
           context:
             - docker-hub-creds
             - git-oauth-token
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_base-arm64:
+          branch: develop
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_base-manifest:
+          branch: develop
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-amd64
+            - build-hysds_base-arm64
           filters:
             tags:
               only: /^v6.*/
@@ -1294,7 +1321,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base
+            - build-hysds_base-manifest
           filters:
             tags:
               only: /^v6.*/
@@ -1308,7 +1335,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base
+            - build-hysds_base-manifest
           filters:
             tags:
               only: /^v6.*/
@@ -1339,7 +1366,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base
+            - build-hysds_base-manifest
             - build-hysds_dev
           filters:
             tags:
@@ -1375,7 +1402,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base
+            - build-hysds_base-manifest
             - build-hysds_dev
           filters:
             tags:
@@ -1393,7 +1420,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base
+            - build-hysds_base-manifest
             - build-hysds_dev
           filters:
             tags:
@@ -1411,7 +1438,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base
+            - build-hysds_base-manifest
             - build-hysds_dev
           filters:
             tags:
@@ -1429,7 +1456,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base
+            - build-hysds_base-manifest
             - build-hysds_dev
           filters:
             tags:
