@@ -1425,7 +1425,7 @@ workflows:
           filters:
             branches:
               only: HC-567
-      - build-hysds_dev:
+      - build-hysds_dev-amd64:
           branch: HC-567
           build_tag: ""
           final_tag: HC-567
@@ -1437,7 +1437,7 @@ workflows:
           filters:
             branches:
               only: HC-567
-      - build-hysds_cuda_base:
+      - build-hysds_dev-arm64:
           branch: HC-567
           build_tag: ""
           final_tag: HC-567
@@ -1446,6 +1446,56 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base-manifest
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_dev-manifest:
+          branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_dev-amd64
+            - build-hysds_dev-arm64
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_cuda_base-amd64:
+          branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_cuda_base-arm64:
+          branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_cuda_base-manifest:
+          branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_cuda_base-amd64
+            - build-hysds_cuda_base-arm64
           filters:
             branches:
               only: HC-567
@@ -1678,7 +1728,7 @@ workflows:
               only: /^v6.*/
             branches:
               ignore: /.*/
-      - build-hysds_dev:
+      - build-hysds_dev-amd64:
           branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
@@ -1692,7 +1742,7 @@ workflows:
               only: /^v6.*/
             branches:
               ignore: /.*/
-      - build-hysds_cuda_base:
+      - build-hysds_dev-arm64:
           branch: develop
           build_tag: $CIRCLE_TAG
           final_tag: latest
@@ -1701,6 +1751,64 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base-manifest
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_dev-manifest:
+          branch: develop
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_dev-amd64
+            - build-hysds_dev-arm64
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_cuda_base-amd64:
+          branch: develop
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_cuda_base-arm64:
+          branch: develop
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_cuda_base-manifest:
+          branch: develop
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_cuda_base-amd64
+            - build-hysds_cuda_base-arm64
           filters:
             tags:
               only: /^v6.*/
