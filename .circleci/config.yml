@@ -758,6 +758,13 @@ jobs:
             export USE_BUILDX=1
             
             ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-amd64 << parameters.base_branch >>
+            
+            # Tag images with architecture-specific final_tag
+            docker tag hysds/pge-base:${build_tag} hysds/pge-base:<< parameters.final_tag >>-amd64
+            docker tag hysds/verdi:${build_tag} hysds/verdi:<< parameters.final_tag >>-amd64
+            docker push hysds/pge-base:<< parameters.final_tag >>-amd64
+            docker push hysds/verdi:<< parameters.final_tag >>-amd64
+            
             cd ..
             rm -rf puppet-verdi
   build-hysds_verdi_pge_base-arm64:
@@ -816,6 +823,13 @@ jobs:
             export USE_BUILDX=1
             
             ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-arm64 << parameters.base_branch >>
+            
+            # Tag images with architecture-specific final_tag
+            docker tag hysds/pge-base:${build_tag} hysds/pge-base:<< parameters.final_tag >>-arm64
+            docker tag hysds/verdi:${build_tag} hysds/verdi:<< parameters.final_tag >>-arm64
+            docker push hysds/pge-base:<< parameters.final_tag >>-arm64
+            docker push hysds/verdi:<< parameters.final_tag >>-arm64
+            
             cd ..
             rm -rf puppet-verdi
   build-hysds_verdi_pge_base-manifest:
