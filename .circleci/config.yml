@@ -332,13 +332,12 @@ jobs:
                 hysds/base:<< parameters.final_tag >>-arm64
               docker manifest push hysds/base:<< parameters.final_tag >>
             fi
-  build-hysds_cuda_base:
+  build-hysds_cuda_base-amd64:
     docker:
       - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
-    resource_class: large
     parameters:
       org:
         type: string
@@ -358,7 +357,7 @@ jobs:
       - setup_buildx
       - prep_env
       - run:
-          name: Build hysds/cuda-base
+          name: Build hysds/cuda-base (amd64)
           command: |
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
@@ -366,34 +365,35 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull multi-platform base image
-            docker pull --platform linux/amd64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/base:<< parameters.final_tag >>
+            # Pull amd64 base image
+            docker pull hysds/base:<< parameters.final_tag >>-amd64
             
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
             cd hysds_base
             
-            # Build and push multi-platform image
+            # Build and push amd64 image
             if [ "$push_build_tag" -eq 1 ]; then
-              docker buildx build --platform linux/amd64,linux/arm64 \
+              docker buildx build --platform linux/amd64 \
+                --provenance=false \
                 --build-arg TAG=<< parameters.final_tag >> \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-                -t hysds/cuda-base:${build_tag} -t hysds/cuda-base:<< parameters.final_tag >> \
+                -t hysds/cuda-base:${build_tag}-amd64 -t hysds/cuda-base:<< parameters.final_tag >>-amd64 \
                 -f docker/Dockerfile.cuda . --push
             else
-              docker buildx build --platform linux/amd64,linux/arm64 \
+              docker buildx build --platform linux/amd64 \
+                --provenance=false \
                 --build-arg TAG=<< parameters.final_tag >> \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-                -t hysds/cuda-base:<< parameters.final_tag >> \
+                -t hysds/cuda-base:<< parameters.final_tag >>-amd64 \
                 -f docker/Dockerfile.cuda . --push
             fi
-  build-hysds_dev:
+  build-hysds_cuda_base-arm64:
     docker:
       - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
-    resource_class: large
+    resource_class: arm.medium
     parameters:
       org:
         type: string
@@ -413,7 +413,7 @@ jobs:
       - setup_buildx
       - prep_env
       - run:
-          name: Build hysds/dev
+          name: Build hysds/cuda-base (arm64)
           command: |
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
@@ -421,26 +421,232 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull multi-platform base image
-            docker pull --platform linux/amd64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/base:<< parameters.final_tag >>
+            # Pull arm64 base image
+            docker pull hysds/base:<< parameters.final_tag >>-arm64
+            
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_base.git hysds_base
+            cd hysds_base
+            
+            # Build and push arm64 image
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker buildx build --platform linux/arm64 \
+                --provenance=false \
+                --build-arg TAG=<< parameters.final_tag >> \
+                --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+                -t hysds/cuda-base:${build_tag}-arm64 -t hysds/cuda-base:<< parameters.final_tag >>-arm64 \
+                -f docker/Dockerfile.cuda . --push
+            else
+              docker buildx build --platform linux/arm64 \
+                --provenance=false \
+                --build-arg TAG=<< parameters.final_tag >> \
+                --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+                -t hysds/cuda-base:<< parameters.final_tag >>-arm64 \
+                -f docker/Dockerfile.cuda . --push
+            fi
+  build-hysds_cuda_base-manifest:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: develop
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - setup_remote_docker:
+          version: default
+      - prep_env
+      - run:
+          name: Create multi-platform manifest for hysds/cuda-base
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Create and push manifest
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker manifest create hysds/cuda-base:${build_tag} \
+                hysds/cuda-base:${build_tag}-amd64 \
+                hysds/cuda-base:${build_tag}-arm64
+              docker manifest push hysds/cuda-base:${build_tag}
+              
+              docker manifest create hysds/cuda-base:<< parameters.final_tag >> \
+                hysds/cuda-base:<< parameters.final_tag >>-amd64 \
+                hysds/cuda-base:<< parameters.final_tag >>-arm64
+              docker manifest push hysds/cuda-base:<< parameters.final_tag >>
+            else
+              docker manifest create hysds/cuda-base:<< parameters.final_tag >> \
+                hysds/cuda-base:<< parameters.final_tag >>-amd64 \
+                hysds/cuda-base:<< parameters.final_tag >>-arm64
+              docker manifest push hysds/cuda-base:<< parameters.final_tag >>
+            fi
+  build-hysds_dev-amd64:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: develop
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Build hysds/dev (amd64)
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Pull amd64 base image
+            docker pull hysds/base:<< parameters.final_tag >>-amd64
             
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_dev.git hysds_dev
             cd hysds_dev
             
-            # Build and push multi-platform image
+            # Build and push amd64 image
             if [ "$push_build_tag" -eq 1 ]; then
-              docker buildx build --platform linux/amd64,linux/arm64 \
+              docker buildx build --platform linux/amd64 \
+                --provenance=false \
                 --build-arg TAG=<< parameters.final_tag >> \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-                -t hysds/dev:${build_tag} -t hysds/dev:<< parameters.final_tag >> \
+                -t hysds/dev:${build_tag}-amd64 -t hysds/dev:<< parameters.final_tag >>-amd64 \
                 -f docker/Dockerfile . --push
             else
-              docker buildx build --platform linux/amd64,linux/arm64 \
+              docker buildx build --platform linux/amd64 \
+                --provenance=false \
                 --build-arg TAG=<< parameters.final_tag >> \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-                -t hysds/dev:<< parameters.final_tag >> \
+                -t hysds/dev:<< parameters.final_tag >>-amd64 \
                 -f docker/Dockerfile . --push
+            fi
+  build-hysds_dev-arm64:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: arm.medium
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: develop
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Build hysds/dev (arm64)
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Pull arm64 base image
+            docker pull hysds/base:<< parameters.final_tag >>-arm64
+            
+            git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-hysds_dev.git hysds_dev
+            cd hysds_dev
+            
+            # Build and push arm64 image
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker buildx build --platform linux/arm64 \
+                --provenance=false \
+                --build-arg TAG=<< parameters.final_tag >> \
+                --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+                -t hysds/dev:${build_tag}-arm64 -t hysds/dev:<< parameters.final_tag >>-arm64 \
+                -f docker/Dockerfile . --push
+            else
+              docker buildx build --platform linux/arm64 \
+                --provenance=false \
+                --build-arg TAG=<< parameters.final_tag >> \
+                --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+                -t hysds/dev:<< parameters.final_tag >>-arm64 \
+                -f docker/Dockerfile . --push
+            fi
+  build-hysds_dev-manifest:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    parameters:
+      org:
+        type: string
+        default: hysds
+      branch:
+        type: string
+        default: develop
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - setup_remote_docker:
+          version: default
+      - prep_env
+      - run:
+          name: Create multi-platform manifest for hysds/dev
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Create and push manifest
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker manifest create hysds/dev:${build_tag} \
+                hysds/dev:${build_tag}-amd64 \
+                hysds/dev:${build_tag}-arm64
+              docker manifest push hysds/dev:${build_tag}
+              
+              docker manifest create hysds/dev:<< parameters.final_tag >> \
+                hysds/dev:<< parameters.final_tag >>-amd64 \
+                hysds/dev:<< parameters.final_tag >>-arm64
+              docker manifest push hysds/dev:<< parameters.final_tag >>
+            else
+              docker manifest create hysds/dev:<< parameters.final_tag >> \
+                hysds/dev:<< parameters.final_tag >>-amd64 \
+                hysds/dev:<< parameters.final_tag >>-arm64
+              docker manifest push hysds/dev:<< parameters.final_tag >>
             fi
   build-hysds_cuda_dev:
     docker:
@@ -497,13 +703,12 @@ jobs:
                 -t hysds/cuda-dev:<< parameters.final_tag >> \
                 -f docker/Dockerfile.cuda . --push
             fi
-  build-hysds_verdi_pge_base:
+  build-hysds_verdi_pge_base-amd64:
     docker:
       - image: docker:24.0.9-git
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
-    resource_class: large
     parameters:
       org:
         type: string
@@ -532,7 +737,7 @@ jobs:
       - setup_buildx
       - prep_env
       - run:
-          name: Build hysds/pge-base and hysds/verdi
+          name: Build hysds/pge-base and hysds/verdi (amd64)
           command: |
             set -ex
             export build_tag=<< parameters.build_tag >>
@@ -541,32 +746,151 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull multi-platform base images
-            docker pull --platform linux/amd64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/amd64 hysds/dev:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/dev:<< parameters.final_tag >>
+            # Pull amd64 base images
+            docker pull hysds/base:<< parameters.final_tag >>-amd64
+            docker pull hysds/dev:<< parameters.final_tag >>-amd64
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
             
-            # Set environment variables for multi-platform builds
-            export DOCKER_BUILDX_PLATFORM="linux/amd64,linux/arm64"
+            # Set environment variables for amd64 builds
+            export DOCKER_BUILDX_PLATFORM="linux/amd64"
             export USE_BUILDX=1
             
-            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-amd64 << parameters.base_branch >>
             cd ..
             rm -rf puppet-verdi
+  build-hysds_verdi_pge_base-arm64:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: arm.medium
+    parameters:
+      org:
+        type: string
+        default: hysds
+      puppet_branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Build hysds/pge-base and hysds/verdi (arm64)
+          command: |
+            set -ex
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Pull arm64 base images
+            docker pull hysds/base:<< parameters.final_tag >>-arm64
+            docker pull hysds/dev:<< parameters.final_tag >>-arm64
             
-            # Note: If build_docker.sh doesn't support buildx yet, manual tagging/pushing may be needed
-            # The build script should be updated to use: docker buildx build --platform linux/amd64,linux/arm64 --push
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
+            cd puppet-verdi
             
-            cd images
-            # Save multi-arch manifest for verdi image
+            # Set environment variables for arm64 builds
+            export DOCKER_BUILDX_PLATFORM="linux/arm64"
+            export USE_BUILDX=1
+            
+            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-arm64 << parameters.base_branch >>
+            cd ..
+            rm -rf puppet-verdi
+  build-hysds_verdi_pge_base-manifest:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    parameters:
+      org:
+        type: string
+        default: hysds
+      puppet_branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
+    steps:
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - prep_env
+      - run:
+          name: Create multi-platform manifests for hysds/pge-base and hysds/verdi
+          command: |
+            set -ex
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            
+            # Create and push manifests for pge-base
             if [ "$push_build_tag" -eq 1 ]; then
-              docker pull hysds/verdi:<< parameters.build_tag >>
-              docker save hysds/verdi:<< parameters.build_tag >> > hysds-verdi-<< parameters.build_tag >>.tar
-              pigz -f hysds-verdi-<< parameters.build_tag >>.tar
+              docker manifest create hysds/pge-base:${build_tag} \
+                hysds/pge-base:${build_tag}-amd64 \
+                hysds/pge-base:${build_tag}-arm64
+              docker manifest push hysds/pge-base:${build_tag}
+            fi
+            docker manifest create hysds/pge-base:<< parameters.final_tag >> \
+              hysds/pge-base:<< parameters.final_tag >>-amd64 \
+              hysds/pge-base:<< parameters.final_tag >>-arm64
+            docker manifest push hysds/pge-base:<< parameters.final_tag >>
+            
+            # Create and push manifests for verdi
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker manifest create hysds/verdi:${build_tag} \
+                hysds/verdi:${build_tag}-amd64 \
+                hysds/verdi:${build_tag}-arm64
+              docker manifest push hysds/verdi:${build_tag}
+            fi
+            docker manifest create hysds/verdi:<< parameters.final_tag >> \
+              hysds/verdi:<< parameters.final_tag >>-amd64 \
+              hysds/verdi:<< parameters.final_tag >>-arm64
+            docker manifest push hysds/verdi:<< parameters.final_tag >>
+            
+            # Save multi-arch manifest for verdi image
+            mkdir -p images
+            cd images
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker pull hysds/verdi:${build_tag}
+              docker save hysds/verdi:${build_tag} > hysds-verdi-${build_tag}.tar
+              pigz -f hysds-verdi-${build_tag}.tar
             fi
             docker pull hysds/verdi:<< parameters.final_tag >>
             docker save hysds/verdi:<< parameters.final_tag >> > hysds-verdi-<< parameters.final_tag >>.tar
@@ -1137,7 +1461,7 @@ workflows:
           filters:
             branches:
               only: develop
-      - build-hysds_verdi_pge_base:
+      - build-hysds_verdi_pge_base-amd64:
           puppet_branch: HC-567
           build_tag: ""
           final_tag: HC-567
@@ -1149,7 +1473,39 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base-manifest
-            - build-hysds_dev
+            - build-hysds_dev-manifest
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_verdi_pge_base-arm64:
+          puppet_branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          framework_branch: HC-567
+          hysds_release: develop
+          base_branch: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_verdi_pge_base-manifest:
+          puppet_branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          framework_branch: HC-567
+          hysds_release: develop
+          base_branch: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_verdi_pge_base-amd64
+            - build-hysds_verdi_pge_base-arm64
           filters:
             branches:
               only: HC-567
@@ -1364,7 +1720,7 @@ workflows:
               only: /^v6.*/
             branches:
               ignore: /.*/
-      - build-hysds_verdi_pge_base:
+      - build-hysds_verdi_pge_base-amd64:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
@@ -1376,7 +1732,43 @@ workflows:
             - git-oauth-token
           requires:
             - build-hysds_base-manifest
-            - build-hysds_dev
+            - build-hysds_dev-manifest
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_verdi_pge_base-arm64:
+          puppet_branch: docker
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_verdi_pge_base-manifest:
+          puppet_branch: docker
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_verdi_pge_base-amd64
+            - build-hysds_verdi_pge_base-arm64
           filters:
             tags:
               only: /^v6.*/
