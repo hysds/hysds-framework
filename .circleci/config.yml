@@ -234,8 +234,11 @@ jobs:
                 -f docker/Dockerfile . --push
             fi
   build-hysds_base-arm64:
-    machine:
-      image: ubuntu-2204:current
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
     resource_class: arm.medium
     parameters:
       org:
@@ -250,6 +253,8 @@ jobs:
         type: string
     steps:
       - checkout
+      - setup_remote_docker:
+          version: default
       - install_deps
       - setup_buildx
       - prep_env
