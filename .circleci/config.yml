@@ -1184,7 +1184,7 @@ jobs:
               hysds/cuda-pge-base:<< parameters.final_tag >>-amd64 \
               hysds/cuda-pge-base:<< parameters.final_tag >>-arm64
             docker manifest push hysds/cuda-pge-base:<< parameters.final_tag >>
-  build-hysds_mozart:
+  build-hysds_mozart-amd64:
     docker:
       - image: docker:24.0.9-git
         auth:
@@ -1219,7 +1219,7 @@ jobs:
       - setup_buildx
       - prep_env
       - run:
-          name: Build hysds/mozart
+          name: Build hysds/mozart (amd64)
           command: |
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
@@ -1227,25 +1227,127 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull multi-platform base images
-            docker pull --platform linux/amd64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/amd64 hysds/dev:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/dev:<< parameters.final_tag >>
+            # Pull amd64 base images
+            docker pull hysds/base:<< parameters.final_tag >>-amd64
+            docker pull hysds/dev:<< parameters.final_tag >>-amd64
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-mozart.git
             cd puppet-mozart
             
-            # Set environment variables for multi-platform builds
-            export DOCKER_BUILDX_PLATFORM="linux/amd64,linux/arm64"
-            export USE_BUILDX=1
+            # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
+            ./build_docker.sh << parameters.final_tag >>-amd64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-amd64 << parameters.base_branch >>
             
-            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
+            # Push the image
+            docker push hysds/mozart:<< parameters.final_tag >>-amd64
+            
             cd ..
             rm -rf puppet-mozart
+  build-hysds_mozart-arm64:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: arm.large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      puppet_branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Build hysds/mozart (arm64)
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Pull arm64 base images
+            docker pull hysds/base:<< parameters.final_tag >>-arm64
+            docker pull hysds/dev:<< parameters.final_tag >>-arm64
             
-            # Note: If build_docker.sh doesn't support buildx yet, manual tagging/pushing may be needed
-  build-hysds_metrics:
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-mozart.git
+            cd puppet-mozart
+            
+            # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
+            ./build_docker.sh << parameters.final_tag >>-arm64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-arm64 << parameters.base_branch >>
+            
+            # Push the image
+            docker push hysds/mozart:<< parameters.final_tag >>-arm64
+            
+            cd ..
+            rm -rf puppet-mozart
+  build-hysds_mozart-manifest:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    parameters:
+      org:
+        type: string
+        default: hysds
+      puppet_branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Create multi-arch manifest for hysds/mozart
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Create and push manifest list
+            docker manifest create hysds/mozart:<< parameters.final_tag >> \
+              hysds/mozart:<< parameters.final_tag >>-amd64 \
+              hysds/mozart:<< parameters.final_tag >>-arm64
+            docker manifest push hysds/mozart:<< parameters.final_tag >>
+  build-hysds_metrics-amd64:
     docker:
       - image: docker:24.0.9-git
         auth:
@@ -1280,7 +1382,7 @@ jobs:
       - setup_buildx
       - prep_env
       - run:
-          name: Build hysds/metrics
+          name: Build hysds/metrics (amd64)
           command: |
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
@@ -1288,25 +1390,127 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull multi-platform base images
-            docker pull --platform linux/amd64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/amd64 hysds/dev:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/dev:<< parameters.final_tag >>
+            # Pull amd64 base images
+            docker pull hysds/base:<< parameters.final_tag >>-amd64
+            docker pull hysds/dev:<< parameters.final_tag >>-amd64
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-metrics.git
             cd puppet-metrics
             
-            # Set environment variables for multi-platform builds
-            export DOCKER_BUILDX_PLATFORM="linux/amd64,linux/arm64"
-            export USE_BUILDX=1
+            # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
+            ./build_docker.sh << parameters.final_tag >>-amd64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-amd64 << parameters.base_branch >>
             
-            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
+            # Push the image
+            docker push hysds/metrics:<< parameters.final_tag >>-amd64
+            
             cd ..
             rm -rf puppet-metrics
+  build-hysds_metrics-arm64:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: arm.large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      puppet_branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Build hysds/metrics (arm64)
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Pull arm64 base images
+            docker pull hysds/base:<< parameters.final_tag >>-arm64
+            docker pull hysds/dev:<< parameters.final_tag >>-arm64
             
-            # Note: If build_docker.sh doesn't support buildx yet, manual tagging/pushing may be needed
-  build-hysds_grq:
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-metrics.git
+            cd puppet-metrics
+            
+            # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
+            ./build_docker.sh << parameters.final_tag >>-arm64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-arm64 << parameters.base_branch >>
+            
+            # Push the image
+            docker push hysds/metrics:<< parameters.final_tag >>-arm64
+            
+            cd ..
+            rm -rf puppet-metrics
+  build-hysds_metrics-manifest:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    parameters:
+      org:
+        type: string
+        default: hysds
+      puppet_branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Create multi-arch manifest for hysds/metrics
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Create and push manifest list
+            docker manifest create hysds/metrics:<< parameters.final_tag >> \
+              hysds/metrics:<< parameters.final_tag >>-amd64 \
+              hysds/metrics:<< parameters.final_tag >>-arm64
+            docker manifest push hysds/metrics:<< parameters.final_tag >>
+  build-hysds_grq-amd64:
     docker:
       - image: docker:24.0.9-git
         auth:
@@ -1341,7 +1545,7 @@ jobs:
       - setup_buildx
       - prep_env
       - run:
-          name: Build hysds/grq
+          name: Build hysds/grq (amd64)
           command: |
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
@@ -1349,25 +1553,127 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull multi-platform base images
-            docker pull --platform linux/amd64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/amd64 hysds/dev:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/dev:<< parameters.final_tag >>
+            # Pull amd64 base images
+            docker pull hysds/base:<< parameters.final_tag >>-amd64
+            docker pull hysds/dev:<< parameters.final_tag >>-amd64
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-grq.git
             cd puppet-grq
             
-            # Set environment variables for multi-platform builds
-            export DOCKER_BUILDX_PLATFORM="linux/amd64,linux/arm64"
-            export USE_BUILDX=1
+            # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
+            ./build_docker.sh << parameters.final_tag >>-amd64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-amd64 << parameters.base_branch >>
             
-            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
+            # Push the image
+            docker push hysds/grq:<< parameters.final_tag >>-amd64
+            
             cd ..
             rm -rf puppet-grq
+  build-hysds_grq-arm64:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: arm.large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      puppet_branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Build hysds/grq (arm64)
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Pull arm64 base images
+            docker pull hysds/base:<< parameters.final_tag >>-arm64
+            docker pull hysds/dev:<< parameters.final_tag >>-arm64
             
-            # Note: If build_docker.sh doesn't support buildx yet, manual tagging/pushing may be needed
-  build-hysds_cont_int:
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-grq.git
+            cd puppet-grq
+            
+            # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
+            ./build_docker.sh << parameters.final_tag >>-arm64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-arm64 << parameters.base_branch >>
+            
+            # Push the image
+            docker push hysds/grq:<< parameters.final_tag >>-arm64
+            
+            cd ..
+            rm -rf puppet-grq
+  build-hysds_grq-manifest:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    parameters:
+      org:
+        type: string
+        default: hysds
+      puppet_branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Create multi-arch manifest for hysds/grq
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Create and push manifest list
+            docker manifest create hysds/grq:<< parameters.final_tag >> \
+              hysds/grq:<< parameters.final_tag >>-amd64 \
+              hysds/grq:<< parameters.final_tag >>-arm64
+            docker manifest push hysds/grq:<< parameters.final_tag >>
+  build-hysds_cont_int-amd64:
     docker:
       - image: docker:24.0.9-git
         auth:
@@ -1402,7 +1708,7 @@ jobs:
       - setup_buildx
       - prep_env
       - run:
-          name: Build hysds/cont_int
+          name: Build hysds/cont_int (amd64)
           command: |
             export build_tag=<< parameters.build_tag >>
             export push_build_tag=1
@@ -1410,24 +1716,126 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull multi-platform base images
-            docker pull --platform linux/amd64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/amd64 hysds/dev:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/dev:<< parameters.final_tag >>
+            # Pull amd64 base images
+            docker pull hysds/base:<< parameters.final_tag >>-amd64
+            docker pull hysds/dev:<< parameters.final_tag >>-amd64
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-cont_int.git
             cd puppet-cont_int
             
-            # Set environment variables for multi-platform builds
-            export DOCKER_BUILDX_PLATFORM="linux/amd64,linux/arm64"
-            export USE_BUILDX=1
+            # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
+            ./build_docker.sh << parameters.final_tag >>-amd64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-amd64 << parameters.base_branch >>
             
-            ./build_docker.sh $build_tag << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >> << parameters.base_branch >>
+            # Push the image
+            docker push hysds/cont_int:<< parameters.final_tag >>-amd64
+            
             cd ..
             rm -rf puppet-cont_int
+  build-hysds_cont_int-arm64:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: arm.large
+    parameters:
+      org:
+        type: string
+        default: hysds
+      puppet_branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Build hysds/cont_int (arm64)
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Pull arm64 base images
+            docker pull hysds/base:<< parameters.final_tag >>-arm64
+            docker pull hysds/dev:<< parameters.final_tag >>-arm64
             
-            # Note: If build_docker.sh doesn't support buildx yet, manual tagging/pushing may be needed
+            git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-cont_int.git
+            cd puppet-cont_int
+            
+            # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
+            ./build_docker.sh << parameters.final_tag >>-arm64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-arm64 << parameters.base_branch >>
+            
+            # Push the image
+            docker push hysds/cont_int:<< parameters.final_tag >>-arm64
+            
+            cd ..
+            rm -rf puppet-cont_int
+  build-hysds_cont_int-manifest:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    parameters:
+      org:
+        type: string
+        default: hysds
+      puppet_branch:
+        type: string
+        default: docker
+      build_tag:
+        type: string
+      final_tag:
+        type: string
+      framework_branch:
+        type: string
+        default: develop
+      hysds_release:
+        type: string
+        default: develop
+      base_branch:
+        type: string
+        default: develop
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Create multi-arch manifest for hysds/cont_int
+          command: |
+            export build_tag=<< parameters.build_tag >>
+            export push_build_tag=1
+            if [ -z "$build_tag" ]; then
+              export build_tag=$(date -u +%Y%m%d)
+              export push_build_tag=0
+            fi
+            # Create and push manifest list
+            docker manifest create hysds/cont_int:<< parameters.final_tag >> \
+              hysds/cont_int:<< parameters.final_tag >>-amd64 \
+              hysds/cont_int:<< parameters.final_tag >>-arm64
+            docker manifest push hysds/cont_int:<< parameters.final_tag >>
   deploy:
     docker:
       - image: alpine:latest
@@ -1855,7 +2263,7 @@ workflows:
           filters:
             branches:
               only: HC-567
-      - build-hysds_mozart:
+      - build-hysds_mozart-amd64:
           puppet_branch: HC-567
           build_tag: ""
           final_tag: HC-567
@@ -1871,7 +2279,7 @@ workflows:
           filters:
             branches:
               only: HC-567
-      - build-hysds_metrics:
+      - build-hysds_mozart-arm64:
           puppet_branch: HC-567
           build_tag: ""
           final_tag: HC-567
@@ -1887,7 +2295,23 @@ workflows:
           filters:
             branches:
               only: HC-567
-      - build-hysds_grq:
+      - build-hysds_mozart-manifest:
+          puppet_branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          framework_branch: HC-567
+          hysds_release: develop
+          base_branch: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_mozart-amd64
+            - build-hysds_mozart-arm64
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_metrics-amd64:
           puppet_branch: HC-567
           build_tag: ""
           final_tag: HC-567
@@ -1903,7 +2327,7 @@ workflows:
           filters:
             branches:
               only: HC-567
-      - build-hysds_cont_int:
+      - build-hysds_metrics-arm64:
           puppet_branch: HC-567
           build_tag: ""
           final_tag: HC-567
@@ -1916,6 +2340,118 @@ workflows:
           requires:
             - build-hysds_base-manifest
             - build-hysds_dev-manifest
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_metrics-manifest:
+          puppet_branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          framework_branch: HC-567
+          hysds_release: develop
+          base_branch: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_metrics-amd64
+            - build-hysds_metrics-arm64
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_grq-amd64:
+          puppet_branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          framework_branch: HC-567
+          hysds_release: develop
+          base_branch: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_grq-arm64:
+          puppet_branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          framework_branch: HC-567
+          hysds_release: develop
+          base_branch: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_grq-manifest:
+          puppet_branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          framework_branch: HC-567
+          hysds_release: develop
+          base_branch: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_grq-amd64
+            - build-hysds_grq-arm64
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_cont_int-amd64:
+          puppet_branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          framework_branch: HC-567
+          hysds_release: develop
+          base_branch: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_cont_int-arm64:
+          puppet_branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          framework_branch: HC-567
+          hysds_release: develop
+          base_branch: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
+          filters:
+            branches:
+              only: HC-567
+      - build-hysds_cont_int-manifest:
+          puppet_branch: HC-567
+          build_tag: ""
+          final_tag: HC-567
+          framework_branch: HC-567
+          hysds_release: develop
+          base_branch: HC-567
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_cont_int-amd64
+            - build-hysds_cont_int-arm64
           filters:
             branches:
               only: HC-567
@@ -2245,7 +2781,7 @@ workflows:
               only: /^v6.*/
             branches:
               ignore: /.*/
-      - build-hysds_mozart:
+      - build-hysds_mozart-amd64:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
@@ -2263,7 +2799,7 @@ workflows:
               only: /^v6.*/
             branches:
               ignore: /.*/
-      - build-hysds_metrics:
+      - build-hysds_mozart-arm64:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
@@ -2281,7 +2817,25 @@ workflows:
               only: /^v6.*/
             branches:
               ignore: /.*/
-      - build-hysds_grq:
+      - build-hysds_mozart-manifest:
+          puppet_branch: docker
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_mozart-amd64
+            - build-hysds_mozart-arm64
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_metrics-amd64:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
@@ -2299,7 +2853,7 @@ workflows:
               only: /^v6.*/
             branches:
               ignore: /.*/
-      - build-hysds_cont_int:
+      - build-hysds_metrics-arm64:
           puppet_branch: docker
           build_tag: $CIRCLE_TAG
           final_tag: latest
@@ -2312,6 +2866,132 @@ workflows:
           requires:
             - build-hysds_base-manifest
             - build-hysds_dev-manifest
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_metrics-manifest:
+          puppet_branch: docker
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_metrics-amd64
+            - build-hysds_metrics-arm64
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_grq-amd64:
+          puppet_branch: docker
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_grq-arm64:
+          puppet_branch: docker
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_grq-manifest:
+          puppet_branch: docker
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_grq-amd64
+            - build-hysds_grq-arm64
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_cont_int-amd64:
+          puppet_branch: docker
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_cont_int-arm64:
+          puppet_branch: docker
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - build-hysds_cont_int-manifest:
+          puppet_branch: docker
+          build_tag: $CIRCLE_TAG
+          final_tag: latest
+          framework_branch: $CIRCLE_TAG
+          hysds_release: $CIRCLE_TAG
+          base_branch: develop
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_cont_int-amd64
+            - build-hysds_cont_int-arm64
           filters:
             tags:
               only: /^v6.*/
