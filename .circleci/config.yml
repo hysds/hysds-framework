@@ -998,17 +998,31 @@ jobs:
               hysds/verdi:<< parameters.final_tag >>-arm64
             docker manifest push hysds/verdi:<< parameters.final_tag >>
             
-            # Save multi-arch manifest for verdi image
+            # Save architecture-specific images for verdi
             mkdir -p images
             cd images
             if [ "$push_build_tag" -eq 1 ]; then
-              docker pull hysds/verdi:${build_tag}
-              docker save hysds/verdi:${build_tag} > hysds-verdi-${build_tag}.tar
+              # Save amd64 image (no suffix for backwards compatibility)
+              docker pull --platform linux/amd64 hysds/verdi:${build_tag}-amd64
+              docker save hysds/verdi:${build_tag}-amd64 > hysds-verdi-${build_tag}.tar
               pigz -f hysds-verdi-${build_tag}.tar
+              
+              # Save arm64 image (with suffix)
+              docker pull --platform linux/arm64 hysds/verdi:${build_tag}-arm64
+              docker save hysds/verdi:${build_tag}-arm64 > hysds-verdi-${build_tag}-arm64.tar
+              pigz -f hysds-verdi-${build_tag}-arm64.tar
             fi
-            docker pull hysds/verdi:<< parameters.final_tag >>
-            docker save hysds/verdi:<< parameters.final_tag >> > hysds-verdi-<< parameters.final_tag >>.tar
+            
+            # Save amd64 image for final_tag (no suffix for backwards compatibility)
+            docker pull --platform linux/amd64 hysds/verdi:<< parameters.final_tag >>-amd64
+            docker save hysds/verdi:<< parameters.final_tag >>-amd64 > hysds-verdi-<< parameters.final_tag >>.tar
             pigz -f hysds-verdi-<< parameters.final_tag >>.tar
+            
+            # Save arm64 image for final_tag (with suffix)
+            docker pull --platform linux/arm64 hysds/verdi:<< parameters.final_tag >>-arm64
+            docker save hysds/verdi:<< parameters.final_tag >>-arm64 > hysds-verdi-<< parameters.final_tag >>-arm64.tar
+            pigz -f hysds-verdi-<< parameters.final_tag >>-arm64.tar
+            
             ls -al
       - persist_to_workspace:
           root: images
@@ -1877,13 +1891,17 @@ jobs:
             set -x
             tag=$(gh release list -R ${org}/${repo} -L 1 | awk 'BEGIN{FS=":"}{print $1}')
             if [ "$push_build_tag" -eq 1 ]; then
-              file=hysds-verdi-<< parameters.build_tag >>.tar.gz
-              gh release upload ${tag} ${file} -R ${org}/${repo} --clobber
+              # Upload amd64 tarball (no suffix for backwards compatibility)
+              gh release upload ${tag} hysds-verdi-<< parameters.build_tag >>.tar.gz -R ${org}/${repo} --clobber
+              # Upload arm64 tarball (with suffix)
+              gh release upload ${tag} hysds-verdi-<< parameters.build_tag >>-arm64.tar.gz -R ${org}/${repo} --clobber
             fi
             repo=hysds-dockerfiles
             tag=$(gh release list -R ${org}/${repo} -L 1 | awk 'BEGIN{FS=":"}{print $1}')
-            file=hysds-verdi-<< parameters.final_tag >>.tar.gz
-            gh release upload ${tag} ${file} -R ${org}/${repo} --clobber
+            # Upload amd64 tarball for final_tag (no suffix for backwards compatibility)
+            gh release upload ${tag} hysds-verdi-<< parameters.final_tag >>.tar.gz -R ${org}/${repo} --clobber
+            # Upload arm64 tarball for final_tag (with suffix)
+            gh release upload ${tag} hysds-verdi-<< parameters.final_tag >>-arm64.tar.gz -R ${org}/${repo} --clobber
   export-support-assets:
     docker:
       - image: docker:24.0.9-git
