@@ -2304,8 +2304,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
+            - build-hysds_mozart-amd64
           filters:
             branches:
               only: HC-567
@@ -2320,7 +2319,6 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_mozart-amd64
             - build-hysds_mozart-arm64
           filters:
             branches:
@@ -2352,8 +2350,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
+            - build-hysds_metrics-amd64
           filters:
             branches:
               only: HC-567
@@ -2368,7 +2365,6 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_metrics-amd64
             - build-hysds_metrics-arm64
           filters:
             branches:
@@ -2400,8 +2396,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
+            - build-hysds_grq-amd64
           filters:
             branches:
               only: HC-567
@@ -2416,7 +2411,6 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_grq-amd64
             - build-hysds_grq-arm64
           filters:
             branches:
@@ -2448,8 +2442,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
+            - build-hysds_cont_int-amd64
           filters:
             branches:
               only: HC-567
@@ -2464,7 +2457,6 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_cont_int-amd64
             - build-hysds_cont_int-arm64
           filters:
             branches:
