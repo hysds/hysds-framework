@@ -318,7 +318,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone sciflo package
-  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git
+  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git HC-567
   
   
   # clone chimera package
