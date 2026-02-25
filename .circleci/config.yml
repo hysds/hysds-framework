@@ -786,7 +786,9 @@ jobs:
             cd assets
             org=<< parameters.org >>
             repo=hysds-dockerfiles
+            set +x
             echo $GIT_OAUTH_TOKEN | gh auth login --with-token
+            set -x
             tag=$(gh release list -R ${org}/${repo} -L 1 | awk 'BEGIN{FS=":"}{print $1}')
             for file in *; do
               gh release upload ${tag} ${file} -R ${org}/${repo} --clobber
