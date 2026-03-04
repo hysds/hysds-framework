@@ -302,13 +302,13 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds_commons package
-  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git
+  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git HC-567
   
   
   # clone hysds package
   cd $OPS
   PACKAGE=hysds
-  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
+  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git HC-567
   cd $OPS/$PACKAGE
   pip install -e .
   if [ "$?" -ne 0 ]; then
@@ -326,7 +326,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone mozart package
-  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git
+  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git HC-567
   
   
   # clone sdscli package
