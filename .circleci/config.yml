@@ -1902,7 +1902,7 @@ jobs:
             gh release upload ${tag} hysds-verdi-<< parameters.final_tag >>.tar.gz -R ${org}/${repo} --clobber
             # Upload arm64 tarball for final_tag (with suffix)
             gh release upload ${tag} hysds-verdi-<< parameters.final_tag >>-arm64.tar.gz -R ${org}/${repo} --clobber
-  export-support-assets:
+  export-support-assets-amd64:
     docker:
       - image: docker:24.0.9-git
         auth:
@@ -1916,35 +1916,81 @@ jobs:
       - setup_buildx
       - prep_env
       - run:
-          name: Load support assets and save to files
+          name: Load support assets and save to files (amd64)
           command: |
             mkdir -p assets
             cd assets
             
-            # Pull and save multi-platform images
-            # Note: docker save will save all architectures from a multi-arch manifest
-            docker pull registry:2
+            # Pull and save amd64 images (no suffix for backwards compatibility)
+            docker pull --platform linux/amd64 registry:2
             docker save registry:2 > docker-registry-2.tar
             pigz -f docker-registry-2.tar
 
-            docker pull hysds/verdi:develop-es1
+            docker pull --platform linux/amd64 hysds/verdi:develop-es1
             docker save hysds/verdi:develop-es1 > hysds-verdi-develop-es1.tar
             pigz -f hysds-verdi-develop-es1.tar
 
-            docker pull hysds/logstash:7.1.1
+            docker pull --platform linux/amd64 hysds/logstash:7.1.1
             docker tag hysds/logstash:7.1.1 logstash:7.1.1
             docker save logstash:7.1.1 > logstash-7.1.1.tar
             pigz -f logstash-7.1.1.tar
 
-            docker pull hysds/logstash:7.9.3
+            docker pull --platform linux/amd64 hysds/logstash:7.9.3
             docker tag hysds/logstash:7.9.3 logstash:7.9.3
             docker save logstash:7.9.3 > logstash-7.9.3.tar
             pigz -f logstash-7.9.3.tar
 
-            docker pull opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.3
+            docker pull --platform linux/amd64 opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.3
             docker tag opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.3 logstash-oss:7.16.3
             docker save logstash-oss:7.16.3 > logstash-oss-7.16.3.tar
             pigz -f logstash-oss-7.16.3.tar
+      - persist_to_workspace:
+          root: assets
+          paths:
+            - "*"
+  export-support-assets-arm64:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: arm.medium
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - setup_buildx
+      - prep_env
+      - run:
+          name: Load support assets and save to files (arm64)
+          command: |
+            mkdir -p assets
+            cd assets
+            
+            # Pull and save arm64 images
+            docker pull --platform linux/arm64 registry:2
+            docker save registry:2 > docker-registry-2-arm64.tar
+            pigz -f docker-registry-2-arm64.tar
+
+            docker pull --platform linux/arm64 hysds/verdi:develop-es1
+            docker save hysds/verdi:develop-es1 > hysds-verdi-develop-es1-arm64.tar
+            pigz -f hysds-verdi-develop-es1-arm64.tar
+
+            docker pull --platform linux/arm64 hysds/logstash:7.1.1
+            docker tag hysds/logstash:7.1.1 logstash:7.1.1
+            docker save logstash:7.1.1 > logstash-7.1.1-arm64.tar
+            pigz -f logstash-7.1.1-arm64.tar
+
+            docker pull --platform linux/arm64 hysds/logstash:7.9.3
+            docker tag hysds/logstash:7.9.3 logstash:7.9.3
+            docker save logstash:7.9.3 > logstash-7.9.3-arm64.tar
+            pigz -f logstash-7.9.3-arm64.tar
+
+            docker pull --platform linux/arm64 opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.3
+            docker tag opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.3 logstash-oss:7.16.3
+            docker save logstash-oss:7.16.3 > logstash-oss-7.16.3-arm64.tar
+            pigz -f logstash-oss-7.16.3-arm64.tar
       - persist_to_workspace:
           root: assets
           paths:
@@ -3016,7 +3062,16 @@ workflows:
               only: /^v6.*/
             branches:
               ignore: /.*/
-      - export-support-assets:
+      - export-support-assets-amd64:
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
+      - export-support-assets-arm64:
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -3030,7 +3085,8 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - export-support-assets
+            - export-support-assets-amd64
+            - export-support-assets-arm64
           filters:
             tags:
               only: /^v6.*/
