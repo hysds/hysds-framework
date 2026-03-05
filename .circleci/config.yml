@@ -2323,190 +2323,190 @@ workflows:
           filters:
             branches:
               only: HC-567
-      - build-hysds_mozart-amd64:
-          puppet_branch: HC-567
-          build_tag: ""
-          final_tag: HC-567
-          framework_branch: HC-567
-          hysds_release: develop
-          base_branch: HC-567
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
-          filters:
-            branches:
-              only: HC-567
-      - build-hysds_mozart-arm64:
-          puppet_branch: HC-567
-          build_tag: ""
-          final_tag: HC-567
-          framework_branch: HC-567
-          hysds_release: develop
-          base_branch: HC-567
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_mozart-amd64
-          filters:
-            branches:
-              only: HC-567
-      - build-hysds_mozart-manifest:
-          puppet_branch: HC-567
-          build_tag: ""
-          final_tag: HC-567
-          framework_branch: HC-567
-          hysds_release: develop
-          base_branch: HC-567
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_mozart-arm64
-          filters:
-            branches:
-              only: HC-567
-      - build-hysds_metrics-amd64:
-          puppet_branch: HC-567
-          build_tag: ""
-          final_tag: HC-567
-          framework_branch: HC-567
-          hysds_release: develop
-          base_branch: HC-567
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
-          filters:
-            branches:
-              only: HC-567
-      - build-hysds_metrics-arm64:
-          puppet_branch: HC-567
-          build_tag: ""
-          final_tag: HC-567
-          framework_branch: HC-567
-          hysds_release: develop
-          base_branch: HC-567
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_metrics-amd64
-          filters:
-            branches:
-              only: HC-567
-      - build-hysds_metrics-manifest:
-          puppet_branch: HC-567
-          build_tag: ""
-          final_tag: HC-567
-          framework_branch: HC-567
-          hysds_release: develop
-          base_branch: HC-567
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_metrics-arm64
-          filters:
-            branches:
-              only: HC-567
-      - build-hysds_grq-amd64:
-          puppet_branch: HC-567
-          build_tag: ""
-          final_tag: HC-567
-          framework_branch: HC-567
-          hysds_release: develop
-          base_branch: HC-567
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
-          filters:
-            branches:
-              only: HC-567
-      - build-hysds_grq-arm64:
-          puppet_branch: HC-567
-          build_tag: ""
-          final_tag: HC-567
-          framework_branch: HC-567
-          hysds_release: develop
-          base_branch: HC-567
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_grq-amd64
-          filters:
-            branches:
-              only: HC-567
-      - build-hysds_grq-manifest:
-          puppet_branch: HC-567
-          build_tag: ""
-          final_tag: HC-567
-          framework_branch: HC-567
-          hysds_release: develop
-          base_branch: HC-567
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_grq-arm64
-          filters:
-            branches:
-              only: HC-567
-      - build-hysds_cont_int-amd64:
-          puppet_branch: HC-567
-          build_tag: ""
-          final_tag: HC-567
-          framework_branch: HC-567
-          hysds_release: develop
-          base_branch: HC-567
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
-          filters:
-            branches:
-              only: HC-567
-      - build-hysds_cont_int-arm64:
-          puppet_branch: HC-567
-          build_tag: ""
-          final_tag: HC-567
-          framework_branch: HC-567
-          hysds_release: develop
-          base_branch: HC-567
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_cont_int-amd64
-          filters:
-            branches:
-              only: HC-567
-      - build-hysds_cont_int-manifest:
-          puppet_branch: HC-567
-          build_tag: ""
-          final_tag: HC-567
-          framework_branch: HC-567
-          hysds_release: develop
-          base_branch: HC-567
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_cont_int-arm64
-          filters:
-            branches:
-              only: HC-567
+      # - build-hysds_mozart-amd64:
+      #     puppet_branch: HC-567
+      #     build_tag: ""
+      #     final_tag: HC-567
+      #     framework_branch: HC-567
+      #     hysds_release: develop
+      #     base_branch: HC-567
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_base-manifest
+      #       - build-hysds_dev-manifest
+      #     filters:
+      #       branches:
+      #         only: HC-567
+      # - build-hysds_mozart-arm64:
+      #     puppet_branch: HC-567
+      #     build_tag: ""
+      #     final_tag: HC-567
+      #     framework_branch: HC-567
+      #     hysds_release: develop
+      #     base_branch: HC-567
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_mozart-amd64
+      #     filters:
+      #       branches:
+      #         only: HC-567
+      # - build-hysds_mozart-manifest:
+      #     puppet_branch: HC-567
+      #     build_tag: ""
+      #     final_tag: HC-567
+      #     framework_branch: HC-567
+      #     hysds_release: develop
+      #     base_branch: HC-567
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_mozart-arm64
+      #     filters:
+      #       branches:
+      #         only: HC-567
+      # - build-hysds_metrics-amd64:
+      #     puppet_branch: HC-567
+      #     build_tag: ""
+      #     final_tag: HC-567
+      #     framework_branch: HC-567
+      #     hysds_release: develop
+      #     base_branch: HC-567
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_base-manifest
+      #       - build-hysds_dev-manifest
+      #     filters:
+      #       branches:
+      #         only: HC-567
+      # - build-hysds_metrics-arm64:
+      #     puppet_branch: HC-567
+      #     build_tag: ""
+      #     final_tag: HC-567
+      #     framework_branch: HC-567
+      #     hysds_release: develop
+      #     base_branch: HC-567
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_metrics-amd64
+      #     filters:
+      #       branches:
+      #         only: HC-567
+      # - build-hysds_metrics-manifest:
+      #     puppet_branch: HC-567
+      #     build_tag: ""
+      #     final_tag: HC-567
+      #     framework_branch: HC-567
+      #     hysds_release: develop
+      #     base_branch: HC-567
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_metrics-arm64
+      #     filters:
+      #       branches:
+      #         only: HC-567
+      # - build-hysds_grq-amd64:
+      #     puppet_branch: HC-567
+      #     build_tag: ""
+      #     final_tag: HC-567
+      #     framework_branch: HC-567
+      #     hysds_release: develop
+      #     base_branch: HC-567
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_base-manifest
+      #       - build-hysds_dev-manifest
+      #     filters:
+      #       branches:
+      #         only: HC-567
+      # - build-hysds_grq-arm64:
+      #     puppet_branch: HC-567
+      #     build_tag: ""
+      #     final_tag: HC-567
+      #     framework_branch: HC-567
+      #     hysds_release: develop
+      #     base_branch: HC-567
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_grq-amd64
+      #     filters:
+      #       branches:
+      #         only: HC-567
+      # - build-hysds_grq-manifest:
+      #     puppet_branch: HC-567
+      #     build_tag: ""
+      #     final_tag: HC-567
+      #     framework_branch: HC-567
+      #     hysds_release: develop
+      #     base_branch: HC-567
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_grq-arm64
+      #     filters:
+      #       branches:
+      #         only: HC-567
+      # - build-hysds_cont_int-amd64:
+      #     puppet_branch: HC-567
+      #     build_tag: ""
+      #     final_tag: HC-567
+      #     framework_branch: HC-567
+      #     hysds_release: develop
+      #     base_branch: HC-567
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_base-manifest
+      #       - build-hysds_dev-manifest
+      #     filters:
+      #       branches:
+      #         only: HC-567
+      # - build-hysds_cont_int-arm64:
+      #     puppet_branch: HC-567
+      #     build_tag: ""
+      #     final_tag: HC-567
+      #     framework_branch: HC-567
+      #     hysds_release: develop
+      #     base_branch: HC-567
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_cont_int-amd64
+      #     filters:
+      #       branches:
+      #         only: HC-567
+      # - build-hysds_cont_int-manifest:
+      #     puppet_branch: HC-567
+      #     build_tag: ""
+      #     final_tag: HC-567
+      #     framework_branch: HC-567
+      #     hysds_release: develop
+      #     base_branch: HC-567
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_cont_int-arm64
+      #     filters:
+      #       branches:
+      #         only: HC-567
       - deploy:
           build_tag: ""
           final_tag: HC-567
@@ -2833,222 +2833,222 @@ workflows:
               only: /^v6.*/
             branches:
               ignore: /.*/
-      - build-hysds_mozart-amd64:
-          puppet_branch: docker
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          framework_branch: $CIRCLE_TAG
-          hysds_release: $CIRCLE_TAG
-          base_branch: develop
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
-          filters:
-            tags:
-              only: /^v6.*/
-            branches:
-              ignore: /.*/
-      - build-hysds_mozart-arm64:
-          puppet_branch: docker
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          framework_branch: $CIRCLE_TAG
-          hysds_release: $CIRCLE_TAG
-          base_branch: develop
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
-          filters:
-            tags:
-              only: /^v6.*/
-            branches:
-              ignore: /.*/
-      - build-hysds_mozart-manifest:
-          puppet_branch: docker
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          framework_branch: $CIRCLE_TAG
-          hysds_release: $CIRCLE_TAG
-          base_branch: develop
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_mozart-amd64
-            - build-hysds_mozart-arm64
-          filters:
-            tags:
-              only: /^v6.*/
-            branches:
-              ignore: /.*/
-      - build-hysds_metrics-amd64:
-          puppet_branch: docker
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          framework_branch: $CIRCLE_TAG
-          hysds_release: $CIRCLE_TAG
-          base_branch: develop
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
-          filters:
-            tags:
-              only: /^v6.*/
-            branches:
-              ignore: /.*/
-      - build-hysds_metrics-arm64:
-          puppet_branch: docker
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          framework_branch: $CIRCLE_TAG
-          hysds_release: $CIRCLE_TAG
-          base_branch: develop
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
-          filters:
-            tags:
-              only: /^v6.*/
-            branches:
-              ignore: /.*/
-      - build-hysds_metrics-manifest:
-          puppet_branch: docker
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          framework_branch: $CIRCLE_TAG
-          hysds_release: $CIRCLE_TAG
-          base_branch: develop
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_metrics-amd64
-            - build-hysds_metrics-arm64
-          filters:
-            tags:
-              only: /^v6.*/
-            branches:
-              ignore: /.*/
-      - build-hysds_grq-amd64:
-          puppet_branch: docker
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          framework_branch: $CIRCLE_TAG
-          hysds_release: $CIRCLE_TAG
-          base_branch: develop
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
-          filters:
-            tags:
-              only: /^v6.*/
-            branches:
-              ignore: /.*/
-      - build-hysds_grq-arm64:
-          puppet_branch: docker
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          framework_branch: $CIRCLE_TAG
-          hysds_release: $CIRCLE_TAG
-          base_branch: develop
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
-          filters:
-            tags:
-              only: /^v6.*/
-            branches:
-              ignore: /.*/
-      - build-hysds_grq-manifest:
-          puppet_branch: docker
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          framework_branch: $CIRCLE_TAG
-          hysds_release: $CIRCLE_TAG
-          base_branch: develop
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_grq-amd64
-            - build-hysds_grq-arm64
-          filters:
-            tags:
-              only: /^v6.*/
-            branches:
-              ignore: /.*/
-      - build-hysds_cont_int-amd64:
-          puppet_branch: docker
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          framework_branch: $CIRCLE_TAG
-          hysds_release: $CIRCLE_TAG
-          base_branch: develop
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
-          filters:
-            tags:
-              only: /^v6.*/
-            branches:
-              ignore: /.*/
-      - build-hysds_cont_int-arm64:
-          puppet_branch: docker
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          framework_branch: $CIRCLE_TAG
-          hysds_release: $CIRCLE_TAG
-          base_branch: develop
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
-          filters:
-            tags:
-              only: /^v6.*/
-            branches:
-              ignore: /.*/
-      - build-hysds_cont_int-manifest:
-          puppet_branch: docker
-          build_tag: $CIRCLE_TAG
-          final_tag: latest
-          framework_branch: $CIRCLE_TAG
-          hysds_release: $CIRCLE_TAG
-          base_branch: develop
-          context:
-            - docker-hub-creds
-            - git-oauth-token
-          requires:
-            - build-hysds_cont_int-amd64
-            - build-hysds_cont_int-arm64
-          filters:
-            tags:
-              only: /^v6.*/
-            branches:
-              ignore: /.*/
+      # - build-hysds_mozart-amd64:
+      #     puppet_branch: docker
+      #     build_tag: $CIRCLE_TAG
+      #     final_tag: latest
+      #     framework_branch: $CIRCLE_TAG
+      #     hysds_release: $CIRCLE_TAG
+      #     base_branch: develop
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_base-manifest
+      #       - build-hysds_dev-manifest
+      #     filters:
+      #       tags:
+      #         only: /^v6.*/
+      #       branches:
+      #         ignore: /.*/
+      # - build-hysds_mozart-arm64:
+      #     puppet_branch: docker
+      #     build_tag: $CIRCLE_TAG
+      #     final_tag: latest
+      #     framework_branch: $CIRCLE_TAG
+      #     hysds_release: $CIRCLE_TAG
+      #     base_branch: develop
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_base-manifest
+      #       - build-hysds_dev-manifest
+      #     filters:
+      #       tags:
+      #         only: /^v6.*/
+      #       branches:
+      #         ignore: /.*/
+      # - build-hysds_mozart-manifest:
+      #     puppet_branch: docker
+      #     build_tag: $CIRCLE_TAG
+      #     final_tag: latest
+      #     framework_branch: $CIRCLE_TAG
+      #     hysds_release: $CIRCLE_TAG
+      #     base_branch: develop
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_mozart-amd64
+      #       - build-hysds_mozart-arm64
+      #     filters:
+      #       tags:
+      #         only: /^v6.*/
+      #       branches:
+      #         ignore: /.*/
+      # - build-hysds_metrics-amd64:
+      #     puppet_branch: docker
+      #     build_tag: $CIRCLE_TAG
+      #     final_tag: latest
+      #     framework_branch: $CIRCLE_TAG
+      #     hysds_release: $CIRCLE_TAG
+      #     base_branch: develop
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_base-manifest
+      #       - build-hysds_dev-manifest
+      #     filters:
+      #       tags:
+      #         only: /^v6.*/
+      #       branches:
+      #         ignore: /.*/
+      # - build-hysds_metrics-arm64:
+      #     puppet_branch: docker
+      #     build_tag: $CIRCLE_TAG
+      #     final_tag: latest
+      #     framework_branch: $CIRCLE_TAG
+      #     hysds_release: $CIRCLE_TAG
+      #     base_branch: develop
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_base-manifest
+      #       - build-hysds_dev-manifest
+      #     filters:
+      #       tags:
+      #         only: /^v6.*/
+      #       branches:
+      #         ignore: /.*/
+      # - build-hysds_metrics-manifest:
+      #     puppet_branch: docker
+      #     build_tag: $CIRCLE_TAG
+      #     final_tag: latest
+      #     framework_branch: $CIRCLE_TAG
+      #     hysds_release: $CIRCLE_TAG
+      #     base_branch: develop
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_metrics-amd64
+      #       - build-hysds_metrics-arm64
+      #     filters:
+      #       tags:
+      #         only: /^v6.*/
+      #       branches:
+      #         ignore: /.*/
+      # - build-hysds_grq-amd64:
+      #     puppet_branch: docker
+      #     build_tag: $CIRCLE_TAG
+      #     final_tag: latest
+      #     framework_branch: $CIRCLE_TAG
+      #     hysds_release: $CIRCLE_TAG
+      #     base_branch: develop
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_base-manifest
+      #       - build-hysds_dev-manifest
+      #     filters:
+      #       tags:
+      #         only: /^v6.*/
+      #       branches:
+      #         ignore: /.*/
+      # - build-hysds_grq-arm64:
+      #     puppet_branch: docker
+      #     build_tag: $CIRCLE_TAG
+      #     final_tag: latest
+      #     framework_branch: $CIRCLE_TAG
+      #     hysds_release: $CIRCLE_TAG
+      #     base_branch: develop
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_base-manifest
+      #       - build-hysds_dev-manifest
+      #     filters:
+      #       tags:
+      #         only: /^v6.*/
+      #       branches:
+      #         ignore: /.*/
+      # - build-hysds_grq-manifest:
+      #     puppet_branch: docker
+      #     build_tag: $CIRCLE_TAG
+      #     final_tag: latest
+      #     framework_branch: $CIRCLE_TAG
+      #     hysds_release: $CIRCLE_TAG
+      #     base_branch: develop
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_grq-amd64
+      #       - build-hysds_grq-arm64
+      #     filters:
+      #       tags:
+      #         only: /^v6.*/
+      #       branches:
+      #         ignore: /.*/
+      # - build-hysds_cont_int-amd64:
+      #     puppet_branch: docker
+      #     build_tag: $CIRCLE_TAG
+      #     final_tag: latest
+      #     framework_branch: $CIRCLE_TAG
+      #     hysds_release: $CIRCLE_TAG
+      #     base_branch: develop
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_base-manifest
+      #       - build-hysds_dev-manifest
+      #     filters:
+      #       tags:
+      #         only: /^v6.*/
+      #       branches:
+      #         ignore: /.*/
+      # - build-hysds_cont_int-arm64:
+      #     puppet_branch: docker
+      #     build_tag: $CIRCLE_TAG
+      #     final_tag: latest
+      #     framework_branch: $CIRCLE_TAG
+      #     hysds_release: $CIRCLE_TAG
+      #     base_branch: develop
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_base-manifest
+      #       - build-hysds_dev-manifest
+      #     filters:
+      #       tags:
+      #         only: /^v6.*/
+      #       branches:
+      #         ignore: /.*/
+      # - build-hysds_cont_int-manifest:
+      #     puppet_branch: docker
+      #     build_tag: $CIRCLE_TAG
+      #     final_tag: latest
+      #     framework_branch: $CIRCLE_TAG
+      #     hysds_release: $CIRCLE_TAG
+      #     base_branch: develop
+      #     context:
+      #       - docker-hub-creds
+      #       - git-oauth-token
+      #     requires:
+      #       - build-hysds_cont_int-amd64
+      #       - build-hysds_cont_int-arm64
+      #     filters:
+      #       tags:
+      #         only: /^v6.*/
+      #       branches:
+      #         ignore: /.*/
       - deploy:
           build_tag: $CIRCLE_TAG
           final_tag: latest
