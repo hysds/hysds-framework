@@ -370,7 +370,7 @@ if [[ "$DEV" == 1 ]]; then
 
   # download latest develop verdi image
   if [[ "$COMPONENT" == "mozart" ]]; then
-    ${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^hysds-verdi-develop"
+    ${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^hysds-verdi-HC-567"
   fi
 else
   # print release if not specified
