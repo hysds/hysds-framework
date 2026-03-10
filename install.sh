@@ -330,7 +330,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone sdscli package
-  install_dev_repo $OPS sdscli https://github.com/hysds/sdscli.git
+  install_dev_repo $OPS sdscli https://github.com/hysds/sdscli.git HC-567
   
   
   # clone grq2 package
