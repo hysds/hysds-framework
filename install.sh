@@ -302,13 +302,13 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds_commons package
-  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git HC-567
+  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git
   
   
   # clone hysds package
   cd $OPS
   PACKAGE=hysds
-  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git HC-567
+  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
   cd $OPS/$PACKAGE
   pip install -e .
   if [ "$?" -ne 0 ]; then
@@ -318,7 +318,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone sciflo package
-  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git HC-567
+  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git
   
   
   # clone chimera package
@@ -326,11 +326,11 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone mozart package
-  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git HC-567
+  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git
   
   
   # clone sdscli package
-  install_dev_repo $OPS sdscli https://github.com/hysds/sdscli.git HC-567
+  install_dev_repo $OPS sdscli https://github.com/hysds/sdscli.git
   
   
   # clone grq2 package
@@ -370,7 +370,6 @@ if [[ "$DEV" == 1 ]]; then
 
   # download latest develop verdi image
   if [[ "$COMPONENT" == "mozart" ]]; then
-    ${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^hysds-verdi-HC-567"
     ${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^hysds-verdi-develop"
   fi
 else
