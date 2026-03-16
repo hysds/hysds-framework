@@ -338,7 +338,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone pele package
-  install_dev_repo $OPS pele https://github.com/hysds/pele.git
+  install_dev_repo $OPS pele https://github.com/hysds/pele.git HC-606
 
 
   # clone hysds_ui package
