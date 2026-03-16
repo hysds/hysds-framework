@@ -326,7 +326,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone mozart package
-  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git
+  install_dev_repo $OPS mozart https://github.com/hysds/mozart.git HC-606
   
   
   # clone sdscli package
