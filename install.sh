@@ -302,13 +302,13 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds_commons package
-  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git
+  install_dev_repo $OPS hysds_commons https://github.com/hysds/hysds_commons.git HC-606
   
   
   # clone hysds package
   cd $OPS
   PACKAGE=hysds
-  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git
+  clone_dev_repo $OPS $PACKAGE https://github.com/hysds/hysds.git HC-606
   cd $OPS/$PACKAGE
   pip install -e .
   if [ "$?" -ne 0 ]; then
@@ -318,7 +318,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone sciflo package
-  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git
+  install_dev_repo $OPS sciflo https://github.com/hysds/sciflo.git HC-606
   
   
   # clone chimera package
@@ -334,7 +334,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone grq2 package
-  install_dev_repo $OPS grq2 https://github.com/hysds/grq2.git
+  install_dev_repo $OPS grq2 https://github.com/hysds/grq2.git HC-606
   
   
   # clone pele package
