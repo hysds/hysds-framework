@@ -2258,7 +2258,7 @@ workflows:
             - build-hysds_dev-manifest
           filters:
             branches:
-              only: HC-567
+              only: develop
       - build-hysds_verdi_pge_base-manifest:
           puppet_branch: docker
           build_tag: ""
@@ -2274,7 +2274,7 @@ workflows:
             - build-hysds_verdi_pge_base-arm64
           filters:
             branches:
-              only: HC-567
+              only: develop
       - build-hysds_cuda_pge_base-amd64:
           puppet_branch: docker
           build_tag: ""
@@ -2290,7 +2290,7 @@ workflows:
             - build-hysds_cuda_dev-manifest
           filters:
             branches:
-              only: HC-567
+              only: develop
       - build-hysds_cuda_pge_base-arm64:
           puppet_branch: docker
           build_tag: ""
