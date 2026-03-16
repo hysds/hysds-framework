@@ -699,9 +699,9 @@ jobs:
               docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >>-amd64 \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-                -t hysds/cuda-dev:${build_tag} -t hysds/cuda-dev:<< parameters.final_tag >>-amd64 \
+                -t hysds/cuda-dev:${build_tag}-amd64 -t hysds/cuda-dev:<< parameters.final_tag >>-amd64 \
                 -f docker/Dockerfile.cuda .
-              docker push hysds/cuda-dev:${build_tag}
+              docker push hysds/cuda-dev:${build_tag}-amd64
               docker push hysds/cuda-dev:<< parameters.final_tag >>-amd64
             else
               docker build --progress=plain --rm --force-rm \
@@ -757,9 +757,9 @@ jobs:
               docker build --progress=plain --rm --force-rm \
                 --build-arg TAG=<< parameters.final_tag >>-arm64 \
                 --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
-                -t hysds/cuda-dev:${build_tag} -t hysds/cuda-dev:<< parameters.final_tag >>-arm64 \
+                -t hysds/cuda-dev:${build_tag}-arm64 -t hysds/cuda-dev:<< parameters.final_tag >>-arm64 \
                 -f docker/Dockerfile.cuda .
-              docker push hysds/cuda-dev:${build_tag}
+              docker push hysds/cuda-dev:${build_tag}-arm64
               docker push hysds/cuda-dev:<< parameters.final_tag >>-arm64
             else
               docker build --progress=plain --rm --force-rm \
@@ -802,17 +802,23 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Create and push manifest for final_tag
+            # Create and push manifest for build_tag
             if [ "$push_build_tag" -eq 1 ]; then
               docker manifest create hysds/cuda-dev:${build_tag} \
+                hysds/cuda-dev:${build_tag}-amd64 \
+                hysds/cuda-dev:${build_tag}-arm64
+              docker manifest push hysds/cuda-dev:${build_tag}
+              
+              docker manifest create hysds/cuda-dev:<< parameters.final_tag >> \
                 hysds/cuda-dev:<< parameters.final_tag >>-amd64 \
                 hysds/cuda-dev:<< parameters.final_tag >>-arm64
-              docker manifest push hysds/cuda-dev:${build_tag}
+              docker manifest push hysds/cuda-dev:<< parameters.final_tag >>
+            else
+              docker manifest create hysds/cuda-dev:<< parameters.final_tag >> \
+                hysds/cuda-dev:<< parameters.final_tag >>-amd64 \
+                hysds/cuda-dev:<< parameters.final_tag >>-arm64
+              docker manifest push hysds/cuda-dev:<< parameters.final_tag >>
             fi
-            docker manifest create hysds/cuda-dev:<< parameters.final_tag >> \
-              hysds/cuda-dev:<< parameters.final_tag >>-amd64 \
-              hysds/cuda-dev:<< parameters.final_tag >>-arm64
-            docker manifest push hysds/cuda-dev:<< parameters.final_tag >>
   build-hysds_verdi_pge_base-amd64:
     docker:
       - image: docker:24.0.9-git
@@ -869,6 +875,14 @@ jobs:
             # Push the images
             docker push hysds/pge-base:<< parameters.final_tag >>-amd64
             docker push hysds/verdi:<< parameters.final_tag >>-amd64
+            
+            # Also tag and push with build_tag for release builds
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker tag hysds/pge-base:<< parameters.final_tag >>-amd64 hysds/pge-base:${build_tag}-amd64
+              docker tag hysds/verdi:<< parameters.final_tag >>-amd64 hysds/verdi:${build_tag}-amd64
+              docker push hysds/pge-base:${build_tag}-amd64
+              docker push hysds/verdi:${build_tag}-amd64
+            fi
             
             cd ..
             rm -rf puppet-verdi
@@ -929,6 +943,14 @@ jobs:
             # Push the images
             docker push hysds/pge-base:<< parameters.final_tag >>-arm64
             docker push hysds/verdi:<< parameters.final_tag >>-arm64
+            
+            # Also tag and push with build_tag for release builds
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker tag hysds/pge-base:<< parameters.final_tag >>-arm64 hysds/pge-base:${build_tag}-arm64
+              docker tag hysds/verdi:<< parameters.final_tag >>-arm64 hysds/verdi:${build_tag}-arm64
+              docker push hysds/pge-base:${build_tag}-arm64
+              docker push hysds/verdi:${build_tag}-arm64
+            fi
             
             cd ..
             rm -rf puppet-verdi
@@ -1084,6 +1106,12 @@ jobs:
             # Push the image
             docker push hysds/cuda-pge-base:<< parameters.final_tag >>-amd64
             
+            # Also tag and push with build_tag for release builds
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker tag hysds/cuda-pge-base:<< parameters.final_tag >>-amd64 hysds/cuda-pge-base:${build_tag}-amd64
+              docker push hysds/cuda-pge-base:${build_tag}-amd64
+            fi
+            
             cd ..
             rm -rf puppet-verdi
   build-hysds_cuda_pge_base-arm64:
@@ -1143,6 +1171,12 @@ jobs:
             # Push the image
             docker push hysds/cuda-pge-base:<< parameters.final_tag >>-arm64
             
+            # Also tag and push with build_tag for release builds
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker tag hysds/cuda-pge-base:<< parameters.final_tag >>-arm64 hysds/cuda-pge-base:${build_tag}-arm64
+              docker push hysds/cuda-pge-base:${build_tag}-arm64
+            fi
+            
             cd ..
             rm -rf puppet-verdi
   build-hysds_cuda_pge_base-manifest:
@@ -1187,17 +1221,23 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Create and push manifest for final_tag
+            # Create and push manifest for build_tag
             if [ "$push_build_tag" -eq 1 ]; then
               docker manifest create hysds/cuda-pge-base:${build_tag} \
+                hysds/cuda-pge-base:${build_tag}-amd64 \
+                hysds/cuda-pge-base:${build_tag}-arm64
+              docker manifest push hysds/cuda-pge-base:${build_tag}
+              
+              docker manifest create hysds/cuda-pge-base:<< parameters.final_tag >> \
                 hysds/cuda-pge-base:<< parameters.final_tag >>-amd64 \
                 hysds/cuda-pge-base:<< parameters.final_tag >>-arm64
-              docker manifest push hysds/cuda-pge-base:${build_tag}
+              docker manifest push hysds/cuda-pge-base:<< parameters.final_tag >>
+            else
+              docker manifest create hysds/cuda-pge-base:<< parameters.final_tag >> \
+                hysds/cuda-pge-base:<< parameters.final_tag >>-amd64 \
+                hysds/cuda-pge-base:<< parameters.final_tag >>-arm64
+              docker manifest push hysds/cuda-pge-base:<< parameters.final_tag >>
             fi
-            docker manifest create hysds/cuda-pge-base:<< parameters.final_tag >> \
-              hysds/cuda-pge-base:<< parameters.final_tag >>-amd64 \
-              hysds/cuda-pge-base:<< parameters.final_tag >>-arm64
-            docker manifest push hysds/cuda-pge-base:<< parameters.final_tag >>
   build-hysds_mozart-amd64:
     docker:
       - image: docker:24.0.9-git
