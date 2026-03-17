@@ -2020,10 +2020,6 @@ jobs:
             docker save registry:2 > docker-registry-2-arm64.tar
             pigz -f docker-registry-2-arm64.tar
 
-            docker pull --platform linux/arm64 hysds/verdi:develop-es1
-            docker save hysds/verdi:develop-es1 > hysds-verdi-develop-es1-arm64.tar
-            pigz -f hysds-verdi-develop-es1-arm64.tar
-
             docker pull --platform linux/arm64 hysds/logstash:7.13.1
             docker tag hysds/logstash:7.13.1 logstash:7.13.1
             docker save logstash:7.13.1 > logstash-7.13.1-arm64.tar
