@@ -1982,6 +1982,11 @@ jobs:
             docker save logstash:7.9.3 > logstash-7.9.3.tar
             pigz -f logstash-7.9.3.tar
 
+            docker pull --platform linux/amd64 hysds/logstash:7.13.1
+            docker tag hysds/logstash:7.13.1 logstash:7.13.1
+            docker save logstash:7.13.1 > logstash-7.13.1.tar
+            pigz -f logstash-7.13.1.tar
+
             docker pull --platform linux/amd64 opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.3
             docker tag opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.3 logstash-oss:7.16.3
             docker save logstash-oss:7.16.3 > logstash-oss-7.16.3.tar
@@ -2015,20 +2020,15 @@ jobs:
             docker save registry:2 > docker-registry-2-arm64.tar
             pigz -f docker-registry-2-arm64.tar
 
-            docker pull --platform linux/arm64 hysds/logstash:7.1.1
-            docker tag hysds/logstash:7.1.1 logstash:7.1.1
-            docker save logstash:7.1.1 > logstash-7.1.1-arm64.tar
-            pigz -f logstash-7.1.1-arm64.tar
-
-            docker pull --platform linux/arm64 hysds/logstash:7.9.3
-            docker tag hysds/logstash:7.9.3 logstash:7.9.3
-            docker save logstash:7.9.3 > logstash-7.9.3-arm64.tar
-            pigz -f logstash-7.9.3-arm64.tar
+            docker pull --platform linux/arm64 hysds/logstash:7.13.1
+            docker tag hysds/logstash:7.13.1 logstash:7.13.1
+            docker save logstash:7.13.1 > logstash-7.13.1-arm64.tar
+            pigz -f logstash-7.13.1-arm64.tar
 
             docker pull --platform linux/arm64 opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.3
             docker tag opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.3 logstash-oss:7.16.3
             docker save logstash-oss:7.16.3 > logstash-oss-7.16.3-arm64.tar
-            pigz -f logstash-oss-7.16.3-arm64.tar
+            gzip logstash-oss-7.16.3-arm64.tar
       - persist_to_workspace:
           root: assets
           paths:
