@@ -1026,7 +1026,8 @@ jobs:
             if [ "$push_build_tag" -eq 1 ]; then
               # Save amd64 image (no suffix for backwards compatibility)
               docker pull --platform linux/amd64 hysds/verdi:${build_tag}-amd64
-              docker save hysds/verdi:${build_tag}-amd64 > hysds-verdi-${build_tag}.tar
+              docker tag hysds/verdi:${build_tag}-amd64 hysds/verdi:${build_tag}
+              docker save hysds/verdi:${build_tag} > hysds-verdi-${build_tag}.tar
               pigz -f hysds-verdi-${build_tag}.tar
               
               # Save arm64 image (with suffix)
@@ -1037,7 +1038,8 @@ jobs:
             
             # Save amd64 image for final_tag (no suffix for backwards compatibility)
             docker pull --platform linux/amd64 hysds/verdi:<< parameters.final_tag >>-amd64
-            docker save hysds/verdi:<< parameters.final_tag >>-amd64 > hysds-verdi-<< parameters.final_tag >>.tar
+            docker tag hysds/verdi:<< parameters.final_tag >>-amd64 hysds/verdi:<< parameters.final_tag >>
+            docker save hysds/verdi:<< parameters.final_tag >> > hysds-verdi-<< parameters.final_tag >>.tar
             pigz -f hysds-verdi-<< parameters.final_tag >>.tar
             
             # Save arm64 image for final_tag (with suffix)
