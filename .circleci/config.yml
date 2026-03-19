@@ -80,25 +80,25 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull multi-platform base image
-            docker pull --platform linux/amd64 hysds/base:<< parameters.final_tag >>
-            docker pull --platform linux/arm64 hysds/base:<< parameters.final_tag >>
             
             git clone --single-branch -b << parameters.branch >> https://github.com/<< parameters.org >>/puppet-redis.git redis
             cd redis
             
-            # Set environment variable to enable multi-platform builds in build script
-            export DOCKER_BUILDX_PLATFORM="linux/amd64,linux/arm64"
-            export USE_BUILDX=1
+            # Build and push multi-platform image
+            if [ "$push_build_tag" -eq 1 ]; then
+              docker buildx build --platform linux/amd64,linux/arm64 \
+                --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+                -t hysds/redis:${build_tag} -t hysds/redis:<< parameters.final_tag >> \
+                -f docker/Dockerfile . --push
+            else
+              docker buildx build --platform linux/amd64,linux/arm64 \
+                --build-arg ORG=<< parameters.org >> --build-arg BRANCH=<< parameters.branch >> \
+                -t hysds/redis:<< parameters.final_tag >> \
+                -f docker/Dockerfile . --push
+            fi
             
-            ./build_docker.sh $build_tag << parameters.org >> << parameters.branch >> << parameters.final_tag >>
             cd ..
             rm -rf redis
-            
-            # Tag and push using buildx imagetools if build script doesn't handle it
-            if [ "$push_build_tag" -eq 1 ]; then
-              docker buildx imagetools create -t hysds/redis:<< parameters.final_tag >> hysds/redis:${build_tag}
-            fi
   build-elasticsearch:
     docker:
       - image: docker:24.0.9-git
