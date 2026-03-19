@@ -29,6 +29,30 @@ commands:
             mkdir -p images
             echo "$DOCKER_PASS" | docker login -u $DOCKER_USER --password-stdin
             echo "GIT_OAUTH_TOKEN=${GIT_OAUTH_TOKEN}" > $HOME/.git_oauth_token
+
+  load_base_images:
+    parameters:
+      arch:
+        type: string
+      final_tag:
+        type: string
+    steps:
+      - attach_workspace:
+          at: /tmp/base-images
+      - run:
+          name: Load cached base and dev images
+          command: |
+            cd /tmp/base-images
+            if [ -f hysds-base-<< parameters.arch >>-<< parameters.final_tag >>.tar.gz ]; then
+              echo "Loading hysds/base:<< parameters.final_tag >>-<< parameters.arch >>"
+              pigz -d hysds-base-<< parameters.arch >>-<< parameters.final_tag >>.tar.gz
+              docker load < hysds-base-<< parameters.arch >>-<< parameters.final_tag >>.tar
+            fi
+            if [ -f hysds-dev-<< parameters.arch >>-<< parameters.final_tag >>.tar.gz ]; then
+              echo "Loading hysds/dev:<< parameters.final_tag >>-<< parameters.arch >>"
+              pigz -d hysds-dev-<< parameters.arch >>-<< parameters.final_tag >>.tar.gz
+              docker load < hysds-dev-<< parameters.arch >>-<< parameters.final_tag >>.tar
+            fi
 jobs:
   test:
     docker:
@@ -654,6 +678,54 @@ jobs:
                 hysds/dev:<< parameters.final_tag >>-arm64
               docker manifest push hysds/dev:<< parameters.final_tag >>
             fi
+  export-base-dev-images:
+    docker:
+      - image: docker:24.0.9-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: large
+    parameters:
+      final_tag:
+        type: string
+    steps:
+      - setup_remote_docker:
+          version: default
+      - install_deps
+      - prep_env
+      - run:
+          name: Export base and dev images
+          command: |
+            mkdir -p base-images
+            cd base-images
+            
+            # Pull and save amd64 images
+            echo "Exporting hysds/base:<< parameters.final_tag >>-amd64"
+            docker pull --platform linux/amd64 hysds/base:<< parameters.final_tag >>-amd64
+            docker save hysds/base:<< parameters.final_tag >>-amd64 > hysds-base-amd64-<< parameters.final_tag >>.tar
+            pigz -f hysds-base-amd64-<< parameters.final_tag >>.tar
+            
+            echo "Exporting hysds/dev:<< parameters.final_tag >>-amd64"
+            docker pull --platform linux/amd64 hysds/dev:<< parameters.final_tag >>-amd64
+            docker save hysds/dev:<< parameters.final_tag >>-amd64 > hysds-dev-amd64-<< parameters.final_tag >>.tar
+            pigz -f hysds-dev-amd64-<< parameters.final_tag >>.tar
+            
+            # Pull and save arm64 images
+            echo "Exporting hysds/base:<< parameters.final_tag >>-arm64"
+            docker pull --platform linux/arm64 hysds/base:<< parameters.final_tag >>-arm64
+            docker save hysds/base:<< parameters.final_tag >>-arm64 > hysds-base-arm64-<< parameters.final_tag >>.tar
+            pigz -f hysds-base-arm64-<< parameters.final_tag >>.tar
+            
+            echo "Exporting hysds/dev:<< parameters.final_tag >>-arm64"
+            docker pull --platform linux/arm64 hysds/dev:<< parameters.final_tag >>-arm64
+            docker save hysds/dev:<< parameters.final_tag >>-arm64 > hysds-dev-arm64-<< parameters.final_tag >>.tar
+            pigz -f hysds-dev-arm64-<< parameters.final_tag >>.tar
+            
+            ls -lh
+      - persist_to_workspace:
+          root: base-images
+          paths:
+            - "*.tar.gz"
   build-hysds_cuda_dev-amd64:
     docker:
       - image: docker:24.0.9-git
@@ -825,6 +897,7 @@ jobs:
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
+    resource_class: large
     parameters:
       org:
         type: string
@@ -852,6 +925,9 @@ jobs:
       - install_deps
       - setup_buildx
       - prep_env
+      - load_base_images:
+          arch: amd64
+          final_tag: << parameters.final_tag >>
       - run:
           name: Build hysds/pge-base and hysds/verdi (amd64)
           command: |
@@ -862,9 +938,7 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull amd64 base images
-            docker pull hysds/base:<< parameters.final_tag >>-amd64
-            docker pull hysds/dev:<< parameters.final_tag >>-amd64
+            # Base and dev images already loaded from workspace
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
@@ -892,7 +966,7 @@ jobs:
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
-    resource_class: arm.medium
+    resource_class: arm.large
     parameters:
       org:
         type: string
@@ -920,6 +994,9 @@ jobs:
       - install_deps
       - setup_buildx
       - prep_env
+      - load_base_images:
+          arch: arm64
+          final_tag: << parameters.final_tag >>
       - run:
           name: Build hysds/pge-base and hysds/verdi (arm64)
           command: |
@@ -930,9 +1007,7 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull arm64 base images
-            docker pull hysds/base:<< parameters.final_tag >>-arm64
-            docker pull hysds/dev:<< parameters.final_tag >>-arm64
+            # Base and dev images already loaded from workspace
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
@@ -960,6 +1035,7 @@ jobs:
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
+    resource_class: large
     parameters:
       org:
         type: string
@@ -1273,6 +1349,9 @@ jobs:
       - install_deps
       - setup_buildx
       - prep_env
+      - load_base_images:
+          arch: amd64
+          final_tag: << parameters.final_tag >>
       - run:
           name: Build hysds/mozart (amd64)
           command: |
@@ -1282,9 +1361,7 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull amd64 base images
-            docker pull hysds/base:<< parameters.final_tag >>-amd64
-            docker pull hysds/dev:<< parameters.final_tag >>-amd64
+            # Base and dev images already loaded from workspace
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-mozart.git
             cd puppet-mozart
@@ -1331,6 +1408,9 @@ jobs:
       - install_deps
       - setup_buildx
       - prep_env
+      - load_base_images:
+          arch: arm64
+          final_tag: << parameters.final_tag >>
       - run:
           name: Build hysds/mozart (arm64)
           command: |
@@ -1340,9 +1420,7 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull arm64 base images
-            docker pull hysds/base:<< parameters.final_tag >>-arm64
-            docker pull hysds/dev:<< parameters.final_tag >>-arm64
+            # Base and dev images already loaded from workspace
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-mozart.git
             cd puppet-mozart
@@ -1435,6 +1513,9 @@ jobs:
       - install_deps
       - setup_buildx
       - prep_env
+      - load_base_images:
+          arch: amd64
+          final_tag: << parameters.final_tag >>
       - run:
           name: Build hysds/metrics (amd64)
           command: |
@@ -1444,9 +1525,7 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull amd64 base images
-            docker pull hysds/base:<< parameters.final_tag >>-amd64
-            docker pull hysds/dev:<< parameters.final_tag >>-amd64
+            # Base and dev images already loaded from workspace
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-metrics.git
             cd puppet-metrics
@@ -1493,6 +1572,9 @@ jobs:
       - install_deps
       - setup_buildx
       - prep_env
+      - load_base_images:
+          arch: arm64
+          final_tag: << parameters.final_tag >>
       - run:
           name: Build hysds/metrics (arm64)
           command: |
@@ -1502,9 +1584,7 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull arm64 base images
-            docker pull hysds/base:<< parameters.final_tag >>-arm64
-            docker pull hysds/dev:<< parameters.final_tag >>-arm64
+            # Base and dev images already loaded from workspace
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-metrics.git
             cd puppet-metrics
@@ -1597,6 +1677,9 @@ jobs:
       - install_deps
       - setup_buildx
       - prep_env
+      - load_base_images:
+          arch: amd64
+          final_tag: << parameters.final_tag >>
       - run:
           name: Build hysds/grq (amd64)
           command: |
@@ -1606,9 +1689,7 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull amd64 base images
-            docker pull hysds/base:<< parameters.final_tag >>-amd64
-            docker pull hysds/dev:<< parameters.final_tag >>-amd64
+            # Base and dev images already loaded from workspace
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-grq.git
             cd puppet-grq
@@ -1655,6 +1736,9 @@ jobs:
       - install_deps
       - setup_buildx
       - prep_env
+      - load_base_images:
+          arch: arm64
+          final_tag: << parameters.final_tag >>
       - run:
           name: Build hysds/grq (arm64)
           command: |
@@ -1664,9 +1748,7 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull arm64 base images
-            docker pull hysds/base:<< parameters.final_tag >>-arm64
-            docker pull hysds/dev:<< parameters.final_tag >>-arm64
+            # Base and dev images already loaded from workspace
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-grq.git
             cd puppet-grq
@@ -1759,6 +1841,9 @@ jobs:
       - install_deps
       - setup_buildx
       - prep_env
+      - load_base_images:
+          arch: amd64
+          final_tag: << parameters.final_tag >>
       - run:
           name: Build hysds/cont_int (amd64)
           command: |
@@ -1768,9 +1853,7 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull amd64 base images
-            docker pull hysds/base:<< parameters.final_tag >>-amd64
-            docker pull hysds/dev:<< parameters.final_tag >>-amd64
+            # Base and dev images already loaded from workspace
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-cont_int.git
             cd puppet-cont_int
@@ -1817,6 +1900,9 @@ jobs:
       - install_deps
       - setup_buildx
       - prep_env
+      - load_base_images:
+          arch: arm64
+          final_tag: << parameters.final_tag >>
       - run:
           name: Build hysds/cont_int (arm64)
           command: |
@@ -1826,9 +1912,7 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            # Pull arm64 base images
-            docker pull hysds/base:<< parameters.final_tag >>-arm64
-            docker pull hysds/dev:<< parameters.final_tag >>-arm64
+            # Base and dev images already loaded from workspace
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-cont_int.git
             cd puppet-cont_int
@@ -2124,29 +2208,29 @@ workflows:
             branches:
               only: develop
       - build-hysds_base-amd64:
-          branch: develop
+          branch: HC-616
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_base-arm64:
-          branch: develop
+          branch: HC-616
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_base-manifest:
-          branch: develop
+          branch: HC-616
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2155,11 +2239,11 @@ workflows:
             - build-hysds_base-arm64
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_dev-amd64:
-          branch: develop
+          branch: HC-616
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2167,11 +2251,11 @@ workflows:
             - build-hysds_base-manifest
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_dev-arm64:
-          branch: develop
+          branch: HC-616
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2179,11 +2263,11 @@ workflows:
             - build-hysds_base-manifest
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_dev-manifest:
-          branch: develop
+          branch: HC-616
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2192,11 +2276,22 @@ workflows:
             - build-hysds_dev-arm64
           filters:
             branches:
-              only: develop
+              only: HC-616
+      - export-base-dev-images:
+          final_tag: HC-616
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
+          filters:
+            branches:
+              only: HC-616
       - build-hysds_cuda_base-amd64:
-          branch: develop
+          branch: HC-616
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2204,11 +2299,11 @@ workflows:
             - build-hysds_base-manifest
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_cuda_base-arm64:
-          branch: develop
+          branch: HC-616
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2216,11 +2311,11 @@ workflows:
             - build-hysds_base-manifest
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_cuda_base-manifest:
-          branch: develop
+          branch: HC-616
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2229,11 +2324,11 @@ workflows:
             - build-hysds_cuda_base-arm64
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_cuda_dev-amd64:
-          branch: develop
+          branch: HC-616
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2241,11 +2336,11 @@ workflows:
             - build-hysds_cuda_base-manifest
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_cuda_dev-arm64:
-          branch: develop
+          branch: HC-616
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2253,11 +2348,11 @@ workflows:
             - build-hysds_cuda_base-manifest
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_cuda_dev-manifest:
-          branch: develop
+          branch: HC-616
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2266,46 +2361,44 @@ workflows:
             - build-hysds_cuda_dev-arm64
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_verdi_pge_base-amd64:
-          puppet_branch: docker
+          puppet_branch: HC-616
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-616
+          framework_branch: HC-616
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
+            - export-base-dev-images
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_verdi_pge_base-arm64:
-          puppet_branch: docker
+          puppet_branch: HC-616
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-616
+          framework_branch: HC-616
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
+            - export-base-dev-images
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_verdi_pge_base-manifest:
-          puppet_branch: docker
+          puppet_branch: HC-616
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-616
+          framework_branch: HC-616
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2314,14 +2407,14 @@ workflows:
             - build-hysds_verdi_pge_base-arm64
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_cuda_pge_base-amd64:
-          puppet_branch: docker
+          puppet_branch: HC-616
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-616
+          framework_branch: HC-616
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2330,14 +2423,14 @@ workflows:
             - build-hysds_cuda_dev-manifest
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_cuda_pge_base-arm64:
-          puppet_branch: docker
+          puppet_branch: HC-616
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-616
+          framework_branch: HC-616
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2346,14 +2439,14 @@ workflows:
             - build-hysds_cuda_dev-manifest
           filters:
             branches:
-              only: develop
+              only: HC-616
       - build-hysds_cuda_pge_base-manifest:
-          puppet_branch: docker
+          puppet_branch: HC-616
           build_tag: ""
-          final_tag: develop
-          framework_branch: develop
+          final_tag: HC-616
+          framework_branch: HC-616
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2362,7 +2455,7 @@ workflows:
             - build-hysds_cuda_pge_base-arm64
           filters:
             branches:
-              only: develop
+              only: HC-616
       # - build-hysds_mozart-amd64:
       #     puppet_branch: docker
       #     build_tag: ""
@@ -2549,7 +2642,7 @@ workflows:
       #         only: develop
       - deploy:
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-616
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2557,7 +2650,7 @@ workflows:
             - build-hysds_verdi_pge_base-manifest
           filters:
             branches:
-              only: develop
+              only: HC-616
   build-deploy-release:
     jobs:
       - build-redis:
@@ -2679,6 +2772,19 @@ workflows:
               only: /^v6.*/
             branches:
               ignore: /.*/
+      - export-base-dev-images:
+          final_tag: latest
+          context:
+            - docker-hub-creds
+            - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
+          filters:
+            tags:
+              only: /^v6.*/
+            branches:
+              ignore: /.*/
       - build-hysds_cuda_base-amd64:
           branch: develop
           build_tag: $CIRCLE_TAG
@@ -2776,8 +2882,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
+            - export-base-dev-images
           filters:
             tags:
               only: /^v6.*/
@@ -2794,8 +2899,7 @@ workflows:
             - docker-hub-creds
             - git-oauth-token
           requires:
-            - build-hysds_base-manifest
-            - build-hysds_dev-manifest
+            - export-base-dev-images
           filters:
             tags:
               only: /^v6.*/
