@@ -58,4 +58,4 @@ Documentation = "https://hysds.github.io/hysds-framework/"
 
 # Meta-package has no Python code — hysds import name is provided by hysds-core
 [tool.hatch.build.targets.wheel]
-packages = []
+only-include = []
