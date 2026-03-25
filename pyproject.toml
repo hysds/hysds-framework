@@ -28,9 +28,9 @@ classifiers = [
 # Using exact pins for tested, reproducible releases
 dependencies = [
     "hysds-core==7.0.8rc1",
-    "hysds-osaka==7.0.2rc1",
-    "hysds-prov-es==7.0.1rc1",
-    "hysds-commons==7.0.2rc1",
+    "hysds-osaka==7.0.1",
+    "hysds-prov-es==7.0.0",
+    "hysds-commons==7.0.1",
     "hysds-sdscli==7.0.4rc1",
     # Centralized third-party constraints for consistency across ecosystem
     "elasticsearch>=7.0.0,<7.14.0",
@@ -44,10 +44,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-mozart = ["hysds-mozart==7.0.5rc1", "hysds-chimera==7.0.2rc1", "hysds-sciflo==7.0.4rc1"]
+mozart = ["hysds-mozart==7.0.5rc1", "hysds-chimera==7.0.2rc1", "hysds-sciflo==7.0.2"]
 grq = ["hysds-grq2==7.0.4rc1", "hysds-pele==7.0.2rc1"]
 metrics = []  # Metrics node only needs base deps
-verdi = ["hysds-chimera==7.0.2rc1", "hysds-sciflo==7.0.4rc1"]
+verdi = ["hysds-chimera==7.0.2rc1", "hysds-sciflo==7.0.2"]
 all = ["hysds[mozart,grq,metrics,verdi]"]
 dev = ["pytest>=9.0", "pytest-cov", "black", "flake8", "isort", "pre-commit"]
 
