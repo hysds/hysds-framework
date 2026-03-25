@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hysds"
+version = "7.0.0"
+description = "HySDS — Hybrid Cloud Science Data System"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12"
+authors = [{ name = "HySDS", email = "hysds-help@jpl.nasa.gov" }]
+keywords = ["hysds", "science", "data", "system", "workflow", "orchestration"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+# Base deps — installed for ALL components
+dependencies = [
+    "hysds-core~=7.0",
+    "hysds-osaka~=7.0",
+    "hysds-prov-es~=7.0",
+    "hysds-commons~=7.0",
+    "hysds-sdscli~=7.0",
+    # Centralized third-party constraints for consistency across ecosystem
+    "elasticsearch>=7.0.0,<7.14.0",
+    "elasticsearch-dsl>=7.0.0,<7.4.0",
+    "opensearch-py>=2.3.0,<3.0.0",
+    "Flask>=2.2,<3.0",
+    "werkzeug>=2.2,<3.0",
+    "redis~=5.2",
+    "numpy<2.0.0",
+    "lxml>=3.4.0,<5.0.0",
+]
+
+[project.optional-dependencies]
+mozart = ["hysds-mozart~=7.0", "hysds-chimera~=7.0", "hysds-sciflo~=7.0"]
+grq = ["hysds-grq2~=7.0", "hysds-pele~=7.0"]
+metrics = []  # Metrics node only needs base deps
+verdi = ["hysds-chimera~=7.0", "hysds-sciflo~=7.0"]
+all = ["hysds[mozart,grq,metrics,verdi]"]
+dev = ["pytest>=9.0", "pytest-cov", "black", "flake8", "isort", "pre-commit"]
+
+[project.urls]
+Homepage = "https://github.com/hysds/hysds-framework"
+Repository = "https://github.com/hysds/hysds-framework"
+Issues = "https://github.com/hysds/hysds-framework/issues"
+Documentation = "https://hysds.github.io/hysds-framework/"
+
+# Meta-package has no Python code — hysds import name is provided by hysds-core
+[tool.hatch.build.targets.wheel]
+packages = []
