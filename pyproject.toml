@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hysds"
-version = "7.0.0"
+version = "7.0.0rc1"
 description = "HySDS — Hybrid Cloud Science Data System"
 readme = "README.md"
 license = "Apache-2.0"
@@ -25,12 +25,13 @@ classifiers = [
 ]
 
 # Base deps — installed for ALL components
+# Using exact pins for tested, reproducible releases
 dependencies = [
-    "hysds-core~=7.0",
-    "hysds-osaka~=7.0",
-    "hysds-prov-es~=7.0",
-    "hysds-commons~=7.0",
-    "hysds-sdscli~=7.0",
+    "hysds-core==7.0.8rc1",
+    "hysds-osaka==7.0.2rc1",
+    "hysds-prov-es==7.0.1rc1",
+    "hysds-commons==7.0.2rc1",
+    "hysds-sdscli==7.0.4rc1",
     # Centralized third-party constraints for consistency across ecosystem
     "elasticsearch>=7.0.0,<7.14.0",
     "elasticsearch-dsl>=7.0.0,<7.4.0",
@@ -43,10 +44,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-mozart = ["hysds-mozart~=7.0", "hysds-chimera~=7.0", "hysds-sciflo~=7.0"]
-grq = ["hysds-grq2~=7.0", "hysds-pele~=7.0"]
+mozart = ["hysds-mozart==7.0.5rc1", "hysds-chimera==7.0.2rc1", "hysds-sciflo==7.0.4rc1"]
+grq = ["hysds-grq2==7.0.4rc1", "hysds-pele==7.0.2rc1"]
 metrics = []  # Metrics node only needs base deps
-verdi = ["hysds-chimera~=7.0", "hysds-sciflo~=7.0"]
+verdi = ["hysds-chimera==7.0.2rc1", "hysds-sciflo==7.0.4rc1"]
 all = ["hysds[mozart,grq,metrics,verdi]"]
 dev = ["pytest>=9.0", "pytest-cov", "black", "flake8", "isort", "pre-commit"]
 
