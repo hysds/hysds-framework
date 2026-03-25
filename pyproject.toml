@@ -56,6 +56,6 @@ Repository = "https://github.com/hysds/hysds-framework"
 Issues = "https://github.com/hysds/hysds-framework/issues"
 Documentation = "https://hysds.github.io/hysds-framework/"
 
-# Meta-package has no Python code — hysds import name is provided by hysds-core
+# Meta-package with minimal placeholder - actual hysds package provided by hysds-core
 [tool.hatch.build.targets.wheel]
-only-include = []
+packages = ["hysds"]
