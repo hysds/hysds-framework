@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hysds"
-version = "7.0.0rc1"
+version = "7.0.1rc1"
 description = "HySDS — Hybrid Cloud Science Data System"
 readme = "README.md"
 license = "Apache-2.0"
