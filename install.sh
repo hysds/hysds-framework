@@ -394,7 +394,7 @@ else
     exit 0
   fi
 
-  # Strip 'v' prefix if present (v7.0.0 -> 7.0.0)
+  # Strip 'v' prefix for PyPI if present (v7.0.0 -> 7.0.0), keep RELEASE as-is for GitHub
   PYPI_VERSION="${RELEASE#v}"
   
   # Install HySDS meta-package with component extra
@@ -414,12 +414,46 @@ else
   
   echo "Successfully installed hysds[${COMPONENT}]==${PYPI_VERSION}"
   
-  # Clone hysds_ui (Node.js app - still needed for web interface)
+  # Download specific non-Python package assets for the release
   cd $OPS
-  clone_dev_repo $OPS hysds_ui https://github.com/hysds/hysds_ui.git ${RELEASE}
+  declare -A assets
+  for i in `${BASE_PATH}/query_releases.py $REL_API_URL -r $RELEASE`; do
+    as_name=`echo $i | awk 'BEGIN{FS="|"}{print $1}'`
+    as_url=`echo $i | awk 'BEGIN{FS="|"}{print $2}'`
+
+    # Only download assets we need: hysds_ui, container-builder, and hysds-verdi
+    if [[ ! "$as_name" =~ ^hysds_ui && ! "$as_name" =~ ^container-builder && ! "$as_name" =~ ^hysds-verdi ]]; then
+      continue
+    fi
+
+    # skip verdi docker image for non-mozart components
+    if [[ "$as_name" =~ ^hysds-verdi && "$COMPONENT" != "mozart" ]]; then
+      continue
+    fi
+
+    assets[$as_name]+=$as_url
+    if [[ "$GIT_OAUTH_TOKEN" == "" ]]; then
+        ${BASE_PATH}/download_asset.py $as_url $as_name
+    else
+        ${BASE_PATH}/download_asset.py $as_url $as_name --token $GIT_OAUTH_TOKEN
+    fi
+    if [ "$?" -ne 0 ]; then
+      echo "Failed to download asset $as_url."
+      exit 1
+    fi
+    # move hysds-verdi release to pkgs instead of extracting
+    if [[ $as_name == hysds-verdi* ]]; then
+      mkdir -p $INSTALL_DIR/pkgs
+      mv hysds-verdi*.tar.gz $INSTALL_DIR/pkgs/
+      continue
+    fi
+    tar xvfz $as_name
+  done
+  rm -rf *.tar.gz
   
-  # Clone container-builder (still needed for PGE container builds)
-  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git ${RELEASE}
+  # Link essential non-Python packages
+  link_repo $OPS hysds_ui
+  link_repo $OPS container-builder
 fi
 
 # additional tasks if installing mozart component
