@@ -27,7 +27,8 @@ Usage:
                                 OAuth token to use to authenticate
     -h | --help                 Print help
     -t | --test                 Install test HySDS component, e.g. $HOME/mozart-test instead of $HOME/mozart
-    COMPONENT                   <component>: mozart | grq | metrics | verdi
+    --test-pypi                 Install from TestPyPI instead of production PyPI (for testing RC versions)
+    COMPONENT                   <component>: mozart | grq | metrics | verdi | all
 USAGE
   exit 1
 }
@@ -119,6 +120,7 @@ unset DIR_POST
 unset DEV
 unset RELEASE
 unset GIT_OAUTH_TOKEN
+unset TEST_PYPI
 
 
 # process arguments
@@ -158,6 +160,10 @@ while [[ $# -gt 0 ]]; do
       GIT_OAUTH_TOKEN="${1#*=}"
       shift 1
       ;;
+    --test-pypi)
+      TEST_PYPI=1
+      shift 1
+      ;;
     mozart|metrics|verdi)
       COMPONENT="$1"
       HYSDS_DIR="$1"
@@ -166,6 +172,11 @@ while [[ $# -gt 0 ]]; do
     grq)
       COMPONENT="$1"
       HYSDS_DIR="sciflo"
+      shift 1
+      ;;
+    all)
+      COMPONENT="$1"
+      HYSDS_DIR="hysds-all"
       shift 1
       ;;
     *)
@@ -346,11 +357,11 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone spyddder-man package
-  clone_dev_repo $OPS spyddder-man https://github.com/hysds/spyddder-man.git
+  #clone_dev_repo $OPS spyddder-man https://github.com/hysds/spyddder-man.git
   
   
   # clone lightweight-jobs package
-  clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git
+  #clone_dev_repo $OPS lightweight-jobs https://github.com/hysds/lightweight-jobs.git
   
   
   # clone container-builder package
@@ -358,22 +369,22 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone s3-bucket-listing package
-  clone_dev_repo $OPS s3-bucket-listing https://github.com/hysds/s3-bucket-listing.git
+  #clone_dev_repo $OPS s3-bucket-listing https://github.com/hysds/s3-bucket-listing.git
   
   
   # clone hysds-dockerfiles package
-  clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git
+  #clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git
   
   
   # clone hysds-cloud-functions package
-  clone_dev_repo $OPS hysds-cloud-functions https://github.com/hysds/hysds-cloud-functions.git
+  #clone_dev_repo $OPS hysds-cloud-functions https://github.com/hysds/hysds-cloud-functions.git
 
   # download latest develop verdi image
   if [[ "$COMPONENT" == "mozart" ]]; then
     ${BASE_PATH}/download_latest.py $API_URL hysds hysds-dockerfiles -o ${INSTALL_DIR}/pkgs -r "^hysds-verdi-develop"
   fi
 else
-  # print release if not specified
+  # Release mode - install from PyPI
   if [[ "$RELEASE" == "" ]]; then
     echo "No release specified. Use -r RELEASE | --release=RELEASE to install a specific release."
     echo "Listing available releases:"
@@ -383,128 +394,30 @@ else
     exit 0
   fi
 
-  # verify release exists
-  if [[ "${rels[$RELEASE]}" == "" ]]; then
-    echoerr "Error: release $RELEASE doesn't exist."
-    usage
+  # Strip 'v' prefix if present (v7.0.0 -> 7.0.0)
+  PYPI_VERSION="${RELEASE#v}"
+  
+  # Install HySDS meta-package with component extra
+  if [[ "$TEST_PYPI" == 1 ]]; then
+    echo "Installing HySDS ${COMPONENT} version ${PYPI_VERSION} from TestPyPI..."
+    pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ "hysds[${COMPONENT}]==${PYPI_VERSION}"
+  else
+    echo "Installing HySDS ${COMPONENT} version ${PYPI_VERSION} from PyPI..."
+    pip install "hysds[${COMPONENT}]==${PYPI_VERSION}"
   fi
-  
-  
-  # download all assets for a release and untar
-  declare -A assets
-  for i in `${BASE_PATH}/query_releases.py $REL_API_URL -r $RELEASE`; do
-    as_name=`echo $i | awk 'BEGIN{FS="|"}{print $1}'`
-    as_url=`echo $i | awk 'BEGIN{FS="|"}{print $2}'`
-
-    # skip verdi docker image
-    if [[ "$as_name" =~ ^hysds-verdi && "$COMPONENT" != "mozart" ]]; then
-      continue
-    fi
-
-    assets[$as_name]+=$as_url
-    if [[ "$GIT_OAUTH_TOKEN" == "" ]]; then
-        #echo wget --max-redirect=10 --header="Accept: application/octet-stream" \
-        #     -O $as_name $as_url
-        ${BASE_PATH}/download_asset.py $as_url $as_name
-    else
-        #echo wget --max-redirect=10 --header="Accept: application/octet-stream" \
-        #     --header="Authorization: token $GIT_OAUTH_TOKEN" \
-        #     -O $as_name $as_url
-        ${BASE_PATH}/download_asset.py $as_url $as_name --token $GIT_OAUTH_TOKEN
-    fi
-    if [ "$?" -ne 0 ]; then
-      echo "Failed to download asset $as_url."
-      exit 1
-    fi
-    # move hysds-verdi release to pkgs
-    if [[ $as_name == hysds-verdi* ]]; then
-      mkdir -p $INSTALL_DIR/pkgs
-      mv hysds-verdi*.tar.gz $INSTALL_DIR/pkgs/
-      continue
-    fi
-    tar xvfz $as_name
-  done
-  rm -rf *.tar.gz
-  
-  
-  # export latest prov_es package
-  install_repo $OPS prov_es
-  
-  
-  # export latest osaka package
-  pip install -U pyasn1
-  pip install -U pyasn1-modules
-  pip install -U python-dateutil
-  install_repo $OPS osaka
-  
-  
-  # export latest hysds_commons package
-  install_repo $OPS hysds_commons
-  
-  
-  # export latest hysds package
-  cd $OPS
-  PACKAGE=hysds
-  PACKAGE_DIR=${PACKAGE}-!(dockerfiles*|cloud-functions*|ops-bot*)
-  ln -sf $PACKAGE_DIR $PACKAGE
-  cd $OPS/$PACKAGE
-  pip install -e .
   if [ "$?" -ne 0 ]; then
-    echo "Failed to run 'pip install -e .' for $PACKAGE."
+    echo "Failed to install hysds[${COMPONENT}]==${PYPI_VERSION}."
     exit 1
   fi
   
+  echo "Successfully installed hysds[${COMPONENT}]==${PYPI_VERSION}"
   
-  # export latest sciflo package
-  install_repo $OPS sciflo
+  # Clone hysds_ui (Node.js app - still needed for web interface)
+  cd $OPS
+  clone_dev_repo $OPS hysds_ui https://github.com/hysds/hysds_ui.git ${RELEASE}
   
-  
-  # export latest chimera package
-  install_repo $OPS chimera
-  
-  
-  # export latest mozart package
-  install_repo $OPS mozart
-  
-  
-  # export latest sdscli package
-  install_repo $OPS sdscli
-  
-  
-  # export latest grq2 package
-  install_repo $OPS grq2
-  
-  
-  # export latest pele package
-  install_repo $OPS pele
-
-
-  # export latest hysds_ui package
-  link_repo $OPS hysds_ui
-  
-  
-  # export latest spyddder-man package
-  link_repo $OPS spyddder-man
-  
-  
-  # export latest lightweight-jobs package
-  link_repo $OPS lightweight-jobs
-  
-  
-  # export latest container-builder package
-  link_repo $OPS container-builder
-  
-  
-  # export latest s3-bucket-listing package
-  link_repo $OPS s3-bucket-listing
-  
-  
-  # export latest hysds-dockerfiles package
-  link_repo $OPS hysds-dockerfiles
-  
-  
-  # export latest hysds-cloud-functions package
-  link_repo $OPS hysds-cloud-functions
+  # Clone container-builder (still needed for PGE container builds)
+  clone_dev_repo $OPS container-builder https://github.com/hysds/container-builder.git ${RELEASE}
 fi
 
 # additional tasks if installing mozart component
