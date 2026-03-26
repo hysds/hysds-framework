@@ -417,7 +417,8 @@ else
   # Download specific non-Python package assets for the release
   cd $OPS
   declare -A assets
-  for i in `${BASE_PATH}/query_releases.py $REL_API_URL -r $RELEASE`; do
+  # FIXME: Added kludge for testing
+  for i in `${BASE_PATH}/query_releases.py $REL_API_URL -r v6.2.0`; do
     as_name=`echo $i | awk 'BEGIN{FS="|"}{print $1}'`
     as_url=`echo $i | awk 'BEGIN{FS="|"}{print $2}'`
 
