@@ -176,7 +176,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     all)
       COMPONENT="$1"
-      HYSDS_DIR="hysds-all"
+      HYSDS_DIR="mozart"
       shift 1
       ;;
     *)
