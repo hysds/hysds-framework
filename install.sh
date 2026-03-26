@@ -225,8 +225,8 @@ fi
 source $INSTALL_DIR/bin/activate
 
 
-# Combining installs in case we have to pin setuptools in the future
-pip install -U pip "setuptools<80.0.0"
+# Update pip and setuptools
+pip install -U pip setuptools
 
 # Need to install backoff due to download_assets needing it
 pip install backoff
@@ -400,6 +400,8 @@ else
   # Install HySDS meta-package with component extra
   if [[ "$TEST_PYPI" == 1 ]]; then
     echo "Installing HySDS ${COMPONENT} version ${PYPI_VERSION} from TestPyPI..."
+    # Workaround: Install Events from production PyPI first to avoid broken package on TestPyPI
+    pip install Events
     pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ "hysds[${COMPONENT}]==${PYPI_VERSION}"
   else
     echo "Installing HySDS ${COMPONENT} version ${PYPI_VERSION} from PyPI..."
