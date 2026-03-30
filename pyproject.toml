@@ -26,6 +26,7 @@ classifiers = [
 
 # Base deps — installed for ALL components
 # Using exact pins for tested, reproducible releases
+# Adding another comment
 dependencies = [
     "hysds-core==7.0.8rc4",
     "hysds-osaka==7.0.1",
