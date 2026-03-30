@@ -373,7 +373,7 @@ if [[ "$DEV" == 1 ]]; then
   
   
   # clone hysds-dockerfiles package
-  #clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git
+  clone_dev_repo $OPS hysds-dockerfiles https://github.com/hysds/hysds-dockerfiles.git
   
   
   # clone hysds-cloud-functions package
@@ -423,7 +423,7 @@ else
     as_url=`echo $i | awk 'BEGIN{FS="|"}{print $2}'`
 
     # Only download assets we need: hysds_ui, container-builder, and hysds-verdi
-    if [[ ! "$as_name" =~ ^hysds_ui && ! "$as_name" =~ ^container-builder && ! "$as_name" =~ ^hysds-verdi ]]; then
+    if [[ ! "$as_name" =~ ^hysds_ui && ! "$as_name" =~ ^container-builder && ! "$as_name" =~ ^hysds-verdi && ! "$as_name" =~ ^hysds-dockerfiles ]]; then
       continue
     fi
 
