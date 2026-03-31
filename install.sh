@@ -455,6 +455,7 @@ else
   # Link essential non-Python packages
   link_repo $OPS hysds_ui
   link_repo $OPS container-builder
+  link_repo $OPS hysds-dockerfiles
 fi
 
 # additional tasks if installing mozart component
