@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hysds"
-version = "7.0.1rc6"
+version = "7.0.1rc7"
 description = "HySDS — Hybrid Cloud Science Data System"
 readme = "README.md"
 license = "Apache-2.0"
@@ -28,11 +28,11 @@ classifiers = [
 # Using exact pins for tested, reproducible releases
 # Adding another comment
 dependencies = [
-    "hysds-core==7.0.8rc4",
+    "hysds-core==7.0.8rc5",
     "hysds-osaka==7.0.1",
     "hysds-prov-es==7.0.0",
     "hysds-commons==7.0.1",
-    "hysds-sdscli==7.0.5rc9",
+    "hysds-sdscli==7.0.5rc13",
     # Centralized third-party constraints for consistency across ecosystem
     "elasticsearch>=7.0.0,<7.14.0",
     "elasticsearch-dsl>=7.0.0,<7.4.0",
@@ -46,7 +46,7 @@ dependencies = [
 
 [project.optional-dependencies]
 mozart = ["hysds-mozart==7.0.5rc10", "hysds-chimera==7.0.2rc1", "hysds-sciflo==7.0.2"]
-grq = ["hysds-grq2==7.0.4rc5", "hysds-pele==7.0.2rc3"]
+grq = ["hysds-grq2==7.0.4rc6", "hysds-pele==7.0.2rc3"]
 metrics = []  # Metrics node only needs base deps
 verdi = ["hysds-chimera==7.0.2rc1", "hysds-sciflo==7.0.2"]
 all = ["hysds[mozart,grq,metrics,verdi]"]
