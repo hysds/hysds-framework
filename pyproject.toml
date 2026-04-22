@@ -28,7 +28,7 @@ classifiers = [
 # Using exact pins for tested, reproducible releases
 # Adding another comment
 dependencies = [
-    "hysds-core==7.0.8rc6",
+    "hysds-core==7.0.8rc5",
     "hysds-osaka==7.0.1",
     "hysds-prov-es==7.0.0",
     "hysds-commons==7.0.1",
