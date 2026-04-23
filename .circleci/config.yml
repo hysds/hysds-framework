@@ -2099,11 +2099,11 @@ workflows:
           context:
             - docker-hub-creds
             - git-oauth-token
-          # requires:
-          #   - build-hysds_base-manifest
+          requires:
+            - build-hysds_base-manifest
           filters:
             branches:
-              only: hot-fix-build-redis
+              only: develop
       - build-elasticsearch:
           build_tag: ""
           final_tag: develop
