@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hysds"
-version = "7.0.1rc15"
+version = "7.0.1rc16"
 description = "HySDS — Hybrid Cloud Science Data System"
 readme = "README.md"
 license = "Apache-2.0"
@@ -32,7 +32,7 @@ dependencies = [
     "hysds-osaka==7.0.1",
     "hysds-prov-es==7.0.0",
     "hysds-commons==7.0.1",
-    "hysds-sdscli==7.0.5rc24",
+    "hysds-sdscli==7.0.5rc25",
     # Centralized third-party constraints for consistency across ecosystem
     "elasticsearch>=7.0.0,<7.14.0",
     "elasticsearch-dsl>=7.0.0,<7.4.0",
