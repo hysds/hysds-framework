@@ -52,7 +52,7 @@ jobs:
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
-    #resource_class: large
+    resource_class: large
     parameters:
       org:
         type: string
@@ -2099,11 +2099,11 @@ workflows:
           context:
             - docker-hub-creds
             - git-oauth-token
-          requires:
-            - build-hysds_base-manifest
+          # requires:
+          #   - build-hysds_base-manifest
           filters:
             branches:
-              only: develop
+              only: hot-fix-build-redis
       - build-elasticsearch:
           build_tag: ""
           final_tag: develop
