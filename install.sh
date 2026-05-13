@@ -510,7 +510,7 @@ fi
 # additional tasks if installing mozart component
 if [[ "$COMPONENT" == "mozart" ]]; then
   # download hysds core packages and docker registry image if mozart
-  ${BASE_PATH}/download_latest.py $API_URL hysds lightweight-jobs -o ${INSTALL_DIR}/pkgs -r "^container-hysds_lightweight-jobs-(v2|hc-628)"
+  ${BASE_PATH}/download_latest.py $API_URL hysds lightweight-jobs -o ${INSTALL_DIR}/pkgs -r "^container-hysds_lightweight-jobs-v2"
 
   # Check if we downloaded part files and reassemble
   if ls ${INSTALL_DIR}/pkgs/container-hysds_lightweight-jobs-*.part-* 1> /dev/null 2>&1; then
