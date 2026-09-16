@@ -219,7 +219,7 @@ source $INSTALL_DIR/bin/activate
 # np.float_, which the pinned elasticsearch 7.13.4 client references at import
 # time in its serializer, so every component that imports hysds.es_util fails to
 # load. Stopgap pin to hold numpy below 2.0 until the ES client usage is fixed.
-pip install -U pip "setuptools<80.0.0" "contourpy<1.4.0"
+pip install -U pip "setuptools<80.0.0" "numpy<2.0" "contourpy<1.4.0"
 
 # Need to install backoff due to download_assets needing it
 pip install backoff
