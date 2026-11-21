@@ -845,10 +845,6 @@ jobs:
       base_branch:
         type: string
         default: develop
-      base_tag:
-        type: string
-        default: ""
-        description: hysds/base and hysds/dev tag to build from; empty means final_tag
     steps:
       - checkout
       - setup_remote_docker:
@@ -866,17 +862,15 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            base_tag=<< parameters.base_tag >>
-            base_tag=${base_tag:-<< parameters.final_tag >>}
             # Pull amd64 base images
-            docker pull hysds/base:${base_tag}-amd64
-            docker pull hysds/dev:${base_tag}-amd64
+            docker pull hysds/base:<< parameters.final_tag >>-amd64
+            docker pull hysds/dev:<< parameters.final_tag >>-amd64
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
             
             # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
-            ./build_docker.sh << parameters.final_tag >>-amd64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> ${base_tag}-amd64 << parameters.base_branch >>
+            ./build_docker.sh << parameters.final_tag >>-amd64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-amd64 << parameters.base_branch >>
             
             # Push the images
             docker push hysds/pge-base:<< parameters.final_tag >>-amd64
@@ -919,10 +913,6 @@ jobs:
       base_branch:
         type: string
         default: develop
-      base_tag:
-        type: string
-        default: ""
-        description: hysds/base and hysds/dev tag to build from; empty means final_tag
     steps:
       - checkout
       - setup_remote_docker:
@@ -940,17 +930,15 @@ jobs:
               export build_tag=$(date -u +%Y%m%d)
               export push_build_tag=0
             fi
-            base_tag=<< parameters.base_tag >>
-            base_tag=${base_tag:-<< parameters.final_tag >>}
             # Pull arm64 base images
-            docker pull hysds/base:${base_tag}-arm64
-            docker pull hysds/dev:${base_tag}-arm64
+            docker pull hysds/base:<< parameters.final_tag >>-arm64
+            docker pull hysds/dev:<< parameters.final_tag >>-arm64
             
             git clone --single-branch -b << parameters.puppet_branch >> https://github.com/<< parameters.org >>/puppet-verdi.git
             cd puppet-verdi
             
             # Build with the final architecture-specific tag directly (without buildx to create single-platform images)
-            ./build_docker.sh << parameters.final_tag >>-arm64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> ${base_tag}-arm64 << parameters.base_branch >>
+            ./build_docker.sh << parameters.final_tag >>-arm64 << parameters.org >> << parameters.puppet_branch >> << parameters.framework_branch >> << parameters.hysds_release >> << parameters.final_tag >>-arm64 << parameters.base_branch >>
             
             # Push the images
             docker push hysds/pge-base:<< parameters.final_tag >>-arm64
@@ -2136,29 +2124,29 @@ workflows:
             branches:
               only: develop
       - build-hysds_base-amd64:
-          branch: develop
+          branch: HC-677
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-675_HC-677
           context:
             - docker-hub-creds
             - git-oauth-token
           filters:
             branches:
-              only: develop
+              only: HC-675
       - build-hysds_base-arm64:
-          branch: develop
+          branch: HC-677
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-675_HC-677
           context:
             - docker-hub-creds
             - git-oauth-token
           filters:
             branches:
-              only: develop
+              only: HC-675
       - build-hysds_base-manifest:
-          branch: develop
+          branch: HC-677
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-675_HC-677
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2167,11 +2155,11 @@ workflows:
             - build-hysds_base-arm64
           filters:
             branches:
-              only: develop
+              only: HC-675
       - build-hysds_dev-amd64:
-          branch: develop
+          branch: HC-677
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-675_HC-677
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2179,11 +2167,11 @@ workflows:
             - build-hysds_base-manifest
           filters:
             branches:
-              only: develop
+              only: HC-675
       - build-hysds_dev-arm64:
-          branch: develop
+          branch: HC-677
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-675_HC-677
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2191,11 +2179,11 @@ workflows:
             - build-hysds_base-manifest
           filters:
             branches:
-              only: develop
+              only: HC-675
       - build-hysds_dev-manifest:
-          branch: develop
+          branch: HC-677
           build_tag: ""
-          final_tag: develop
+          final_tag: HC-675_HC-677
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2204,7 +2192,7 @@ workflows:
             - build-hysds_dev-arm64
           filters:
             branches:
-              only: develop
+              only: HC-675
       - build-hysds_cuda_base-amd64:
           branch: develop
           build_tag: ""
@@ -2282,38 +2270,42 @@ workflows:
       - build-hysds_verdi_pge_base-amd64:
           puppet_branch: docker
           build_tag: ""
-          final_tag: HC-675
-          base_tag: develop
+          final_tag: HC-675_HC-677
           framework_branch: HC-675
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-677
           context:
             - docker-hub-creds
             - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
           filters:
             branches:
               only: HC-675
       - build-hysds_verdi_pge_base-arm64:
           puppet_branch: docker
           build_tag: ""
-          final_tag: HC-675
-          base_tag: develop
+          final_tag: HC-675_HC-677
           framework_branch: HC-675
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-677
           context:
             - docker-hub-creds
             - git-oauth-token
+          requires:
+            - build-hysds_base-manifest
+            - build-hysds_dev-manifest
           filters:
             branches:
               only: HC-675
       - build-hysds_verdi_pge_base-manifest:
           puppet_branch: docker
           build_tag: ""
-          final_tag: HC-675
+          final_tag: HC-675_HC-677
           framework_branch: HC-675
           hysds_release: develop
-          base_branch: develop
+          base_branch: HC-677
           context:
             - docker-hub-creds
             - git-oauth-token
@@ -2557,7 +2549,7 @@ workflows:
       #         only: develop
       - deploy:
           build_tag: ""
-          final_tag: HC-675
+          final_tag: HC-675_HC-677
           context:
             - docker-hub-creds
             - git-oauth-token
